@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UnverifiedUser {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  nickname  String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+  handle    String?
+  class     Int?
+  grade     Int?
+  image     String?
+  role      String   @default("user")
+}
+
+model SJHSUser {
+  id                String   @id @default(cuid())
+  name              String?
+  email             String   @unique
+  image             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  nickname          String?
+  password          String?
+  verificationToken String?
+  handle            String?
+  class             Int?
+  grade             Int?
+  role              String   @default("user")
+}
+
+model attendanceObject {
+  id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+}
+
+model compareAT{
+  id            String  @id @default(cuid())
+  data          String?
+}
+model attendanceObjectDB {
+  id            String   @id @default(cuid())
+  author        String?
+  link          String?
+  createdAt     String?
+  type          String?
+}
+
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String    @default("user")
+  class         Int?
+  grade         Int?
+  nickname      String?
+  handle        String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  refresh_token_expires_in Int?
+  user                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id           Int      @id @default(autoincrement())
+  author       String?
+  nickname     String?
+  title        String
+  content      String
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  image        String?
+  like         Int?     @default(0)
+  video        String?
+  likeAuthorId String[] @default([])
+}

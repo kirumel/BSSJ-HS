@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "compareAT" ALTER COLUMN "id" DROP DEFAULT;

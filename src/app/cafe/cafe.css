@@ -1,0 +1,113 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+* {
+  margin: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  text-decoration: none;
+}
+.cafe-scroll-box {
+  background-color: rgb(238, 238, 238);
+  border-radius: 10rem;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding: 0.3rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+.padding1 {
+  padding: 1rem;
+  color: black;
+}
+.cafe-home-title {
+  margin-top: 10px;
+}
+.bottom-padding0 {
+  padding-bottom: 0rem;
+}
+.cafe-insta-img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 0.1rem;
+  border: 0.5px solid rgb(154, 154, 154);
+}
+.cafe-post-title {
+  color: black;
+  margin-top: 1px;
+  font-weight: 600;
+  font-size: 15px;
+}
+.display-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.margin-topbottom10px {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+.cafe-post-content {
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.cafe-text-post-content {
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+.cafe-nickname {
+  margin-bottom: 10px;
+}
+
+.cafe-post {
+  max-width: 500px;
+}
+.cafe-text-post {
+  border-radius: 1rem;
+  border: 1px solid rgb(195, 195, 195, 0.5);
+  padding: 20px;
+}
+.cafe-post p {
+  color: black;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+.cafe-text-post {
+  color: black;
+  font-size: 13px;
+  flex: 1;
+}
+.cafe-text-post p {
+  margin-bottom: 2px;
+}
+.cafe-post-date {
+  text-align: right;
+}
+.border-box {
+  max-width: 500px;
+  width: 100%;
+}
+.display-right {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+.display-around {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.width50 {
+  width: 49%;
+}
