@@ -9,6 +9,8 @@ export default async function handler(req: any, res: any) {
       res.status(200).json(attendance);
     } catch (error) {
       res.status(500).json({ error });
+    } finally {
+      await prisma.$disconnect();
     }
   }
 
@@ -36,6 +38,8 @@ export default async function handler(req: any, res: any) {
       }
     } catch (error) {
       res.status(500).json({ message: "ㄴㄴ" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === "PATCH") {
     try {
@@ -58,6 +62,8 @@ export default async function handler(req: any, res: any) {
       }
     } catch (error) {
       res.status(500).json({ message: "ㄴㄴ" });
+    } finally {
+      await prisma.$disconnect();
     }
   }
 }

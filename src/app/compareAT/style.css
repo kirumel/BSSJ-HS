@@ -1,0 +1,26 @@
+/* Define the keyframes for the sliding animation */
+@keyframes slideInFromTop {
+  from {
+    transform: translateX(300px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to the student items */
+.attendance-student {
+  animation: slideInFromTop 1s ease-out;
+  /* Adjust animation duration and easing function as needed */
+  opacity: 0; /* Ensure initial opacity is 0 */
+  animation-fill-mode: forwards; /* Ensure element retains the final state of animation */
+}
+
+.loading {
+  font-size: 1.5em;
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}

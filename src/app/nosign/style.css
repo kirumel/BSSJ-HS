@@ -1,0 +1,110 @@
+.nsign-background {
+  color: white;
+  background-image: linear-gradient(to top, rgb(30, 30, 30), rgba(0, 0, 0, 0)),
+    url("/background.jpeg");
+  background-blend-mode: multiply;
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  filter: brightness(30%);
+}
+
+.nsign-title {
+  color: white;
+  font-size: 3.9vmin;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+  position: fixed;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%);
+  transition: all 1s;
+}
+@media screen and (max-width: 600px) {
+  .nsign-title {
+    font-size: 5vmin;
+    transition: all 1s;
+  }
+}
+.nsign-login {
+  color: white;
+  background-color: rgb(103, 87, 255);
+  height: 60px;
+  width: 80vw;
+  border-radius: 20px;
+  padding: 10px;
+  border: 0px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.nsign-register {
+  color: white;
+  background: none;
+  border: 1px solid rgb(255, 255, 255);
+  height: 60px;
+  width: 80vw;
+  border-radius: 20px;
+  padding: 10px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.nsign-login-box {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.nsign-login-button {
+  color: rgb(255, 255, 255);
+  background-color: rgb(103, 87, 255);
+  border-radius: 20px;
+  padding: 10px;
+  border: none;
+}
+.nsign-login-input {
+  box-sizing: border-box;
+  color: rgb(107, 107, 107);
+  background: none;
+  border: 1px solid rgb(146, 146, 146);
+  height: 30px;
+  width: 100%;
+  border-radius: 20px;
+  padding: 20px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.google {
+  color: rgb(255, 255, 255);
+  background-color: rgb(255, 64, 64);
+  border-radius: 10px;
+  padding: 5px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: 20px;
+  border: none;
+}
+.naver {
+  color: rgb(255, 255, 255);
+  background-color: rgb(23, 128, 63);
+  border-radius: 10px;
+  padding: 5px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: 20px;
+  border: none;
+}
+.kakao {
+  color: black;
+  background-color: rgb(255, 230, 87);
+  border-radius: 10px;
+  padding: 5px;
+  padding-right: 15px;
+  padding-left: 15px;
+  border: none;
+}

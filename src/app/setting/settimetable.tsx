@@ -28,10 +28,21 @@ export default function Meals(props: any) {
   // API에서 시간표 데이터 가져오기
   async function fetchSchedules() {
     const scheduleData = await getschedules();
-    setSchedules(scheduleData);
+
+    const schedulesWithEmptySlots = scheduleData.map((schedule) => {
+      if (schedule.status === "error" || schedule.status === "정보없음") {
+        return {
+          ...schedule,
+          data: ["", "", "", "", "", "", ""],
+          status: "empty",
+        };
+      }
+      return schedule;
+    });
+    setSchedules(schedulesWithEmptySlots);
 
     // 데이터를 로컬 스토리지에 저장
-    localStorage.setItem("schedules", JSON.stringify(scheduleData));
+    localStorage.setItem("schedules", JSON.stringify(schedulesWithEmptySlots));
   }
 
   // 슬롯을 수정하는 함수
@@ -47,16 +58,6 @@ export default function Meals(props: any) {
     // 수정된 데이터를 로컬 스토리지에 저장
     localStorage.setItem("schedules", JSON.stringify(updatedSchedules));
   };
-  const schedulesWithEmptySlots = schedules.map((schedule) => {
-    if (schedule.status === "정보없음") {
-      return {
-        ...schedule,
-        data: ["등록된 정보가 없습니다", "", "", "", "", "", ""],
-        status: "empty",
-      };
-    }
-    return schedule;
-  });
 
   return (
     <div className="home-layout">
@@ -74,7 +75,7 @@ export default function Meals(props: any) {
           style={{ marginTop: "30px" }}
           className="subject-row etc-container"
         >
-          {schedulesWithEmptySlots.map((schedule, dayIndex) => (
+          {schedules.map((schedule, dayIndex) => (
             <div key={dayIndex} className="subject">
               <div className="slot1">{day[dayIndex]}</div>
               {schedule.data &&

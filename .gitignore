@@ -24,6 +24,7 @@
 #env
 .env
 
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -41,3 +42,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+sjhs-helper-a8602e21146f.json

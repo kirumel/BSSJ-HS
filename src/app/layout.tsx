@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Nav from "./nav";
-import Navout from "./navout";
 import AuthSession from "./AuthSession";
-import Sidenav from "./sidenav";
+import ProtectedPage from "./protectedpage"; // 수정된 파일 경로
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,18 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthSession>
-          <div className="sidenavout-display">
-            <div className="sidenav">
-              <Sidenav />
-            </div>
-            <div className="main-content">
-              <Nav />
-              <div>
-                {children}
-                <Navout />
-              </div>
-            </div>
-          </div>
+          <ProtectedPage children={children} />
         </AuthSession>
       </body>
     </html>

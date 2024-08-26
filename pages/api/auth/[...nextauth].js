@@ -94,6 +94,9 @@ export const authOptions = {
       return session;
     },
   },
+  pages: {
+    signIn: "/signin",
+  },
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
 };

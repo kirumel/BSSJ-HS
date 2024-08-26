@@ -37,7 +37,7 @@ export default function Page() {
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-  const [a, seta] = useState<string>("");
+
   console.log(firstcommitstudent);
 
   const getFilteredStudents = () => {
@@ -91,6 +91,9 @@ export default function Page() {
             id: student.id,
             createdAt: formattedDate,
             name: student.name,
+            class: student.class,
+            grade: student.grade,
+            studentnumber: student.studentnumber,
             check: student.check === "0" ? "2" : "" || "",
             comment: student.comment || "",
             author: session?.user?.name || "",

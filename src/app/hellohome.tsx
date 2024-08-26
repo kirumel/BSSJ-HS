@@ -19,16 +19,5 @@ export default function hellohome() {
         </div>
       </>
     );
-  } else {
-    return (
-      <>
-        <Link href="/api/auth/signin" className="text-decoration-none">
-          <div className="hello">
-            <p>로그인이 필요합니다.</p>
-            <button className="icon-gt white">&gt;</button>
-          </div>
-        </Link>
-      </>
-    );
   }
 }

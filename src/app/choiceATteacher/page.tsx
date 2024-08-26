@@ -16,10 +16,10 @@ export default function ChoiceAT() {
             </div>
             <div className="main-container-50">
               <div className="etc-container display-flex">
-                <Link href="/choiceATsupervisor">
+                <a href="/compareAT">
                   감독관 결과 <br />
                   확인하기
-                </Link>
+                </a>
               </div>
             </div>
           </div>
