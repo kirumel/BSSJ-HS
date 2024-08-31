@@ -230,6 +230,7 @@ export default function Cafe() {
                 key={post.id}
               >
                 <div className="cafe-post margin-topbottom10px">
+                  <img src={post.userimg}></img>
                   <p className="cafe-nickname">{post.nickname}</p>
                   <div className="display-flex">
                     <img className="cafe-insta-img" src={post.image}></img>

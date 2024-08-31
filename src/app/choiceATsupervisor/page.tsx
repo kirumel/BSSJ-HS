@@ -9,7 +9,7 @@ import axios from "axios";
 
 interface Attendance {
   name: string;
-
+  updatedAt: string;
   comment: string;
   check: string;
   author: string;
@@ -26,19 +26,19 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
     {
-      id: string;
-      createdAt: string;
       name: string;
-      check: string;
+      updatedAt: string;
       comment: string;
+      check: string;
       author: string;
+      studentnumber: string;
+      createdAt: string;
+      id: string;
     }[]
   >([]);
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-
-  console.log(firstcommitstudent);
 
   const getFilteredStudents = () => {
     if (selectedClass === null || selectedClass == "") {
@@ -89,14 +89,15 @@ export default function Page() {
 
           const initialFirstCommitStudent = sortedData.map((student) => ({
             id: student.id,
-            createdAt: formattedDate,
+            updatedAt: formattedDate,
             name: student.name,
             class: student.class,
             grade: student.grade,
             studentnumber: student.studentnumber,
-            check: student.check === "0" ? "2" : "" || "",
+            check: student.check === "0" ? "2" : "",
             comment: student.comment || "",
             author: session?.user?.name || "",
+            createdAt: student.createdAt,
           }));
           setFirstCommitStudent(initialFirstCommitStudent);
         } else {

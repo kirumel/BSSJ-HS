@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
-
 import "./style.css";
+import { Slide, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Define the types for the data objects
 interface DataItem {
   id: string;
   createdAt: string;
@@ -114,17 +114,28 @@ export default function CompareAT() {
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      const calculatedDifferences = calculateDifferences(firstdata, afterdata);
-      setDifferences(calculatedDifferences);
+    if (firstdata.length > 0 && afterdata.length > 0) {
+      if (firstdata[0].updatedAt === afterdata[0].updatedAt) {
+        if (!loading) {
+          const calculatedDifferences = calculateDifferences(
+            firstdata,
+            afterdata
+          );
+          setDifferences(calculatedDifferences);
 
-      const differenceIds = new Set(
-        calculatedDifferences.map((diff) => diff.id)
-      );
-      const filteredData = afterdata.filter(
-        (item) => !differenceIds.has(item.id)
-      );
-      setNodifferences(filteredData);
+          const differenceIds = new Set(
+            calculatedDifferences.map((diff) => diff.id)
+          );
+          const filteredData = afterdata.filter(
+            (item) => !differenceIds.has(item.id)
+          );
+          setNodifferences(filteredData);
+        }
+      } else {
+        setDifferences([]);
+        setNodifferences([]);
+        toast("1차 출석과 2차 출석의 일자가 달라요!");
+      }
     }
   }, [firstdata, afterdata, loading]);
 
@@ -133,79 +144,81 @@ export default function CompareAT() {
   }
 
   return (
-    <div className="right-left-margin">
-      <h2 style={{ marginBottom: "0" }}>출석결과</h2>
-      <p style={{ margin: "0" }} className="subtitle">
-        출석 결과를 알아볼 수 있습니다
-      </p>
-      <div className="attendance-container">
-        {differences.map((diff, index) => (
-          <div
-            className="attendance-student"
-            style={{
-              backgroundColor: "#FFE8E8",
-              animationDelay: `${index * 100}ms`,
-            }}
-            key={diff.id}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div className="attendance-student-title-display">
-                <div className="attendance-student-title">
-                  <p className="attendance-student-name">{diff.name}</p>
-                  <p className="attendance-student-gradeandclass">
-                    {diff.grade}학년 {diff.class}반
+    <>
+      <div className="right-left-margin">
+        <h2 style={{ marginBottom: "0" }}>출석결과</h2>
+        <p style={{ margin: "0" }} className="subtitle">
+          출석 결과를 알아볼 수 있습니다
+        </p>
+        <div className="attendance-container">
+          {differences.map((diff, index) => (
+            <div
+              className="attendance-student"
+              style={{
+                backgroundColor: "#FFE8E8",
+                animationDelay: `${index * 100}ms`,
+              }}
+              key={diff.id}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div className="attendance-student-title-display">
+                  <div className="attendance-student-title">
+                    <p className="attendance-student-name">{diff.name}</p>
+                    <p className="attendance-student-gradeandclass">
+                      {diff.grade}학년 {diff.class}반
+                    </p>
+                  </div>
+                  <p className="attendance-student-number">
+                    {diff.studentnumber}번
                   </p>
                 </div>
-                <p className="attendance-student-number">
-                  {diff.studentnumber}번
-                </p>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                {diff.beforeCheck === "1" ? "출석" : "미출석"} -&gt; {""}
-                {diff.afterCheck === "1" ? "출석" : "미출석"}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {diff.beforeCheck === "1" ? "출석" : "미출석"} -&gt; {""}
+                  {diff.afterCheck === "1" ? "출석" : "미출석"}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-        {nodifferences.map((student, index) => (
-          <div
-            className="attendance-student"
-            style={{
-              backgroundColor: "#E8E8E8",
-              animationDelay: `${index * 100 + 100}ms`,
-            }}
-            key={student.id}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div className="attendance-student-title-display">
-                <div className="attendance-student-title">
-                  <p className="attendance-student-name">{student.name}</p>
-                  <p className="attendance-student-gradeandclass">
-                    {student.grade}학년 {student.class}반
+          ))}
+          {nodifferences.map((student, index) => (
+            <div
+              className="attendance-student"
+              style={{
+                backgroundColor: "#E8E8E8",
+                animationDelay: `${index * 100 + 100}ms`,
+              }}
+              key={student.id}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div className="attendance-student-title-display">
+                  <div className="attendance-student-title">
+                    <p className="attendance-student-name">{student.name}</p>
+                    <p className="attendance-student-gradeandclass">
+                      {student.grade}학년 {student.class}반
+                    </p>
+                  </div>
+                  <p className="attendance-student-number">
+                    {student.studentnumber}번
                   </p>
                 </div>
-                <p className="attendance-student-number">
-                  {student.studentnumber}번
-                </p>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                {student.check === "1" ? "출석" : "미출석"}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {student.check === "1" ? "출석" : "미출석"}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

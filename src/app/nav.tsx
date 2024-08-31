@@ -13,6 +13,7 @@ export default function Nav() {
     "/success",
     "/nosign",
     "/signin",
+    "/cafe",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

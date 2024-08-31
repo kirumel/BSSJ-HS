@@ -43,6 +43,7 @@ model attendanceObject {
   id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
+  updatedAt     String?
   check         String?
   comment       String?
   author        String?

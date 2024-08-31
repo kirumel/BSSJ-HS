@@ -24,3 +24,19 @@
   padding: 20px;
   color: #666;
 }
+.alert-modal {
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  left: 50%;
+  width: 60vmin;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 100px;
+  margin: 0;
+}
