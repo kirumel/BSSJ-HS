@@ -7,17 +7,9 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
-    const { email, password, name, nickname, handle, grade, clss } = req.body;
+    const { email, password, name, nickname, grade, clss } = req.body;
 
-    if (
-      !email ||
-      !password ||
-      !name ||
-      !nickname ||
-      !handle ||
-      !grade ||
-      !clss
-    ) {
+    if (!email || !password || !name || !nickname || !grade || !clss) {
       return res.status(400).json({ message: "모든 필드를 입력해주세요" });
     }
 
@@ -39,11 +31,10 @@ export default async function handler(req: any, res: any) {
         data: {
           email,
           password: hashedPassword,
-          grade,
-          class: clss,
+          grade: parseInt(grade, 10),
+          class: parseInt(clss, 10),
           name,
           nickname,
-          handle,
           token,
           expires,
         },

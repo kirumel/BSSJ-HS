@@ -2,6 +2,7 @@
 import { useSession } from "next-auth/react";
 import Settimetable from "./settimetable";
 import { useEffect, useState } from "react";
+import { signIn, signOut } from "next-auth/react";
 export default function setting() {
   const { data: originalSession, loading } = useSession();
   const [isLoading, setIsLoading] = useState(true);
@@ -35,8 +36,14 @@ export default function setting() {
                 </div>
               </div>
             </div>
+            <div className="insert main-container ">
+              <button className="ok-button" onClick={() => signOut()}>
+                로그아웃
+              </button>
+            </div>
             <div className="line"></div>
             <Settimetable name={session.user?.name} />
+
             <div className="line"></div>
           </div>
         </>

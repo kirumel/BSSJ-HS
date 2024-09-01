@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import gsap from "gsap";
 
 export default function StartRegister(props: any) {
-  const { email, password, name, nickname, id, clss, grade } = props;
+  const { email, password, name, nickname, clss, grade } = props;
   const [showPassword, setShowPassword] = useState(false);
   const [buttonComment, setButtonComment] = useState("");
   const [stage, setStage] = useState(1);
@@ -164,8 +164,6 @@ export default function StartRegister(props: any) {
                   <p className="margintop0">{clss}</p>
                   <p className="subtitlewhite margin0">닉네임</p>
                   <p className="margintop0">{nickname}</p>
-                  <p className="subtitlewhite margin0">id</p>
-                  <p className="margintop0">{id}</p>
                 </div>
               </div>
               <div className="card-face card-back">
@@ -228,19 +226,13 @@ export default function StartRegister(props: any) {
               />
               <input
                 style={{ display: "none" }}
-                name="handle"
-                placeholder="id"
-                value={id}
-              />
-              <input
-                style={{ display: "none" }}
                 name="grade"
                 placeholder="학년"
                 value={grade}
               />
               <input
                 style={{ display: "none" }}
-                name="class"
+                name="clss"
                 placeholder="반"
                 value={clss}
               />

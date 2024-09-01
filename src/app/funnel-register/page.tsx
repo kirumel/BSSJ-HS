@@ -19,7 +19,7 @@ export type FunnelState = {
   password: string;
   nickname: string;
   id: string;
-  class: string;
+  clss: string;
   grade: string;
 };
 
@@ -33,7 +33,6 @@ export default function ExampleFunnel() {
       "이름",
       "학년반",
       "닉네임",
-      "사진",
       "확인",
     ] as const,
     { initialStep: "start" }
@@ -96,7 +95,6 @@ export default function ExampleFunnel() {
                 ...prevState,
                 step: "확인",
                 nickname: nicknameandid.nickname,
-                id: nicknameandid.id,
               }))
             }
           />

@@ -14,6 +14,7 @@ export default function Nav() {
     "/nosign",
     "/signin",
     "/cafe",
+    "/accountregister",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

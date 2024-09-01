@@ -13,6 +13,7 @@ export default function NavOut() {
     "/success",
     "/nosign",
     "/signin",
+    "/accountregister",
   ];
   if (pathname && notshow.includes(pathname)) {
     return null;

@@ -27,7 +27,7 @@ export default function StartRegister({ next }: { next: () => void }) {
           />
           <h2 className="start-register-title">이용약관 동의</h2>
           <p className="subtitle">아래의 약관을 확인해주세요</p>
-          <a className="register" href="https://www.youtube.com/">
+          <a className="register" href="accountregister">
             &gt; 개인정보 처리방침
           </a>
           <div style={{ display: "flex", alignItems: "center" }}>

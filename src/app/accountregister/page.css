@@ -1,0 +1,28 @@
+/* Page.css */
+
+.right-left-margin {
+  position: relative;
+}
+
+.back-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff; /* 파란색 배경 */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px; /* 화살표 아이콘 크기 */
+  border: none; /* 기본 버튼 테두리 제거 */
+  cursor: pointer; /* 커서 모양을 포인터로 변경 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none; /* 포커스 아웃라인 제거 */
+}
+
+.back-button:hover {
+  background-color: #0056b3; /* 마우스 오버 시 색상 변화 */
+}

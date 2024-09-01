@@ -1,13 +1,13 @@
-"use client";
 import "./cafe.css";
 import Cafe from "./cafe";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../../public/logo.png";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../pages/api/auth/[...nextauth]";
+export default async function Page() {
+  const session = await getServerSession(authOptions);
 
-export default function Page() {
-  const { data: session } = useSession();
   return (
     <>
       <div className="cafe-top">
@@ -26,7 +26,7 @@ export default function Page() {
       </div>
       <div className="line"></div>
       <div className="cafe-middle-container">
-        <Cafe />
+        <Cafe session={session} />
       </div>
     </>
   );

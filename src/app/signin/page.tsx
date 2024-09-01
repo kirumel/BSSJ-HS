@@ -9,9 +9,20 @@ export default function SignIn({ data }: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    signIn("credentials", { redirect: false, email, password });
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result?.ok) {
+      // Login was successful, reload the page
+      window.location.reload();
+    } else {
+      // Handle login failure (e.g., show an error message)
+      console.error(result?.error || "Login failed");
+    }
   };
 
   // Handler for social login

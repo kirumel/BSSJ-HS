@@ -52,7 +52,7 @@ export default async function handler(req: any, res: any) {
         },
         data: {
           like: like,
-          likeAuthorId: [likeAuthorId],
+          likeAuthorId: likeAuthorId,
         },
       });
       res.status(201).json({ message: "성공", post });

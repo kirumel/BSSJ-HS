@@ -16,7 +16,7 @@ export default function ChoiceAT() {
             </div>
             <div className="main-container-50">
               <div className="etc-container display-flex">
-                <Link href="/choiceATsupervisor">야자 감독관</Link>
+                <Link href="/choiceATgrade">야자 감독관</Link>
               </div>
             </div>
           </div>

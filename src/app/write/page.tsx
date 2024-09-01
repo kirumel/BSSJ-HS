@@ -38,6 +38,11 @@ export default async function Write() {
             value={session?.user?.nickname}
             style={{ display: "none" }}
           />
+          <input
+            name="id"
+            value={session?.user?.id}
+            style={{ display: "none" }}
+          />
           <div className="ok-button-div">
             <button className="ok-button" type="submit">
               확인

@@ -1,0 +1,23 @@
+.class-select {
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #8177fe;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: none;
+  appearance: none; /* 기본 화살표 제거 */
+  -webkit-appearance: none; /* Safari에서 기본 화살표 제거 */
+  -moz-appearance: none; /* Firefox에서 기본 화살표 제거 */
+  outline: none;
+}
+.class-select option {
+  padding: 10px;
+  background-color: #8177fe;
+  color: white;
+  box-shadow: none;
+  outline: none;
+}

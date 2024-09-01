@@ -34,19 +34,19 @@ export const authOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        login: { label: "아이디 or 이메일", type: "text" },
+        email: { label: "이메일", type: "text" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
         try {
-          const user = await prisma.sJHSUser?.findFirst({
+          const user = await prisma.SJHSUser?.findFirst({
             where: {
-              OR: [{ email: credentials.login }],
+              OR: [{ email: credentials.email }],
             },
           });
 
           if (!user) {
-            console.log("해당 로그인 ID 또는 이메일은 없음");
+            console.log("해당 이메일로 등록된 계정이 없음");
             return null;
           }
 
