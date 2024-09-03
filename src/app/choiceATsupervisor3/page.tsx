@@ -64,10 +64,15 @@ export default function Page() {
           const sortedData = data.sort(
             (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
           );
-          const presentStudents = sortedData.filter(
+
+          const sortedData3 = sortedData.filter(
+            (student) => student.grade == "3"
+          );
+
+          const presentStudents = sortedData3.filter(
             (student) => student.check !== "0"
           );
-          const absentStudents = sortedData.filter(
+          const absentStudents = sortedData3.filter(
             (student) => student.check === "0"
           );
           const finalSortedData = [...presentStudents, ...absentStudents];

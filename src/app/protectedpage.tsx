@@ -18,7 +18,12 @@ const ProtectedPage = ({ children }: { children: any }) => {
     );
   }
 
-  if (!session && pathname !== "/funnel-register" && pathname !== "/signin") {
+  if (
+    !session &&
+    pathname !== "/funnel-register" &&
+    pathname !== "/signin" &&
+    pathname !== "/accountregister"
+  ) {
     return <Nosign />;
   }
 

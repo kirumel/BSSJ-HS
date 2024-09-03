@@ -43,27 +43,44 @@ model attendanceObject {
   id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
-  updatedAt     String?
   check         String?
   comment       String?
   author        String?
   class         Int?
   grade         Int?
   studentnumber Int?
+  updatedAt     String?
 }
 
-model compareAT{
-  id            String  @id @default(cuid())
-  data          String?
+model compareAT {
+  id   String  @id @default(cuid())
+  data String?
+  grade String?
 }
+
 model attendanceObjectDB {
-  id            String   @id @default(cuid())
-  author        String?
-  link          String?
-  createdAt     String?
-  type          String?
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
 }
 
+model attendanceObjectDB2 {
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
+}
+
+model attendanceObjectDB3 {
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
+}
 
 model User {
   id            String    @id @default(cuid())

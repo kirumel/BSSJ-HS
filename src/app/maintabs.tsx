@@ -25,7 +25,7 @@ const maintabs = [
   {
     route: "/choiceAT",
     icon: faClock,
-    label: "관리자",
+    label: "8교시 출첵",
   },
 ];
 

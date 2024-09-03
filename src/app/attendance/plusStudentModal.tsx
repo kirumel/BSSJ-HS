@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface Attendance {
   name: string;
@@ -16,12 +17,14 @@ export default function PlusStudentModal(props: {
   closeModal: () => void;
 }) {
   const { closeModal, props: updateAttendance } = props;
-
+  const { data: session } = useSession();
   const [selectedCount, setSelectedCount] = useState<number>(1);
   const [conformselectedCount, setConformSelectedCount] = useState<number>(1);
   const [studentData, setStudentData] = useState<
     { name: string; grade: string; clss: string; studentnumber: string }[]
   >([]);
+
+  console.log(session?.user.grade);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConformSelectedCount(parseInt(e.target.value));
@@ -66,17 +69,33 @@ export default function PlusStudentModal(props: {
   return (
     <>
       <div className="modal">
-        <div className="modal-content">
+        <div className="modal-content" style={{ margin: "30px" }}>
           <span className="close" onClick={closeModal}>
             &times;
           </span>
           <p>인원을 입력해주세요</p>
-          <input type="text" placeholder="인원" onChange={handleSelectChange} />
-          <button onClick={handleconformcount}>인원 추가</button>
+          <input
+            className="plus-student-input"
+            type="text"
+            placeholder="인원"
+            onChange={handleSelectChange}
+          />
+          <button className="plus-student-button" onClick={handleconformcount}>
+            인원 추가
+          </button>
           <div className="scroll-container-attendance">
             {[...Array(selectedCount)].map((_, index) => (
-              <div key={index} className="input-group">
+              <div
+                key={index}
+                className="input-group"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <input
+                  className="plus-student-input"
                   type="text"
                   placeholder="이름"
                   value={studentData[index]?.name || ""}
@@ -85,22 +104,25 @@ export default function PlusStudentModal(props: {
                   }
                 />
                 <input
+                  style={{ display: "none" }}
                   type="text"
-                  value={studentData[index]?.grade || ""}
+                  value={session?.user?.grade || ""}
                   placeholder="학년"
                   onChange={(e) =>
                     handleInputChange(index, "grade", e.target.value)
                   }
                 />
                 <input
+                  style={{ display: "none" }}
                   type="text"
-                  value={studentData[index]?.clss || ""}
+                  value={session?.user?.class}
                   placeholder="반"
                   onChange={(e) =>
                     handleInputChange(index, "clss", e.target.value)
                   }
                 />
                 <input
+                  className="plus-student-input"
                   type="text"
                   value={studentData[index]?.studentnumber || ""}
                   placeholder="번호"
@@ -111,7 +133,9 @@ export default function PlusStudentModal(props: {
               </div>
             ))}
           </div>
-          <button onClick={handleSubmit}>확인</button>
+          <button onClick={handleSubmit} className="ok-button">
+            확인
+          </button>
         </div>
       </div>
     </>

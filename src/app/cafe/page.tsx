@@ -9,7 +9,7 @@ export default async function Page() {
   const session = await getServerSession(authOptions);
 
   return (
-    <>
+    <div className="cafe-body">
       <div className="cafe-top">
         <Link href="/">
           <div className="cafe-top-logo">
@@ -28,6 +28,6 @@ export default async function Page() {
       <div className="cafe-middle-container">
         <Cafe session={session} />
       </div>
-    </>
+    </div>
   );
 }

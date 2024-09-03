@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { fontdata } from "./font";
-import { logo } from "./logo";
+import { fontdata } from "../font";
+import { logo } from "../logo";
 
 import { PrismaClient } from "@prisma/client";
 

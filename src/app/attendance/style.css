@@ -118,3 +118,29 @@
 .attendance-top-in1 p {
   margin-right: 0.5rem;
 }
+.plus-student-input {
+  width: 48%;
+  background-color: #e5e5e5;
+  border-radius: 0.5rem;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  color: #000000;
+  border: none;
+}
+
+.plus-student-button {
+  background-color: rgb(138, 156, 255);
+  border: none;
+  border-radius: 0.5rem;
+  margin-left: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}

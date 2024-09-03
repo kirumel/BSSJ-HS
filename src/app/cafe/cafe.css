@@ -5,8 +5,9 @@
   font-family: "Noto Sans KR", sans-serif;
   text-decoration: none;
 }
-body p {
-  margin: 0;
+.cafe-body p {
+  margin-top: auto;
+  margin-bottom: auto;
 }
 .cafe-scroll-box {
   background-color: rgb(238, 238, 238);
@@ -162,4 +163,35 @@ body p {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.cafe-icon {
+  display: flex;
+  align-content: center;
+}
+
+.cafe-like-post {
+  margin-right: 8px;
+}
+.back-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+
+.back-button:hover {
+  background-color: #0056b3; /* 마우스 오버 시 색상 변화 */
 }
