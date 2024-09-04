@@ -133,12 +133,18 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
-      const response = await axios.post("/api/post/choiceATsupervisor2", {
-        firstcommitstudent,
-      });
-      const response2 = await axios.post("/api/post/choiceATsupervisor", {
-        firstcommitstudent,
-      });
+      const response = await axios.post(
+        "/api/post/filegenerater1/choiceATsupervisor2",
+        {
+          firstcommitstudent,
+        }
+      );
+      const response2 = await axios.post(
+        "/api/post/filegenerater1/choiceATsupervisor",
+        {
+          firstcommitstudent,
+        }
+      );
 
       const response3 = await axios.post("/api/post/compareAT", {
         firstcommitstudent,

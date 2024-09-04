@@ -66,10 +66,17 @@ export default async function handler(req: any, res: any) {
     // 버퍼를 base64로 인코딩
     const base64 = buffer.toString("base64");
 
-    const formattedDate = students.firstcommitstudent[0].createdAt.replace(
-      /(\d{4})\. (\d{2})\. (\d{2})/,
-      "$1-$2-$3"
-    );
+    const todayDate = new Date();
+    const today = new Date();
+
+    // 날짜 보기 좋게 설정
+    let formattedDate: string;
+
+    formattedDate = todayDate.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
 
     try {
       const upload = await prisma.attendanceObjectDB2.create({
