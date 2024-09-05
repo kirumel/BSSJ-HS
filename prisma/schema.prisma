@@ -1,6 +1,6 @@
 datasource db {
-  provider = "postgresql" // 또는 "mysql", "sqlite" 등 사용하고 있는 데이터베이스에 맞는 프로바이더
-  url      = env("DATABASE_URL") // 데이터베이스 연결 URL. 보통 환경 변수로 설정합니다.
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -37,8 +37,8 @@ model SJHSUser {
   class             Int?
   grade             Int?
   role              String   @default("user")
-  likes             Like[]   @relation("UserSJHSLikes")
-  comments          Comment[] @relation("UserSJHSComments")
+  likes             Like[]   @relation("SJHSUserLikes")
+  comments          Comment[] @relation("SJHSUserComments")
 }
 
 model attendanceObject {
@@ -143,29 +143,28 @@ model Post {
   video        String?
   comments     Comment[] @relation("PostComments")
   likes        Like[]    @relation("PostLikes")
-  
 }
 
 model Comment {
   id        String    @id @default(cuid())
   postId    String 
-  userId    String
+  userId    String?
+  sjhsUserId String?
   author    String?
   content   String
   createdAt DateTime @default(now())
   post      Post     @relation("PostComments", fields: [postId], references: [id] ,onDelete: Cascade)
-  user      User     @relation("UserComments", fields: [userId], references: [id],map: "Comment_userId_fkey")
-  sjhsUser  SJHSUser @relation("UserSJHSComments", fields: [userId], references: [id],map: "Comment_sjhsUserId_fkey")
-
+  user      User?    @relation("UserComments", fields: [userId], references: [id], map: "Comment_userId_fkey")
+  sjhsUser  SJHSUser? @relation("SJHSUserComments", fields: [sjhsUserId], references: [id], map: "Comment_sjhsUserId_fkey")
 }
 
 model Like {
   id        String    @id @default(cuid())
   postId    String 
-  userId    String
+  userId    String?
+  sjhsUserId String?
   createdAt DateTime @default(now())
-  post      Post     @relation("PostLikes", fields: [postId], references: [id],onDelete: Cascade)
-  user      User     @relation("UserLikes", fields: [userId], references: [id] , map: "Like_userId_fkey") 
-  sjhsUser  SJHSUser @relation("UserSJHSLikes", fields: [userId], references: [id], map: "Like_sjhsUserId_fkey")
-
+  post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
+  user      User?    @relation("UserLikes", fields: [userId], references: [id], map: "Like_userId_fkey")
+  sjhsUser  SJHSUser? @relation("SJHSUserLikes", fields: [sjhsUserId], references: [id], map: "Like_sjhsUserId_fkey")
 }
