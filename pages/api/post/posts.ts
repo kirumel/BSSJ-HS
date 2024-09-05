@@ -5,10 +5,15 @@ const prisma = new PrismaClient();
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
-      const posts = await prisma.post.findMany();
+      const posts = await prisma.post.findMany({
+        include: {
+          comments: true,
+          likes: true,
+        },
+      });
       res.status(200).json(posts);
     } catch (error) {
-      res.status(500).json({ message: "데이터를 가져오는데 실패했습니다" });
+      res.status(500).json({ message: "게시물을 가져오는 데 실패했습니다" });
     }
   } else if (req.method === "POST") {
     const { title, content, nickname, author } = req.body;
@@ -36,26 +41,6 @@ export default async function handler(req: any, res: any) {
         },
       });
       res.redirect(307, `/cafe`);
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "오류가 발생했습니다 콘솔을 확인해주세요" });
-    }
-  } else if (req.method === "PATCH") {
-    try {
-      const { id, like, likeAuthorId } = req.body;
-
-      const post = await prisma.post.update({
-        where: {
-          id: id,
-        },
-        data: {
-          like: like,
-          likeAuthorId: likeAuthorId,
-        },
-      });
-      res.status(201).json({ message: "성공", post });
     } catch (error) {
       console.error(error);
       res

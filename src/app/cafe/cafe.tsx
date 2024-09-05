@@ -1,20 +1,35 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import "./cafe.css";
 import axios from "axios";
+import "./cafe.css";
 
 interface Post {
-  id: number;
+  id: string;
   title: string;
   content: string;
   nickname: string;
   image: string;
   video: string;
   createdAt: Date;
-  like: number;
-  likeAuthorId: string[];
+  likes: Like[];
+  comments: Comment[]; // Add this line to include comments
 }
+
+interface Like {
+  id: string;
+  postId: string;
+  userId: string;
+  createdAt: Date;
+}
+interface Comment {
+  id: string;
+  postId: number;
+  nickname: string;
+  content: string;
+  createdAt: Date;
+}
+
 interface CafeProps {
   session: any; // Adjust the type as needed
 }
@@ -22,7 +37,6 @@ interface CafeProps {
 export default function Cafe({ session }: CafeProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [likePostClassName, setLikePostClassName] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -45,36 +59,19 @@ export default function Cafe({ session }: CafeProps) {
     );
   }
 
-  const handleLike = async (postId: number) => {
-    const userId = session?.user?.id;
-    if (!userId) return;
+  const handleCommentSubmit = async (id: any, newComment: string) => {
+    if (!newComment.trim()) return;
 
-    // Update posts locally
-    const updatedPosts = posts.map((post) =>
-      post.id === postId
-        ? {
-            ...post,
-            like: post.likeAuthorId.includes(userId)
-              ? post.like - 1
-              : post.like + 1,
-            likeAuthorId: post.likeAuthorId.includes(userId)
-              ? post.likeAuthorId.filter((id) => id !== userId)
-              : [...post.likeAuthorId, userId],
-          }
-        : post
-    );
-
-    setPosts(updatedPosts);
-
-    const updatedPost = updatedPosts.find((post) => post.id === postId);
+    const postId = id;
 
     try {
-      await axios.patch(
-        "/api/post/posts",
+      const response = await axios.post(
+        `/api/post/comments/${id}`,
         {
-          id: postId,
-          likeAuthorId: updatedPost?.likeAuthorId,
-          like: updatedPost?.like,
+          postId,
+          author: session?.user?.nickname,
+          content: newComment,
+          userId: session?.user?.id,
         },
         {
           headers: {
@@ -82,10 +79,51 @@ export default function Cafe({ session }: CafeProps) {
           },
         }
       );
+
+      const get = await axios.get(`/api/post/comments/${id}`).then((res) => {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === id
+              ? {
+                  ...post,
+                  comments: res.data,
+                }
+              : post
+          )
+        );
+      });
     } catch (error) {
-      console.error("Failed to update like:", error);
+      console.error("Failed to add comment:", error);
     }
   };
+  const handleLike = async (id: any) => {
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    try {
+      await axios.post(`/api/post/likes/${id}`, { userId }); // Send userId in the request body
+
+      axios.get(`/api/post/likes/${id}`).then((res) => {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === id
+              ? {
+                  ...post,
+                  likes: res.data,
+                }
+              : post
+          )
+        );
+      });
+    } catch (error) {
+      console.error("좋아요 처리 오류:", error);
+    }
+  };
+
   return (
     <div style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
       <a href="/write">
@@ -148,8 +186,9 @@ export default function Cafe({ session }: CafeProps) {
 
                         <div className="display-between">
                           <div className="margin-topbottom10px cafe-icon">
-                            {post.likeAuthorId.includes(session?.user?.id) ||
-                            likePostClassName == true ? (
+                            {post.likes?.some(
+                              (like) => like.userId === session?.user?.id
+                            ) ? (
                               <button
                                 onClick={() => handleLike(post.id)}
                                 style={{
@@ -181,7 +220,9 @@ export default function Cafe({ session }: CafeProps) {
                                     d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
                                   />
                                 </svg>
-                                <p className="cafe-like-post">{post.like}</p>
+                                <p className="cafe-like-post">
+                                  {post.likes.length}
+                                </p>
                               </button>
                             ) : (
                               <button
@@ -245,8 +286,9 @@ export default function Cafe({ session }: CafeProps) {
                   </div>
                   <div style={{ paddingRight: "10px", paddingLeft: "10px" }}>
                     <div className="margin-topbottom10px cafe-icon">
-                      {post.likeAuthorId.includes(session?.user?.id) ||
-                      likePostClassName == true ? (
+                      {post.likes?.some(
+                        (like) => like.userId === session?.user?.id
+                      ) ? (
                         <button
                           onClick={() => handleLike(post.id)}
                           style={{
@@ -278,7 +320,7 @@ export default function Cafe({ session }: CafeProps) {
                               d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
                             />
                           </svg>
-                          <p className="cafe-like-post">{post.like}</p>
+                          <p className="cafe-like-post">{post.likes.length}</p>
                         </button>
                       ) : (
                         <button
