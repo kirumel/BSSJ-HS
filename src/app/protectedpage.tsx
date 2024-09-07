@@ -22,7 +22,8 @@ const ProtectedPage = ({ children }: { children: any }) => {
     !session &&
     pathname !== "/funnel-register" &&
     pathname !== "/signin" &&
-    pathname !== "/accountregister"
+    pathname !== "/accountregister" &&
+    pathname !== "/verify-email"
   ) {
     return <Nosign />;
   }

@@ -38,10 +38,30 @@ export default async function handler(
         return res.status(400).json({ message: "이미 등록된 이메일입니다." });
       }
 
-      const { password, name, nickname } = unverifiedUser;
+      const { password, name, nickname, grade, role } = unverifiedUser;
+
+      const clss = unverifiedUser.class;
 
       const newUser = await prisma.sJHSUser.create({
-        data: { email: email as string, password, name, nickname },
+        data: {
+          email: email as string,
+          password,
+          name,
+          nickname,
+          grade,
+          class: clss,
+          role,
+        },
+      });
+      const newUser2 = await prisma.user.create({
+        data: {
+          email: email as string,
+          name,
+          nickname,
+          grade,
+          class: clss,
+          role,
+        },
       });
 
       await prisma.unverifiedUser.delete({

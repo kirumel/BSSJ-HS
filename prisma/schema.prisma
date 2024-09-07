@@ -37,8 +37,10 @@ model SJHSUser {
   class             Int?
   grade             Int?
   role              String   @default("user")
-  likes             Like[]   @relation("SJHSUserLikes")
-  comments          Comment[] @relation("SJHSUserComments")
+  user              User[]    
+
+  @@unique([id, name, nickname])
+  @@unique([id, email, class, grade, image, role, name, nickname])
 }
 
 model attendanceObject {
@@ -101,6 +103,8 @@ model User {
   sessions      Session[]
   likes         Like[]    @relation("UserLikes")
   comments      Comment[] @relation("UserComments")
+  post          Post[]
+  SJHSuser      SJHSUser? @relation(fields: [id,email,class,grade,image,role,name, nickname] , references: [id,email,class,grade,image,role,name, nickname])
 }
 
 model Account {
@@ -135,12 +139,14 @@ model Session {
 model Post {
   id           String    @id @default(cuid())
   author       String?
+  authorID     String?
   nickname     String?
   title        String
   content      String
   createdAt    DateTime @default(now()) 
   image        String?
   video        String?
+  userid       User? @relation(fields: [authorID], references: [id])
   comments     Comment[] @relation("PostComments")
   likes        Like[]    @relation("PostLikes")
 }
@@ -154,8 +160,8 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   post      Post     @relation("PostComments", fields: [postId], references: [id] ,onDelete: Cascade)
-  user      User?    @relation("UserComments", fields: [userId], references: [id], map: "Comment_userId_fkey")
-  sjhsUser  SJHSUser? @relation("SJHSUserComments", fields: [sjhsUserId], references: [id], map: "Comment_sjhsUserId_fkey")
+  user      User?    @relation("UserComments", fields: [userId], references: [id])
+  
 }
 
 model Like {
@@ -165,6 +171,6 @@ model Like {
   sjhsUserId String?
   createdAt DateTime @default(now())
   post      Post     @relation("PostLikes", fields: [postId], references: [id], onDelete: Cascade)
-  user      User?    @relation("UserLikes", fields: [userId], references: [id], map: "Like_userId_fkey")
-  sjhsUser  SJHSUser? @relation("SJHSUserLikes", fields: [sjhsUserId], references: [id], map: "Like_sjhsUserId_fkey")
+  user      User?    @relation("UserLikes", fields: [userId], references: [id])
+  
 }

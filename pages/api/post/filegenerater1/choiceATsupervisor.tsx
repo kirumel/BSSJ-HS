@@ -88,6 +88,7 @@ export default async function handler(req: any, res: any) {
         },
       });
       console.log(formattedDate);
+
       res.status(200).json({ message: "업로드가 완료되었습니다" });
     } catch (error) {
       res.status(500).send({
