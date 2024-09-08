@@ -46,8 +46,7 @@ export const authOptions = {
           });
 
           if (!user) {
-            console.log("해당 이메일로 등록된 계정이 없음");
-            return null;
+            throw new Error("해당 이메일로 등록된 계정이 없습니다.");
           }
 
           const pwcheck = await bcrypt.compare(
@@ -56,13 +55,11 @@ export const authOptions = {
           );
 
           if (!pwcheck) {
-            console.log("비밀번호가 일치하지 않음");
-            return null;
+            throw new Error("비밀번호가 일치하지 않습니다.");
           }
           return user;
         } catch (error) {
-          console.error("인증 중 오류 발생:", error);
-          return null;
+          throw new Error(error.message);
         }
       },
     }),

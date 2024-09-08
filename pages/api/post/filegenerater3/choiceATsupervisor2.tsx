@@ -6,6 +6,24 @@ export default async function handler(req: any, res: any) {
   const prisma = new PrismaClient();
   if (req.method === "POST") {
     const students = req.body;
+    const todayDate = new Date();
+    const today = new Date();
+
+    // 날짜 보기 좋게 설정
+    let formattedDate: string;
+
+    formattedDate = todayDate.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const dbcompare = await prisma.attendanceObjectDB3.findMany({
+      where: {
+        createdAt: {
+          gte: formattedDate,
+        },
+      },
+    });
 
     // 엑셀 워크북 및 워크시트 생성
     const workbook = new ExcelJS.Workbook();
@@ -66,18 +84,6 @@ export default async function handler(req: any, res: any) {
     // 버퍼를 base64로 인코딩
     const base64 = buffer.toString("base64");
 
-    const todayDate = new Date();
-    const today = new Date();
-
-    // 날짜 보기 좋게 설정
-    let formattedDate: string;
-
-    formattedDate = todayDate.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
     try {
       const upload = await prisma.attendanceObjectDB3.create({
         data: {
@@ -93,6 +99,8 @@ export default async function handler(req: any, res: any) {
       res.status(500).send({
         message: `에러가 발생하였습니다 오류 코드를 확인해주세요 ${error}`,
       });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });

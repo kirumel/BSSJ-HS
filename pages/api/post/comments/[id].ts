@@ -10,7 +10,6 @@ export default async function handler(
   const postId = req.query.id;
 
   if (req.method === "GET") {
-    // 특정 게시물의 댓글 가져오기
     const comments = await prisma.comment.findMany({
       where: { postId: postId },
       include: {

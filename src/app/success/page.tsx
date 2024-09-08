@@ -1,9 +1,14 @@
 import "../funnel-register/style.css";
+import logo from "../../../public/logo.png";
+import Image from "next/image";
 
 export default function StartRegister() {
   return (
     <>
-      <div className="funnel-layout home-layout">
+      <div className="nav">
+        <Image src={logo} alt="logo" width={71} height={25} />
+      </div>
+      <div className="right-left-margin home-layout">
         <div className="register-main">
           <h2 className="start-register-title">
             회원님의 이메일로 <br />

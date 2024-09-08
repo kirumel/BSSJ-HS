@@ -1,8 +1,11 @@
 import { IncomingForm } from "formidable";
 import { NextApiRequest, NextApiResponse } from "next";
+import sharp from "sharp";
 import axios from "axios";
-import { PassThrough } from "stream";
 import { google, drive_v3 } from "googleapis";
+import fs from "fs";
+import path from "path";
+import { promisify } from "util";
 
 export const config = {
   api: {
@@ -30,33 +33,19 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { files } = await parseForm(req);
 
-    // 비디오 파일의 경로
-    const videoFile = files.video[0] as any;
-    const inputFile = videoFile.filepath;
+    // 프로필 이미지 파일의 경로
+    const imageFile = files.image[0] as any;
+    const inputFile = imageFile.filepath;
 
-    // Cloudinary에 비디오 파일 업로드
-    const uploadResponse = await cloudinary.uploader.upload(inputFile, {
-      resource_type: "video",
-      folder: "uploads",
-      transformation: [
-        { width: 1920, height: null, crop: "scale" },
-        { audio_codec: "none" },
-      ],
-    });
+    // 이미지 압축
+    const compressedFilePath = path.join("/tmp", "compressed-image.jpg");
+    await sharp(inputFile)
+      .resize(600, 600, { fit: "inside" }) // 작은 크기로 조정
+      .toFormat("webp") // WebP 포맷으로 변환
+      .webp({ quality: 75 }) // 품질 설정 (60-75 정도 추천)
+      .toFile(compressedFilePath);
 
-    // Cloudinary 업로드 후의 비디오 URL
-    const videoUrl = uploadResponse.secure_url;
-
-    // 비디오 파일을 다운로드하여 Google Drive에 업로드
-    const downloadStream = (url: string) => {
-      return axios({
-        url,
-        method: "GET",
-        responseType: "stream",
-      }).then((response) => response.data);
-    };
-
-    // Google Drive 업로드를 위한 설정
+    // Google Drive에 업로드
     const auth = new google.auth.GoogleAuth({
       keyFile: "sjhs-helper-a8602e21146f.json",
       scopes: ["https://www.googleapis.com/auth/drive.file"],
@@ -66,22 +55,24 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const compressAndUpload = async () => {
       try {
-        const videoStream = await downloadStream(videoUrl);
+        // Google Drive 폴더 ID: "profileimg" 폴더의 ID를 지정
+        const folderId = "1jjr5jdydVH7j1fD2VPxNUAWtRwgmrx8Q";
 
         const fileMetadata: drive_v3.Schema$File = {
-          name: "video.mp4",
+          name: "profile-image.jpg",
+          parents: [folderId],
         };
 
         const media: drive_v3.Params$Resource$Files$Create = {
           media: {
-            body: videoStream,
+            body: fs.createReadStream(compressedFilePath),
           },
         };
 
         const driveResponse = await drive.files.create({
           resource: fileMetadata,
           media: media.media,
-          fields: "id",
+          fields: "id, webViewLink",
         });
 
         console.log("File Id:", driveResponse.data.id);
@@ -104,14 +95,17 @@ const uploadHandler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        res
-          .status(200)
-          .json({ message: "비디오 업로드 및 처리 완료", videoUrl });
+        // 업로드된 이미지 링크 반환
+        res.status(200).json({
+          message: "이미지 업로드 및 처리 완료",
+          imageUrl: driveResponse.data.webViewLink,
+        });
       } catch (error) {
         console.error("Error during upload or processing:", error);
-        res.status(500).json({ error: "비디오 업로드 또는 처리 실패" });
+        res.status(500).json({ error: "이미지 업로드 또는 처리 실패" });
       } finally {
-        await prisma.$disconnect();
+        // 임시 파일 삭제
+        await promisify(fs.unlink)(compressedFilePath);
       }
     };
 

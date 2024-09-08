@@ -26,9 +26,12 @@ export default async function handler(
       return res
         .status(500)
         .json({ error: "좋아요를 가져오는 데 실패했습니다" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else if (req.method === "POST") {
     const { userId } = req.body; // 요청 본문에서 userId 추출
+    console.log("userId", userId);
 
     // userId가 있는지 확인
     if (!userId) {
@@ -66,6 +69,8 @@ export default async function handler(
       return res
         .status(500)
         .json({ error: "좋아요 처리 중 오류가 발생했습니다" });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     return res.status(405).json({ error: "허용되지 않은 메서드입니다" });

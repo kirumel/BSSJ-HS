@@ -39,10 +39,10 @@ export default async function handler(
       }
 
       const { password, name, nickname, grade, role } = unverifiedUser;
-
       const clss = unverifiedUser.class;
 
-      const newUser = await prisma.sJHSUser.create({
+      // SJHSUser 생성
+      const newSJHSUser = await prisma.sJHSUser.create({
         data: {
           email: email as string,
           password,
@@ -53,8 +53,11 @@ export default async function handler(
           role,
         },
       });
-      const newUser2 = await prisma.user.create({
+
+      // User 생성 (SJHSUser와 동일한 id 사용)
+      const newUser = await prisma.user.create({
         data: {
+          id: newSJHSUser.id, // SJHSUser의 id를 사용
           email: email as string,
           name,
           nickname,
@@ -64,6 +67,7 @@ export default async function handler(
         },
       });
 
+      // unverifiedUser 삭제
       await prisma.unverifiedUser.delete({
         where: { email: email as string },
       });
@@ -75,6 +79,8 @@ export default async function handler(
     } catch (error) {
       console.error("이메일 인증 중 오류 발생:", error);
       res.status(500).json({ message: "이메일 인증 중 오류가 발생했습니다." });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: "허용되지 않는 메서드입니다." });

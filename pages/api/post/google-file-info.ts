@@ -3,7 +3,7 @@ import { google } from "googleapis";
 
 const bytesToGB = (bytes) => (bytes / (1024 * 1024 * 1024)).toFixed(2);
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   const { folderId } = req.query;
 
   if (!folderId) {
@@ -33,5 +33,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Error fetching folder data:", error);
     res.status(500).json({ error: "Error fetching folder data" });
+  } finally {
+    await prisma.$disconnect();
   }
 }

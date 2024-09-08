@@ -5,29 +5,35 @@ import "../nosign/style.css";
 import logo from "../../../public/logo.png";
 import Image from "next/image";
 
-export default function SignIn({ data }: any) {
+export default function SignIn({
+  data,
+  result,
+}: {
+  result: (message: string) => void;
+  data: any;
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await signIn("credentials", {
+    const signInResult = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
-    if (result?.ok) {
-      // Login was successful, reload the page
+
+    if (signInResult?.ok) {
+      // 로그인 성공 시, 페이지를 새로고침
       window.location.reload();
     } else {
-      // Handle login failure (e.g., show an error message)
-      console.error(result?.error || "Login failed");
+      result(`${signInResult?.error}`); // 부모 컴포넌트로 결과 메시지 전달
     }
   };
 
-  // Handler for social login
+  // 소셜 로그인 핸들러
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { redirect: true }); // Use the provider name for social login
+    signIn(provider, { redirect: true }); // 소셜 로그인에 제공자 이름 사용
   };
 
   return (
@@ -61,7 +67,7 @@ export default function SignIn({ data }: any) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <button className="nsign-login-button">Login</button>
+              <button className="nsign-login-button">로그인</button>
             </div>
           </form>
           <p

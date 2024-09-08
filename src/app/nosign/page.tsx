@@ -2,14 +2,37 @@
 import "./style.css";
 import { useState } from "react";
 import SignIn from "../signin/page";
+import { Slide, ToastContainer, toast } from "react-toastify";
+import "../choiceATteacher/style.css";
 export default function nosign() {
   const [loginmodal, setLoginModal] = useState(false);
+
   const handleloginmodal = (data: any) => {
     setLoginModal(data);
+  };
+  const result = (message: any) => {
+    if (message) {
+      toast(message);
+    } else {
+      null;
+    }
   };
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={true}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        transition={Slide}
+        closeButton={false}
+      />
       <div className="nsign-background"></div>
       <p className="nsign-title">
         부산 성지고등학교
@@ -17,7 +40,7 @@ export default function nosign() {
         SJHS_HELPER
       </p>
 
-      {loginmodal ? <SignIn data={handleloginmodal} /> : null}
+      {loginmodal ? <SignIn data={handleloginmodal} result={result} /> : null}
       <div className="nsign-position">
         <div className="nsign-login-box">
           <button

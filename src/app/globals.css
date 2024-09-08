@@ -9,7 +9,7 @@
 .right-left-margin {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
-  height: calc(100vh - 114px);
+  height: calc(100vh - 115px);
   display: flex;
   flex-direction: column;
 }
@@ -61,8 +61,11 @@ html {
 }
 .nav {
   padding-left: 15px;
+  padding-right: 15px;
   height: 50px;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid rgba(15, 15, 15, 0.102);
 }
 

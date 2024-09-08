@@ -93,6 +93,8 @@ export default async function handler(req: any, res: any) {
       res.status(500).send({
         message: `에러가 발생하였습니다 오류 코드를 확인해주세요 ${error}`,
       });
+    } finally {
+      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });

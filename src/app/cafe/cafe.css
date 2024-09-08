@@ -92,9 +92,6 @@
   font-size: 13px;
   flex: 1;
 }
-.cafe-text-post p {
-  margin-bottom: 2px;
-}
 .cafe-post-date {
   text-align: right;
 }
@@ -167,10 +164,21 @@
 .cafe-icon {
   display: flex;
   align-content: center;
+  flex-wrap: wrap;
 }
 
 .cafe-like-post {
+  margin: 0;
   margin-right: 8px;
+}
+
+.cafe-like-button {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 0;
 }
 .back-button {
   position: fixed;
@@ -194,4 +202,10 @@
 
 .back-button:hover {
   background-color: #0056b3; /* 마우스 오버 시 색상 변화 */
+}
+.display-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }

@@ -62,6 +62,8 @@ export default async function handler(req: any, res: any) {
           console.error(error);
           res.status(500).json({ error: "Internal Server Error" });
         }
+      } finally {
+        await prisma.$disconnect();
       }
     } else if ((await dblength).length !== 1 && (await dblength).length !== 0) {
       try {
@@ -83,6 +85,8 @@ export default async function handler(req: any, res: any) {
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
+      } finally {
+        await prisma.$disconnect();
       }
     }
   }

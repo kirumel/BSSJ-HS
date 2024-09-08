@@ -29,17 +29,12 @@ export default async function Write() {
             ></textarea>
           </div>
           <input
-            name="author"
-            value={session?.user?.name}
-            style={{ display: "none" }}
-          />
-          <input
             name="nickname"
             value={session?.user?.nickname}
             style={{ display: "none" }}
           />
           <input
-            name="id"
+            name="authorId"
             value={session?.user?.id}
             style={{ display: "none" }}
           />

@@ -56,12 +56,11 @@ a {
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 .funnel-layout {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 114px);
   overflow: hidden;
   flex: 1;
 }

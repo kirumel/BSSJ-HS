@@ -5,8 +5,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 import "./style.css";
-import { Slide, ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 interface DataItem {
   id: string;
@@ -134,7 +132,6 @@ export default function CompareAT() {
       } else {
         setDifferences([]);
         setNodifferences([]);
-        toast("1차 출석과 2차 출석의 일자가 달라요!");
       }
     }
   }, [firstdata, afterdata, loading]);
@@ -220,6 +217,6 @@ export default function CompareAT() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }

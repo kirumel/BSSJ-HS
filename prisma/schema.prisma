@@ -103,7 +103,7 @@ model User {
   sessions      Session[]
   likes         Like[]    @relation("UserLikes")
   comments      Comment[] @relation("UserComments")
-  post          Post[]
+  post          Post[]    @relation("UserPosts")
   SJHSuser      SJHSUser? @relation(fields: [id,email,class,grade,image,role,name, nickname] , references: [id,email,class,grade,image,role,name, nickname])
 }
 
@@ -138,15 +138,14 @@ model Session {
 
 model Post {
   id           String    @id @default(cuid())
-  author       String?
-  authorID     String?
+  authorId     String    // Foreign key field to link to User
+  author       User      @relation("UserPosts", fields: [authorId], references: [id]) // Defines relation
   nickname     String?
   title        String
   content      String
   createdAt    DateTime @default(now()) 
   image        String?
   video        String?
-  userid       User? @relation(fields: [authorID], references: [id])
   comments     Comment[] @relation("PostComments")
   likes        Like[]    @relation("PostLikes")
 }
