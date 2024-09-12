@@ -28,6 +28,11 @@ const tabs = [
     label: "커뮤니티",
   },
   {
+    route: "/study",
+    icon: faUserCircle,
+    label: "공부",
+  },
+  {
     route: "/setting",
     icon: faUserCircle,
     label: "마이",

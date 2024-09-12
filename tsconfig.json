@@ -12,6 +12,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+
     "plugins": [
       {
         "name": "next"
@@ -21,6 +22,15 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/meals/page.js", "src/app/meals/page.js", "src/app/posts/[id]/page.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/meals/page.js",
+    "src/app/meals/page.js",
+    "src/app/posts/[id]/page.js",
+    "src/app/study/page.jsx"
+  ],
   "exclude": ["node_modules"]
 }
