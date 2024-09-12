@@ -12,7 +12,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append("video", video);
 
-    const res = await fetch("/api/upload", {
+    const res = await fetch("/api/post/profileimg", {
       method: "POST",
       body: formData,
     });

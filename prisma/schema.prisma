@@ -58,6 +58,7 @@ model attendanceObject {
 
 model compareAT {
   id   String  @id @default(cuid())
+  createdAt String?
   data String?
   grade String?
 }

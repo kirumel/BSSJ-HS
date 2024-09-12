@@ -20,6 +20,7 @@ export default async function handler(req: any, res: any) {
       reqObject.studentData.map(async (a: any, i: any) => {
         const { name, grade, clss, studentnumber } = a;
         const afterGrade = parseInt(grade, 10);
+        console.log(grade);
         const afterclass = parseInt(clss, 10);
         const afterstudentnumber = parseInt(studentnumber, 10);
         const createAttendance = await prisma.attendanceObject.create({

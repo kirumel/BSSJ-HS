@@ -32,8 +32,22 @@ const fetchAfterData = async (session: any): Promise<DataItem[]> => {
   try {
     const response = await axios.get<{ data: string }>("/api/post/compareAT");
     if (response.status === 200) {
+      const todayDate = new Date();
+      const today = new Date();
+
+      //날자 보기좋게
+      let formattedDate: string;
+
+      formattedDate = todayDate.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
       const afterdata = JSON.parse(response.data.data);
-      const filteredData = afterdata.filter(
+      const datefilteredData = afterdata.filter(
+        (item: DataItem) => item.createdAt === formattedDate
+      );
+      const filteredData = datefilteredData.filter(
         (item: DataItem) =>
           item.class === session?.user?.class &&
           item.grade === session?.user?.grade

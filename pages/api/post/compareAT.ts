@@ -1,11 +1,31 @@
 import { PrismaClient } from "@prisma/client";
+import { equal } from "assert";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
+    const todayDate = new Date();
+    const today = new Date();
+    const isToday = todayDate.toDateString() === today.toDateString();
+
+    //날자 보기좋게
+    let formattedDate: string;
+
+    formattedDate = todayDate.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
     try {
-      const posts = await prisma.compareAT.findFirst();
+      const posts = await prisma.compareAT.findMany({
+        where: {
+          createdAt: {
+            equals: formattedDate,
+          },
+        },
+      });
       res.status(200).json(posts);
     } catch (error) {
       if (error.code === "P2002") {

@@ -10,18 +10,21 @@ export default async function Write() {
       strategy: "jwt",
     },
   });
-  console.log(session.user?.nickname);
   return (
-    <div className="p-20">
-      <h3>글 작성하기</h3>
-      <p>작성자 : {session?.user?.nickname}</p>
+    <div className="right-left-margin">
+      <p>{session?.user?.nickname}</p>
       <div>
         <form action="/api/post/posts" method="POST">
           <div>
-            <input name="title" placeholder="제목을 입력해주세요" />
+            <input
+              className="title-input"
+              name="title"
+              placeholder="제목을 입력해주세요"
+            />
           </div>
           <div>
             <textarea
+              className="content-input"
               name="content"
               placeholder="글내용"
               rows={4}

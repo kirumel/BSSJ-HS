@@ -24,7 +24,7 @@ export default function PlusStudentModal(props: {
     { name: string; grade: string; clss: string; studentnumber: string }[]
   >([]);
 
-  console.log(session?.user.grade);
+  console.log(studentData);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setConformSelectedCount(parseInt(e.target.value));
@@ -61,8 +61,15 @@ export default function PlusStudentModal(props: {
   };
 
   const handleInputChange = (index: number, field: string, value: string) => {
-    const newData = [...studentData];
-    newData[index] = { ...newData[index], [field]: value };
+    let newData = [...studentData];
+
+    newData[index] = {
+      ...newData[index],
+      [field]: value,
+      grade: session?.user?.grade,
+      clss: session?.user?.class,
+    };
+
     setStudentData(newData);
   };
 
@@ -98,27 +105,10 @@ export default function PlusStudentModal(props: {
                   className="plus-student-input"
                   type="text"
                   placeholder="이름"
+                  maxLength={5}
                   value={studentData[index]?.name || ""}
                   onChange={(e) =>
                     handleInputChange(index, "name", e.target.value)
-                  }
-                />
-                <input
-                  style={{ display: "none" }}
-                  type="text"
-                  value={session?.user?.grade || ""}
-                  placeholder="학년"
-                  onChange={(e) =>
-                    handleInputChange(index, "grade", e.target.value)
-                  }
-                />
-                <input
-                  style={{ display: "none" }}
-                  type="text"
-                  value={session?.user?.class}
-                  placeholder="반"
-                  onChange={(e) =>
-                    handleInputChange(index, "clss", e.target.value)
                   }
                 />
                 <input
@@ -126,6 +116,7 @@ export default function PlusStudentModal(props: {
                   type="text"
                   value={studentData[index]?.studentnumber || ""}
                   placeholder="번호"
+                  maxLength={1}
                   onChange={(e) =>
                     handleInputChange(index, "studentnumber", e.target.value)
                   }

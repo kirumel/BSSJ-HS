@@ -19,7 +19,18 @@ interface Attendance {
   createdAt: string;
   id: string;
 }
+const todayDate = new Date();
+const today = new Date();
+const isToday = todayDate.toDateString() === today.toDateString();
 
+//날자 보기좋게
+let formattedDate: string;
+
+formattedDate = todayDate.toLocaleDateString("ko-KR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
 export default function Page() {
   const [modalOpen, setModalOpen] = useState(false);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
@@ -76,20 +87,6 @@ export default function Page() {
           );
           const finalSortedData = [...presentStudents, ...absentStudents];
           setAttendance(finalSortedData);
-
-          const todayDate = new Date();
-          const today = new Date();
-          const isToday = todayDate.toDateString() === today.toDateString();
-
-          //날자 보기좋게
-          let formattedDate: string;
-          if (isToday) {
-            formattedDate = todayDate.toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            });
-          }
 
           const initialFirstCommitStudent = sortedData.map((student) => ({
             id: student.id,
@@ -148,6 +145,8 @@ export default function Page() {
 
       const response3 = await axios.post("/api/post/compareAT", {
         firstcommitstudent,
+        grade: "1",
+        formattedDate,
       });
 
       if (

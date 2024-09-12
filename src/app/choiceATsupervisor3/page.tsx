@@ -7,6 +7,18 @@ import SuccessModal from "./successModal";
 import "./style.css";
 import axios from "axios";
 
+const todayDate = new Date();
+const today = new Date();
+
+//날자 보기좋게
+let formattedDate: string;
+
+formattedDate = todayDate.toLocaleDateString("ko-KR", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 interface Attendance {
   name: string;
   updatedAt: string;
@@ -78,20 +90,6 @@ export default function Page() {
           const finalSortedData = [...presentStudents, ...absentStudents];
           setAttendance(finalSortedData);
 
-          const todayDate = new Date();
-          const today = new Date();
-          const isToday = todayDate.toDateString() === today.toDateString();
-
-          //날자 보기좋게
-          let formattedDate: string;
-          if (isToday) {
-            formattedDate = todayDate.toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            });
-          }
-
           const initialFirstCommitStudent = sortedData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
@@ -149,6 +147,8 @@ export default function Page() {
 
       const response3 = await axios.post("/api/post/compareAT", {
         firstcommitstudent,
+        grade: "3",
+        formattedDate,
       });
 
       if (

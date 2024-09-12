@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
       });
       res.status(200).json(posts);
     } catch (error) {
-      res.status(500).json({ message: "게시물을 가져오는 데 실패했습니다" });
+      res.status(500).json({ message: `${error.message}` });
     } finally {
       await prisma.$disconnect();
     }
