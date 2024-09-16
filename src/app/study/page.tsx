@@ -106,20 +106,48 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <div className="main-container">
-        <div className="day-box main">
+      <div className="main-container study-top-display">
+        <div className="day-box">
           <p>시험까지 📖</p>
           <p className="day">D - {dDay}</p>
         </div>
+
+        <div className="pad-display-none time-box">
+          <p className="studybar-top-title">{formatTime(totalTime)}</p>
+          <p className="studybar-top-subtitle">현제: {formatTime(time)}</p>
+          <div className="buttons-top ">
+            <button className="start-button" onClick={start}>
+              시작
+            </button>
+            <button className="pause-button" onClick={pause}>
+              일시정지
+            </button>
+            <button className="stop-button" onClick={stop}>
+              중지
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="study-buttons">
+        <button onClick={() => selectSubject("국어")}>국어</button>
+        <button onClick={() => selectSubject("영어")}>영어</button>
+        <button onClick={() => selectSubject("수학")}>수학</button>
+        <button onClick={() => selectSubject("사회")}>사회</button>
+        <button onClick={() => selectSubject("과학")}>과학</button>
+        <button onClick={() => setCurrentSubject(null)}>기타</button>
       </div>
       <div className="line"></div>
       <div>
-        <div>
+        <div className="phone-display-none">
           <div>
             <p>시: {totalHours > 0 && `${totalHours} 시간`}</p>{" "}
             <h1 className="studybar-title">{formatTime(totalTime)}</h1>
             <p className="studybar-subtitle">현재: {formatTime(time)}</p>
           </div>
+        </div>
+
+        <div className="phone-display-none">
           <div className="buttons">
             <button className="start-button" onClick={start}>
               시작
@@ -131,14 +159,19 @@ const Home: React.FC = () => {
               중지
             </button>
           </div>
-          <button onClick={() => selectSubject("국어")}>국어</button>
-          <button onClick={() => selectSubject("영어")}>영어</button>
-          <button onClick={() => selectSubject("수학")}>수학</button>
-          <button onClick={() => selectSubject("사회")}>사회</button>
-          <button onClick={() => selectSubject("과학")}>과학</button>
-          <button onClick={() => setCurrentSubject(null)}>기타</button>
         </div>
-        <div className="line"></div>
+        <div className="phone-display-none">
+          <div className="study-buttons">
+            <button onClick={() => selectSubject("국어")}>국어</button>
+            <button onClick={() => selectSubject("영어")}>영어</button>
+            <button onClick={() => selectSubject("수학")}>수학</button>
+            <button onClick={() => selectSubject("사회")}>사회</button>
+            <button onClick={() => selectSubject("과학")}>과학</button>
+            <button onClick={() => setCurrentSubject(null)}>기타</button>
+          </div>
+        </div>
+        <div className="phone-display-none line"></div>
+
         <div className="main-container">
           {sortedRecords.map(({ subject, time }) => (
             <div key={subject} style={{ marginBottom: "10px" }}>
