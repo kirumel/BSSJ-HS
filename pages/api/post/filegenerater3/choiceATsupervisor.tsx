@@ -22,18 +22,9 @@ export default async function handler(req: any, res: any) {
     const dbcompare = await prisma.attendanceObjectDB3.findMany({
       where: {
         createdAt: {
-          equals: formattedDate,
+          gte: formattedDate,
         },
-      },
-    });
-    const dbcompareExcel = await prisma.attendanceObjectDB3.findMany({
-      where: {
-        type: {
-          equals: "excel",
-        },
-        createdAt: {
-          equals: formattedDate,
-        },
+        type: "pdf",
       },
     });
     const students = req.body;
@@ -94,7 +85,6 @@ export default async function handler(req: any, res: any) {
 
     // PDF 데이터 생성
     const pdfData = pdf.output("datauristring");
-
     if (dbcompare.length == 0) {
       try {
         const upload = await prisma.attendanceObjectDB3.create({
@@ -114,12 +104,15 @@ export default async function handler(req: any, res: any) {
       } finally {
         await prisma.$disconnect();
       }
-    } else if (dbcompare.length >= 2) {
+    } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
       try {
         const dbdelete = await prisma.attendanceObjectDB3.deleteMany({
           where: {
             createdAt: {
               equals: formattedDate,
+            },
+            type: {
+              equals: "pdf",
             },
           },
         });
@@ -141,6 +134,8 @@ export default async function handler(req: any, res: any) {
       } finally {
         await prisma.$disconnect();
       }
+    } else {
+      res.status(400).send({ message: "오류가 발생하였습니다" });
     }
   } else {
     res.status(405).send({ message: "허용되지 않은 접근입니다" });

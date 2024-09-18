@@ -1,29 +1,55 @@
-import { PrismaClient } from '@prisma/client';
-import Link from 'next/link';
+import { PrismaClient } from "@prisma/client";
+import Link from "next/link";
 
-// Prisma Client 직접 설정
+import "../../cafe/cafe.css";
+import Comment from "./comment";
 const prisma = new PrismaClient();
-
-export const dynamic = 'force-dynamic'; // Enables dynamic rendering for this page
-
 interface Post {
-  id: number;
+  id: string;
   title: string;
   content: string;
-  nickname: string;
+  nickname: string | null;
+  image: string | null;
+  video: string | null;
+  createdAt: Date;
+  likes: Like[];
+  comments: Comment[]; // Add this line to include comments
+}
+interface Like {
+  id: string;
+  postId: string;
+  userId: string | null;
   createdAt: Date;
 }
-
-async function getPost(id: number): Promise<Post | null> {
-  const post = await prisma.post.findUnique({
-    where: { id },
-  });
-  return post;
+interface Comment {
+  id: string;
+  postId: string;
+  userId: string | null;
+  sjhsUserId: string | null;
+  author: string | null;
+  content: string;
+  createdAt: Date;
 }
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const { id } = params;
 
-export default async function PostPage({ params }: { params: { id: string } }): Promise<JSX.Element> {
-  const post = await getPost(parseInt(params.id));
+  let post: Post | null = null;
 
+  try {
+    post = await prisma.post.findFirst({
+      where: { id },
+      include: {
+        comments: true,
+        likes: true,
+        author: true,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return <div>오류가 발생했습니다.</div>;
+  } finally {
+    await prisma.$disconnect();
+  }
   if (!post) {
     return <div>포스트를 찾을 수 없습니다.</div>;
   }
@@ -35,20 +61,44 @@ export default async function PostPage({ params }: { params: { id: string } }): 
 
   let formattedDate;
   if (isToday) {
-    formattedDate = `오늘 ${postDate.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}`;
+    formattedDate = `오늘 ${postDate.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
   } else if (isSameYear) {
-    formattedDate = postDate.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    formattedDate = postDate.toLocaleDateString("ko-KR", {
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } else {
-    formattedDate = postDate.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    formattedDate = postDate.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   return (
     <div>
-      <h1>{post.title}</h1>
-      <p>{post.nickname}</p>
-      <p>{formattedDate}</p>
-      <p>{post.content}</p>
-      <Link href="/cafe">목록으로</Link>
+      <div className="display-postinfo-center">
+        <div className="cafe-postinfo-top">
+          <img
+            src="https://i.imgur.com/tgVDqj1.jpeg"
+            className="cafe-postinfo-img "
+          ></img>
+          <div>
+            <p className="cafe-postinfo-nickname">익명</p>
+            <p className="cafe-postinfo-nickname-sub">{formattedDate}</p>
+          </div>
+        </div>
+      </div>
+      <p className="postinfo-title">{post.title}</p>
+      <p className="postinfo-content">{post.content}</p>
+      <Comment post={post} />
     </div>
   );
 }

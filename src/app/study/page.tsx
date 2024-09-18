@@ -128,20 +128,21 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <div className="study-buttons">
-        <button onClick={() => selectSubject("국어")}>국어</button>
-        <button onClick={() => selectSubject("영어")}>영어</button>
-        <button onClick={() => selectSubject("수학")}>수학</button>
-        <button onClick={() => selectSubject("사회")}>사회</button>
-        <button onClick={() => selectSubject("과학")}>과학</button>
-        <button onClick={() => setCurrentSubject(null)}>기타</button>
+      <div className="pad-display-none">
+        <div className="study-buttons">
+          <button onClick={() => selectSubject("국어")}>국어</button>
+          <button onClick={() => selectSubject("영어")}>영어</button>
+          <button onClick={() => selectSubject("수학")}>수학</button>
+          <button onClick={() => selectSubject("사회")}>사회</button>
+          <button onClick={() => selectSubject("과학")}>과학</button>
+          <button onClick={() => setCurrentSubject(null)}>기타 과목</button>
+        </div>
       </div>
       <div className="line"></div>
       <div>
         <div className="phone-display-none">
           <div>
-            <p>시: {totalHours > 0 && `${totalHours} 시간`}</p>{" "}
+            <p>시: {totalHours > 0 && `${totalHours} 시간`}</p>
             <h1 className="studybar-title">{formatTime(totalTime)}</h1>
             <p className="studybar-subtitle">현재: {formatTime(time)}</p>
           </div>
@@ -167,7 +168,7 @@ const Home: React.FC = () => {
             <button onClick={() => selectSubject("수학")}>수학</button>
             <button onClick={() => selectSubject("사회")}>사회</button>
             <button onClick={() => selectSubject("과학")}>과학</button>
-            <button onClick={() => setCurrentSubject(null)}>기타</button>
+            <button onClick={() => setCurrentSubject(null)}>기타 과목</button>
           </div>
         </div>
         <div className="phone-display-none line"></div>

@@ -24,68 +24,68 @@ export default async function handler(req: any, res: any) {
         createdAt: {
           gte: formattedDate,
         },
+        type: "pdf",
       },
     });
+    const students = req.body;
+
+    const pdf = new jsPDF();
+
+    // 폰트 추가 및 설정
+    pdf.addFileToVFS("malgun.ttf", fontdata);
+    pdf.addFont("malgun.ttf", "malgun", "normal");
+    pdf.setFont("malgun");
+
+    const imgWidth = (35 / 5) * 3;
+    const imgHeight = (12 / 5) * 3;
+
+    // 페이지의 너비 가져오기
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    // 중앙에 배치하기 위한 X 좌표 계산
+    const x = (pageWidth - imgWidth) / 2;
+
+    // 이미지 추가
+    pdf.addImage(logo, "PNG", 13, 13, imgWidth, imgHeight);
+
+    // 테이블 헤더와 데이터
+    const 가로 = ["일자", "이름", "출석 여부", "미출석 이유", "작성자"];
+    const 세로: any[] = [];
+
+    students.firstcommitstudent.forEach((student: any) => {
+      // 날짜 포맷을 ISO 형식으로 변환
+      const formattedDate = student.createdAt.replace(
+        /(\d{4})\. (\d{2})\. (\d{2})/,
+        "$1-$2-$3"
+      );
+      const studentsData = [
+        formattedDate,
+        student.name,
+        student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
+        student.comment,
+        student.author,
+      ];
+      세로.push(studentsData);
+    });
+
+    // autoTable 호출 전에 폰트 설정 확인
+    pdf.setFont("malgun");
+
+    // 테이블 추가
+    autoTable(pdf, {
+      head: [가로],
+      body: 세로,
+      startY: 30,
+      styles: {
+        font: "malgun", // autoTable에서 폰트 설정
+        fontSize: 12, // 폰트 크기 조절 (필요에 따라 조정)
+      },
+      headStyles: { fillColor: [138, 156, 255] },
+    });
+
+    // PDF 데이터 생성
+    const pdfData = pdf.output("datauristring");
     if (dbcompare.length == 0) {
-      const students = req.body;
-
-      const pdf = new jsPDF();
-
-      // 폰트 추가 및 설정
-      pdf.addFileToVFS("malgun.ttf", fontdata);
-      pdf.addFont("malgun.ttf", "malgun", "normal");
-      pdf.setFont("malgun");
-
-      const imgWidth = (35 / 5) * 3;
-      const imgHeight = (12 / 5) * 3;
-
-      // 페이지의 너비 가져오기
-      const pageWidth = pdf.internal.pageSize.getWidth();
-
-      // 중앙에 배치하기 위한 X 좌표 계산
-      const x = (pageWidth - imgWidth) / 2;
-
-      // 이미지 추가
-      pdf.addImage(logo, "PNG", 13, 13, imgWidth, imgHeight);
-
-      // 테이블 헤더와 데이터
-      const 가로 = ["일자", "이름", "출석 여부", "미출석 이유", "작성자"];
-      const 세로: any[] = [];
-
-      students.firstcommitstudent.forEach((student: any) => {
-        // 날짜 포맷을 ISO 형식으로 변환
-        const formattedDate = student.createdAt.replace(
-          /(\d{4})\. (\d{2})\. (\d{2})/,
-          "$1-$2-$3"
-        );
-        const studentsData = [
-          formattedDate,
-          student.name,
-          student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
-          student.comment,
-          student.author,
-        ];
-        세로.push(studentsData);
-      });
-
-      // autoTable 호출 전에 폰트 설정 확인
-      pdf.setFont("malgun");
-
-      // 테이블 추가
-      autoTable(pdf, {
-        head: [가로],
-        body: 세로,
-        startY: 30,
-        styles: {
-          font: "malgun", // autoTable에서 폰트 설정
-          fontSize: 12, // 폰트 크기 조절 (필요에 따라 조정)
-        },
-        headStyles: { fillColor: [138, 156, 255] },
-      });
-
-      // PDF 데이터 생성
-      const pdfData = pdf.output("datauristring");
-
       try {
         const upload = await prisma.attendanceObjectDB2.create({
           data: {
@@ -104,74 +104,19 @@ export default async function handler(req: any, res: any) {
       } finally {
         await prisma.$disconnect();
       }
-    } else if (dbcompare.length == 2 && dbcompare.length > 2) {
-      const dbdelete = prisma.attendanceObjectDB2.deleteMany({
-        where: {
-          createdAt: {
-            gte: formattedDate,
-          },
-        },
-      });
-      const students = req.body;
-
-      const pdf = new jsPDF();
-
-      // 폰트 추가 및 설정
-      pdf.addFileToVFS("malgun.ttf", fontdata);
-      pdf.addFont("malgun.ttf", "malgun", "normal");
-      pdf.setFont("malgun");
-
-      const imgWidth = (35 / 5) * 3;
-      const imgHeight = (12 / 5) * 3;
-
-      // 페이지의 너비 가져오기
-      const pageWidth = pdf.internal.pageSize.getWidth();
-
-      // 중앙에 배치하기 위한 X 좌표 계산
-      const x = (pageWidth - imgWidth) / 2;
-
-      // 이미지 추가
-      pdf.addImage(logo, "PNG", 13, 13, imgWidth, imgHeight);
-
-      // 테이블 헤더와 데이터
-      const 가로 = ["일자", "이름", "출석 여부", "미출석 이유", "작성자"];
-      const 세로: any[] = [];
-
-      students.firstcommitstudent.forEach((student: any) => {
-        // 날짜 포맷을 ISO 형식으로 변환
-        const formattedDate = student.createdAt.replace(
-          /(\d{4})\. (\d{2})\. (\d{2})/,
-          "$1-$2-$3"
-        );
-        const studentsData = [
-          formattedDate,
-          student.name,
-          student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
-          student.comment,
-          student.author,
-        ];
-        세로.push(studentsData);
-      });
-
-      // autoTable 호출 전에 폰트 설정 확인
-      pdf.setFont("malgun");
-
-      // 테이블 추가
-      autoTable(pdf, {
-        head: [가로],
-        body: 세로,
-        startY: 30,
-        styles: {
-          font: "malgun", // autoTable에서 폰트 설정
-          fontSize: 12, // 폰트 크기 조절 (필요에 따라 조정)
-        },
-        headStyles: { fillColor: [138, 156, 255] },
-      });
-
-      // PDF 데이터 생성
-      const pdfData = pdf.output("datauristring");
-
+    } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
       try {
+        const dbdelete = await prisma.attendanceObjectDB2.deleteMany({
+          where: {
+            createdAt: {
+              equals: formattedDate,
+            },
+            type: {
+              equals: "pdf",
+            },
+          },
+        });
+
         const upload = await prisma.attendanceObjectDB2.create({
           data: {
             author: students.firstcommitstudent[0].author,
@@ -189,6 +134,8 @@ export default async function handler(req: any, res: any) {
       } finally {
         await prisma.$disconnect();
       }
+    } else {
+      res.status(400).send({ message: "오류가 발생하였습니다" });
     }
   } else {
     res.status(405).send({ message: "허용되지 않은 접근입니다" });

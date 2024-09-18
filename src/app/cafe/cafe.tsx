@@ -61,43 +61,6 @@ export default function Cafe({ session }: CafeProps) {
     );
   }
 
-  const handleCommentSubmit = async (id: any, newComment: string) => {
-    if (!newComment.trim()) return;
-
-    const postId = id;
-
-    try {
-      const response = await axios.post(
-        `/api/post/comments/${id}`,
-        {
-          postId,
-          author: session?.user?.nickname,
-          content: newComment,
-          userId: session?.user?.id,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const get = await axios.get(`/api/post/comments/${id}`).then((res) => {
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === id
-              ? {
-                  ...post,
-                  comments: res.data,
-                }
-              : post
-          )
-        );
-      });
-    } catch (error) {
-      console.error("Failed to add comment:", error);
-    }
-  };
   const handleLike = async (id: any) => {
     const userId = session?.user?.id;
 
@@ -139,7 +102,10 @@ export default function Cafe({ session }: CafeProps) {
             className="cafe-text-post"
             style={{ color: "white", backgroundColor: "rgb(138, 156, 255)" }}
           >
-            <p>오늘의 성지고 대신전함</p>
+            <p>
+              알림 : 베타버전 동안은 닉네임이 <br />
+              아닌 익명으로 표시됩니다
+            </p>
           </div>
         </div>
       </div>
@@ -181,11 +147,24 @@ export default function Cafe({ session }: CafeProps) {
                   <div className="display-flex">
                     <div className="border-box">
                       <div className="cafe-text-post margin-topbottom10px">
-                        <p className="cafe-nickname">{post.nickname}</p>
-
+                        <div className="display-center">
+                          <img
+                            src="https://i.imgur.com/tgVDqj1.jpeg"
+                            style={{
+                              width: "7%",
+                              height: "auto",
+                              borderRadius: "0.3rem",
+                            }}
+                          ></img>
+                          <div>
+                            <p className="cafe-nickname">익명</p>
+                            <p className="cafe-nickname-sub">
+                              성지고등학교 자유게시판
+                            </p>
+                          </div>
+                        </div>
                         <p className="cafe-post-title">{post.title}</p>
                         <p className="cafe-text-post-content">{post.content}</p>
-
                         <div className="display-between">
                           <div className="margin-topbottom10px cafe-icon">
                             {post.likes?.some(

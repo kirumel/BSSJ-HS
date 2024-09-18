@@ -58,9 +58,9 @@ model attendanceObject {
 
 model compareAT {
   id   String  @id @default(cuid())
-  createdAt String?
+  createdAt String
   data String?
-  grade String?
+  grade String
 }
 
 model attendanceObjectDB {

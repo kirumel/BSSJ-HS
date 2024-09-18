@@ -14,8 +14,12 @@ export default function NavOut() {
     "/nosign",
     "/signin",
     "/accountregister",
+    "/posts",
   ];
-  if (pathname && notshow.includes(pathname)) {
+  if (
+    (pathname && notshow.includes(pathname)) ||
+    pathname.startsWith("/posts")
+  ) {
     return null;
   }
   return (

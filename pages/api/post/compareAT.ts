@@ -1,30 +1,26 @@
 import { PrismaClient } from "@prisma/client";
-import { equal } from "assert";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
+  const todayDate = new Date();
+
+  //날자 보기좋게
+  let formattedDate: string;
+
+  formattedDate = todayDate.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
   if (req.method === "GET") {
-    const todayDate = new Date();
-    const today = new Date();
-    const isToday = todayDate.toDateString() === today.toDateString();
-
-    //날자 보기좋게
-    let formattedDate: string;
-
-    formattedDate = todayDate.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
     try {
       const posts = await prisma.compareAT.findMany({
         where: {
           createdAt: {
             equals: formattedDate,
           },
-        },
+        } as any,
       });
       res.status(200).json(posts);
     } catch (error) {
@@ -42,7 +38,7 @@ export default async function handler(req: any, res: any) {
     }
   }
   if (req.method === "POST") {
-    const dblength = prisma.compareAT.findMany({
+    const dblength = await prisma.compareAT.findMany({
       where: {
         grade: req.body.grade,
       },
@@ -58,6 +54,8 @@ export default async function handler(req: any, res: any) {
           data: text, // 변환된 JSON 문자열을 저장
         },
       });
+
+      res.status(200).json({ patch });
     } else if ((await dblength).length == 0) {
       try {
         const data = req.body.firstcommitstudent;
@@ -65,7 +63,9 @@ export default async function handler(req: any, res: any) {
 
         const post = await prisma.compareAT.create({
           data: {
-            data: text, // 변환된 JSON 문자열을 저장
+            data: text,
+            grade: req.body.grade,
+            createdAt: formattedDate,
           },
         });
 
@@ -98,6 +98,8 @@ export default async function handler(req: any, res: any) {
         const post = await prisma.compareAT.create({
           data: {
             data: text,
+            createdAt: formattedDate,
+            grade: req.body.grade,
           },
         });
 

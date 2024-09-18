@@ -132,6 +132,7 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.post(
         "/api/post/filegenerater3/choiceATsupervisor2",
         {
@@ -157,12 +158,15 @@ export default function Page() {
         response3.status === 200
       ) {
         setSuccessModalTimer();
+        setIsLoading(false);
       } else {
         console.log(response.data.message);
         alert("저장 실패");
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 

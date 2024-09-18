@@ -26,7 +26,7 @@ export default function dev() {
             <h3 className="title">문의</h3>
             <p>
               혹시 건의사항이나 궁금한 점, 오류가 있으면 <br /> 인스타그램
-              @th.yestar로 알려주시거나 고객센터에 찾아보세요!
+              @th.yestar로 알려주세요
               <br />
               <br />
               <br />
@@ -36,13 +36,15 @@ export default function dev() {
             <br />
             <h5>developer / UI/UX design : 2309서현웅</h5>
             <h5>
-              special thanks :
+              special thanks :<br />
+              <br />
               <Link
                 href="https://damie.works/profile"
                 style={{ textDecoration: "none" }}
               >
                 @ekal_.index / 다미
               </Link>
+              <div>교무기획부 장은경 선생님 </div>
             </h5>
           </div>
           <div style={{ textAlign: "right" }}>

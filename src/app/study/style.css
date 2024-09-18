@@ -3,12 +3,15 @@
     display: none;
   }
   .day-box {
-    width: 100%;
+    width: 33%;
   }
 }
 @media screen and (max-width: 750px) {
   .pad-display-none {
     display: none;
+  }
+  .day-box {
+    width: 100%;
   }
 }
 .day-box {
@@ -26,7 +29,6 @@
   color: white;
   font-weight: 500;
   font-size: 16px;
-  width: 33%;
 }
 .day-box p {
   margin: 0;
