@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import Settimetable from "./settimetable";
 import { useEffect, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
-export default function setting() {
+export default function Setting() {
   const { data: originalSession, loading } = useSession();
   const [isLoading, setIsLoading] = useState(true);
 

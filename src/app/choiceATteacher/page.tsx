@@ -6,8 +6,18 @@ import { useSession } from "next-auth/react";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "./style.css";
 
+// Defining types for session and API response
+interface SessionUser {
+  class: string;
+  grade: string;
+}
+
+interface SessionData {
+  user: SessionUser;
+}
+
 interface DataItem {
-  updatedAt: any;
+  updatedAt: string;
   id: string;
   createdAt: string;
   name: string;
@@ -25,11 +35,13 @@ export default function ChoiceAT() {
   const { data: session } = useSession();
 
   function handleATcompare() {
-    if (firstdata.length > 0 && afterdata.length > 0) {
-      if (firstdata[0].updatedAt === afterdata[0].updatedAt) {
+    if (firstdata.length > 0 || afterdata.length > 0) {
+      if (!afterdata || afterdata.length === 0) {
+        toast("데이터를 찾지 못했습니다");
+      } else if (firstdata[0]?.updatedAt === afterdata[0]?.updatedAt) {
         window.location.href = "/compareAT";
       } else {
-        toast("1차 출석과 2차 출석의 일자가 달라요!");
+        toast("1차 출석과 2차 출석의 일자가 다르거나");
       }
     }
   }
@@ -43,45 +55,36 @@ export default function ChoiceAT() {
         console.error("Error parsing localStorage data:", error);
       }
     }
-  }, []); // Run once on mount to load firstdata
+  }, []);
 
   useEffect(() => {
-    const fetchAfterData = async (session: any): Promise<DataItem[]> => {
+    const fetchAfterData = async (): Promise<void> => {
       try {
         const response = await axios.get<{ data: string }>(
           "/api/post/compareAT"
         );
-        if (response.status === 200) {
-          const afterdata = JSON.parse(response.data.data);
+        if (response.status === 200 && response.data.data) {
+          const afterdata = JSON.parse(response.data.data) as DataItem[];
           const filteredData = afterdata.filter(
-            (item: DataItem) =>
-              item.class === session?.user?.class &&
-              item.grade === session?.user?.grade
+            (item) =>
+              item.class === (session?.user as SessionUser)?.class &&
+              item.grade === (session?.user as SessionUser)?.grade
           );
-          const data = filteredData.map((item: DataItem) => ({
+          const data = filteredData.map((item) => ({
             ...item,
             check: item.check === "2" ? "0" : item.check,
           }));
-
-          return data;
+          setAfterdata(data);
         } else {
-          alert(response.data.message);
+          console.log("2차 출석의 내부 데이터가 없습니다");
         }
       } catch (error) {
         console.error("Error fetching data from server:", error);
       }
-      return []; // Return an empty array in case of an error
     };
 
-    if (session && firstdata.length > 0) {
-      // Fetch after data only when session and firstdata are available
-      fetchAfterData(session).then((data) => {
-        if (data) {
-          setAfterdata(data);
-        }
-      });
-    }
-  }, [session, firstdata]); // Only run when session or firstdata change
+    if (session) fetchAfterData();
+  }, [session]);
 
   return (
     <>

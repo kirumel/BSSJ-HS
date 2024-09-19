@@ -20,7 +20,7 @@ export default async function handler(req: any, res: any) {
           createdAt: {
             equals: formattedDate,
           },
-        } as any,
+        },
       });
       res.status(200).json(posts);
     } catch (error) {

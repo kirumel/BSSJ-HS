@@ -4,12 +4,19 @@ import { useState } from "react";
 import SignIn from "../signin/page";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../choiceATteacher/style.css";
-export default function nosign() {
+
+export default function Nosign() {
   const [loginmodal, setLoginModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const loadingstate = (loading: boolean) => {
+    setLoading(loading);
+  };
 
   const handleloginmodal = (data: any) => {
     setLoginModal(data);
   };
+
   const result = (message: any) => {
     if (message) {
       toast(message);
@@ -40,7 +47,14 @@ export default function nosign() {
         SJHS_HELPER
       </p>
 
-      {loginmodal ? <SignIn data={handleloginmodal} result={result} /> : null}
+      {loginmodal ? (
+        <SignIn
+          data={handleloginmodal}
+          result={result}
+          loadingstate={loadingstate}
+        />
+      ) : null}
+
       <div className="nsign-position">
         <div className="nsign-login-box">
           <button
@@ -54,6 +68,18 @@ export default function nosign() {
           </a>
         </div>
       </div>
+
+      {loading && (
+        <div className="loader-overlay">
+          <div className="loader">
+            <div className="dots"></div>
+            <div className="dots"></div>
+            <div className="dots"></div>
+            <div className="dots"></div>
+            <div className="dots"></div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

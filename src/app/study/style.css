@@ -3,7 +3,7 @@
     display: none;
   }
   .day-box {
-    width: 33%;
+    width: 38%;
   }
 }
 @media screen and (max-width: 750px) {

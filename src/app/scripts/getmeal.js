@@ -21,8 +21,9 @@ export async function getMeal() {
 
     const response = await axios.get(
       "https://open.neis.go.kr/hub/mealServiceDietInfo",
-      { params },
+      { params }
     );
+    console.log(response.data);
 
     if (response.data?.RESULT?.CODE === "INFO-200") {
       meals.push({
@@ -34,7 +35,7 @@ export async function getMeal() {
     }
 
     let dishes = response.data.mealServiceDietInfo[1].row[0].DDISH_NM.split(
-      "<br/>",
+      "<br/>"
     ).map((dish) => dish.split(" ")[0].replace("H", ""));
 
     meals.push({ status: "ok", date: `${month} / ${day}`, data: dishes });
