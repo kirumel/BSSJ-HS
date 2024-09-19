@@ -28,7 +28,13 @@ export default function Setting() {
             <div className="home-layout">
               <div className="insert main-container ">
                 <div className="profile etc-container">
-                  <img className="profileimg" src={session.user?.image}></img>
+                  <img
+                    className="profileimg"
+                    src={
+                      session.user?.image ||
+                      "https://www.studiopeople.kr/common/img/default_profile.png"
+                    }
+                  ></img>
                   <div>
                     <h2>{session.user?.name}</h2>
                     <p>성지고등학교</p>

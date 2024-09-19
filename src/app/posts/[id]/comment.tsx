@@ -84,7 +84,7 @@ export default function CommentComponent({ post }: { post: Post }) {
                     <div className="display-postinfo-content">
                       <img
                         className="cafe-postinfo-content-img"
-                        src="https://i.namu.wiki/i/J5G6syxG5GY46eCiCVloOXVIOm4wgvD9Shtf8tVfjf-CdMM2XbeCaNWHQalrKxe8hzy-35nVo1AFpg3U6y6lcg.webp"
+                        src="https://www.studiopeople.kr/common/img/default_profile.png"
                       ></img>
                       <div>
                         <p className="cafe-postinfo-nickname">익명</p>
