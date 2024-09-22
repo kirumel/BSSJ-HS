@@ -42,16 +42,18 @@ export default function Setting() {
                 </div>
               </div>
             </div>
-            <div className="insert main-container ">
-              <button className="ok-button" onClick={() => signOut()}>
-                로그아웃
-              </button>
-            </div>
+
             <div className="line"></div>
             <Settimetable name={session.user?.name} />
 
             <div className="line"></div>
           </div>
+          <div className="insert main-container ">
+            <button className="ok-button" onClick={() => signOut()}>
+              로그아웃
+            </button>
+          </div>
+          <div className="margin"></div>
         </>
       );
     } else {

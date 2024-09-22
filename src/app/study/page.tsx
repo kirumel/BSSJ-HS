@@ -207,6 +207,7 @@ const Home: React.FC = () => {
           ))}
         </div>
       </div>
+      <div className="margin"></div>
     </>
   );
 };

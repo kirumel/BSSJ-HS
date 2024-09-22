@@ -27,6 +27,11 @@ const maintabs = [
     icon: faClock,
     label: "8교시 출첵",
   },
+  {
+    route: "/schooltest",
+    icon: faClock,
+    label: "공지사항",
+  },
 ];
 
 export default maintabs;

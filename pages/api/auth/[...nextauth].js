@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { randomUUID } from "crypto";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import NaverProvider from "next-auth/providers/naver";
@@ -30,16 +31,15 @@ export const authOptions = {
         },
       },
     }),
-
     CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "이메일", type: "text" },
-        password: { label: "password", type: "password" },
+        password: { label: "비밀번호", type: "password" },
       },
       async authorize(credentials) {
         try {
-          const user = await prisma.SJHSUser?.findFirst({
+          const user = await prisma.SJHSUser.findFirst({
             where: {
               OR: [{ email: credentials.email }],
             },
@@ -53,11 +53,20 @@ export const authOptions = {
             credentials.password,
             user.password
           );
-
           if (!pwcheck) {
             throw new Error("비밀번호가 일치하지 않습니다.");
           }
-          return user;
+
+          const sessionToken = randomUUID();
+          await prisma.session.create({
+            data: {
+              userId: user.id,
+              expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+              sessionToken,
+            },
+          });
+
+          return { ...user, sessionToken };
         } catch (error) {
           throw new Error(error.message);
         }
@@ -67,27 +76,31 @@ export const authOptions = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, //30일
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        token.user = {
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
-          grade: user.grade,
-          class: user.class,
-          nickname: user.nickname,
-          handle: user.handle,
-          id: user.id,
-        };
+        token.user = { ...user, sessionToken: user.sessionToken };
       }
       return token;
     },
     session: async ({ session, token }) => {
-      session.user = token.user;
+      if (token?.user?.sessionToken) {
+        const sessionExists = await prisma.session.findUnique({
+          where: { sessionToken: token.user.sessionToken },
+        });
+
+        if (!sessionExists) {
+          // 세션이 DB에서 삭제되었으면 null로 설정하여 로그아웃 처리
+          return { user: null }; // 또는 return null; 사용 가능
+        }
+
+        session.user = token.user;
+      } else {
+        // 세션 토큰이 없으면 로그아웃 처리
+        return { user: null };
+      }
       return session;
     },
   },
@@ -96,6 +109,17 @@ export const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
+  events: {
+    signOut: async ({ token }) => {
+      if (token?.sessionToken) {
+        await prisma.session.deleteMany({
+          where: { sessionToken: token.sessionToken },
+        });
+      }
+    },
+  },
 };
+
+// 임시로 세션을 삭제하는 함수
 
 export default NextAuth(authOptions);

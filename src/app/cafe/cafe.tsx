@@ -143,7 +143,7 @@ export default function Cafe({ session }: CafeProps) {
             }
             if (post.image == null && post.video == null) {
               return (
-                <div className="cafe-body">
+                <div className="cafe-body" key={post.id}>
                   <div className="display-flex">
                     <div className="border-box">
                       <div className="cafe-text-post margin-topbottom10px">

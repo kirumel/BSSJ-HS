@@ -121,6 +121,7 @@ export default function CommentComponent({ post }: { post: Post }) {
           {isLoading ? "Posting..." : "보내기"}
         </button>
       </div>
+      <div className="margin"></div>
     </>
   );
 }

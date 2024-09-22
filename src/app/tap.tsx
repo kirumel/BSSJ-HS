@@ -12,16 +12,7 @@ const tabs = [
     icon: faHome,
     label: "홈",
   },
-  {
-    route: "/meals",
-    icon: faBowlFood,
-    label: "식단표",
-  },
-  {
-    route: "/schedules",
-    icon: faCalendarDays,
-    label: "시간표",
-  },
+
   {
     route: "/cafe",
     icon: faBowlFood,

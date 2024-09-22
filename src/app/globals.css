@@ -767,3 +767,13 @@ html {
     opacity: 0;
   }
 }
+@media screen and (max-width: 800px) {
+  .margin {
+    height: 80px;
+  }
+}
+@media screen and (min-width: 800px) {
+  .margin {
+    height: 0px;
+  }
+}

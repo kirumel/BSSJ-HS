@@ -28,6 +28,7 @@ export default async function Page() {
       <div className="cafe-middle-container">
         <Cafe session={session} />
       </div>
+      <div className="margin"></div>
     </div>
   );
 }

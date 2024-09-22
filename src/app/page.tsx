@@ -6,8 +6,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Hello from "./hellohome";
 import "./style.css";
 import Graph from "./graph";
+import { PrismaClient } from "@prisma/client";
 
 export default async function home() {
+  const prisma = new PrismaClient();
+  const deleteSessionTemporarily = async (sessionToken) => {
+    try {
+      await prisma.session.delete({
+        where: { sessionToken },
+      });
+      console.log(`Session with token ${sessionToken} has been deleted.`);
+    } catch (error) {
+      console.error("Error deleting session:", error.message);
+    }
+  };
+  deleteSessionTemporarily("9f325d50-e81c-44b9-8a39-c6e92b78a6d0");
+
   return (
     <>
       <div className="home-layout">
@@ -155,6 +169,7 @@ export default async function home() {
           </div>
         </div>
       </div>
+      <div className="margin"></div>
     </>
   );
 }

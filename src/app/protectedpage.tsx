@@ -1,14 +1,19 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Sidenav from "./sidenav";
 import Nav from "./nav";
 import Navout from "./navout";
 import Nosign from "./nosign/page";
+import { toast } from "react-toastify";
 
 const ProtectedPage = ({ children }: { children: any }) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+  if (session?.user == null && status === "authenticated") {
+    signOut();
+    alert("오류가 발생하였거나 부적절한 사용으로 차단되었습니다");
+  }
 
   if (status === "loading") {
     return (
