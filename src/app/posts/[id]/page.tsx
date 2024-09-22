@@ -84,21 +84,26 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
   return (
     <div>
-      <div className="display-postinfo-center">
-        <div className="cafe-postinfo-top">
-          <img
-            src="https://i.imgur.com/tgVDqj1.jpeg"
-            className="cafe-postinfo-img "
-          ></img>
-          <div>
-            <p className="cafe-postinfo-nickname">익명</p>
-            <p className="cafe-postinfo-nickname-sub">{formattedDate}</p>
+      <div className="cafe-left-right">
+        <div className="display-postinfo-center">
+          <div className="cafe-postinfo-top ">
+            <img
+              src="https://i.imgur.com/tgVDqj1.jpeg"
+              className="cafe-postinfo-img "
+            ></img>
+            <div>
+              <p className="cafe-postinfo-nickname">익명</p>
+              <p className="cafe-postinfo-nickname-sub">{formattedDate}</p>
+            </div>
           </div>
         </div>
+        <p className="postinfo-title">{post.title}</p>
+        <p className="postinfo-content">{post.content}</p>
       </div>
-      <p className="postinfo-title">{post.title}</p>
-      <p className="postinfo-content">{post.content}</p>
+
+      <div className="line" style={{ marginTop: "2rem" }}></div>
       <Comment post={post} />
+      <div className="margin"></div>
     </div>
   );
 }

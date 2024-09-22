@@ -7,6 +7,7 @@ import KakaoProvider from "next-auth/providers/kakao";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { disconnect } from "process";
 
 const prisma = new PrismaClient();
 
@@ -65,9 +66,10 @@ export const authOptions = {
               sessionToken,
             },
           });
-
+          prisma.$disconnect();
           return { ...user, sessionToken };
         } catch (error) {
+          prisma.$disconnect();
           throw new Error(error.message);
         }
       },
@@ -93,14 +95,17 @@ export const authOptions = {
 
         if (!sessionExists) {
           // 세션이 DB에서 삭제되었으면 null로 설정하여 로그아웃 처리
-          return { user: null }; // 또는 return null; 사용 가능
+          prisma.$disconnect();
+          return { user: null };
         }
 
         session.user = token.user;
+        prisma.$disconnect();
       } else {
-        // 세션 토큰이 없으면 로그아웃 처리
+        prisma.$disconnect();
         return { user: null };
       }
+      prisma.$disconnect();
       return session;
     },
   },
@@ -116,6 +121,7 @@ export const authOptions = {
           where: { sessionToken: token.sessionToken },
         });
       }
+      prisma.$disconnect();
     },
   },
 };

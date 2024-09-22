@@ -63,6 +63,36 @@ export default function Cafe({ session }: CafeProps) {
 
   const handleLike = async (id: any) => {
     const userId = session?.user?.id;
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === id) {
+          const hasLiked = post.likes.some(
+            (like: Like) => like.userId === userId
+          );
+
+          if (hasLiked) {
+            return {
+              ...post,
+              likes: post.likes.filter((like: Like) => like.userId !== userId), // 현재 userId 삭제
+            };
+          } else {
+            return {
+              ...post,
+              likes: [
+                ...post.likes,
+                {
+                  id: "temp-id",
+                  postId: post.id,
+                  userId,
+                  createdAt: new Date(),
+                },
+              ],
+            };
+          }
+        }
+        return post;
+      })
+    );
 
     if (!userId) {
       console.error("User ID is missing");

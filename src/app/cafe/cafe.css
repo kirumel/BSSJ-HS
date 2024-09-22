@@ -258,7 +258,7 @@
 .display-postinfo-center {
   margin-top: 20px;
   height: 10vw;
-  max-height: 80px;
+  max-height: 60px;
   margin-bottom: 13px;
   min-height: 30px;
   box-sizing: border-box;
@@ -278,6 +278,7 @@
 }
 
 .comment {
+  margin-top: 30px;
   overflow-y: auto;
   box-sizing: border-box;
   margin-bottom: 60px;
@@ -321,6 +322,16 @@
     box-sizing: border-box;
     height: 60px;
   }
+  .cafe-left-right {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+@media screen and (max-width: 768px) {
+  .cafe-left-right {
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
+  }
 }
 .commentbtn {
   white-space: nowrap;
@@ -337,11 +348,12 @@
 .bordercomment {
   border-radius: 0.5rem;
   border: 1px solid rgb(213, 213, 213);
-  padding: 10px;
+  padding: 13px;
   margin-bottom: 10px;
 }
 .postinfo-content {
   margin: 0;
+  margin-top: 10px;
 }
 .cafe-postinfo-content-img {
   width: 3vw;

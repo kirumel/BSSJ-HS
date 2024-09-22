@@ -25,11 +25,10 @@ interface Post {
 export default function CommentComponent({ post }: { post: Post }) {
   const { data: session } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
-  const [newComment, setNewComment] = useState<string>(""); // 댓글 입력을 위한 상태
+  const [newComment, setNewComment] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // Ensure post is set initially
     setPosts([post]);
   }, [post]);
 
@@ -53,7 +52,6 @@ export default function CommentComponent({ post }: { post: Post }) {
         }
       );
 
-      // Fetch updated comments
       const { data: updatedComments } = await axios.get(
         `/api/post/comments/${id}`
       );
@@ -64,16 +62,16 @@ export default function CommentComponent({ post }: { post: Post }) {
         )
       );
 
-      setNewComment(""); // 댓글 전송 후 입력 필드 초기화
+      setNewComment("");
     } catch (error) {
       console.error("Failed to add comment:", error);
     } finally {
-      setIsLoading(false); // 로딩 상태 종료
+      setIsLoading(false);
     }
   };
 
   return (
-    <>
+    <div className="cafe-left-right">
       <div className="comment">
         {posts.map((post) => (
           <div key={post.id}>
@@ -122,6 +120,6 @@ export default function CommentComponent({ post }: { post: Post }) {
         </button>
       </div>
       <div className="margin"></div>
-    </>
+    </div>
   );
 }
