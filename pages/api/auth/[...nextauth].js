@@ -7,7 +7,6 @@ import KakaoProvider from "next-auth/providers/kakao";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { disconnect } from "process";
 
 const prisma = new PrismaClient();
 
@@ -39,39 +38,32 @@ export const authOptions = {
         password: { label: "비밀번호", type: "password" },
       },
       async authorize(credentials) {
-        try {
-          const user = await prisma.SJHSUser.findFirst({
-            where: {
-              OR: [{ email: credentials.email }],
-            },
-          });
+        const user = await prisma.SJHSUser.findFirst({
+          where: { email: credentials.email },
+        });
 
-          if (!user) {
-            throw new Error("해당 이메일로 등록된 계정이 없습니다.");
-          }
-
-          const pwcheck = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-          if (!pwcheck) {
-            throw new Error("비밀번호가 일치하지 않습니다.");
-          }
-
-          const sessionToken = randomUUID();
-          await prisma.session.create({
-            data: {
-              userId: user.id,
-              expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-              sessionToken,
-            },
-          });
-          prisma.$disconnect();
-          return { ...user, sessionToken };
-        } catch (error) {
-          prisma.$disconnect();
-          throw new Error(error.message);
+        if (!user) {
+          throw new Error("해당 이메일로 등록된 계정이 없습니다.");
         }
+
+        const pwcheck = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+        if (!pwcheck) {
+          throw new Error("비밀번호가 일치하지 않습니다.");
+        }
+
+        const sessionToken = randomUUID();
+        await prisma.session.create({
+          data: {
+            userId: user.id,
+            expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+            sessionToken,
+          },
+        });
+
+        return { ...user, sessionToken };
       },
     }),
   ],
@@ -94,18 +86,13 @@ export const authOptions = {
         });
 
         if (!sessionExists) {
-          // 세션이 DB에서 삭제되었으면 null로 설정하여 로그아웃 처리
-          prisma.$disconnect();
-          return { user: null };
+          return { user: null }; // 세션이 삭제되었으면 null 반환
         }
 
         session.user = token.user;
-        prisma.$disconnect();
       } else {
-        prisma.$disconnect();
         return { user: null };
       }
-      prisma.$disconnect();
       return session;
     },
   },
@@ -121,11 +108,16 @@ export const authOptions = {
           where: { sessionToken: token.sessionToken },
         });
       }
-      prisma.$disconnect();
     },
   },
 };
 
-// 임시로 세션을 삭제하는 함수
+// Prisma disconnect를 프로세스 종료 시 처리
+async function disconnectPrisma() {
+  await prisma.$disconnect();
+}
+
+process.on("SIGINT", disconnectPrisma);
+process.on("SIGTERM", disconnectPrisma);
 
 export default NextAuth(authOptions);

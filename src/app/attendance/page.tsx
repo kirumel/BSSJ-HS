@@ -56,7 +56,12 @@ export default function Page() {
           const sortedData = data.sort(
             (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
           );
-          setAttendance(sortedData);
+          const sortedfilteredData = sortedData.filter(
+            (student) =>
+              student.grade === session?.user?.grade &&
+              student.class === session?.user?.class
+          );
+          setAttendance(sortedfilteredData);
           const todayDate = new Date();
           const today = new Date();
           const isToday = todayDate.toDateString() === today.toDateString();
@@ -82,7 +87,12 @@ export default function Page() {
             comment: "",
             author: session?.user?.name || "",
           }));
-          setFirstCommitStudent(initialFirstCommitStudent);
+          const filteredData = initialFirstCommitStudent.filter(
+            (student) =>
+              student.grade === session?.user?.grade &&
+              student.class === session?.user?.class
+          );
+          setFirstCommitStudent(filteredData);
         } else {
           console.error(data);
         }

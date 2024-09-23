@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
   const todayDate = new Date();
+  console.log(req.body);
 
   //날자 보기좋게
   let formattedDate: string;
@@ -21,7 +22,7 @@ export default async function handler(req: any, res: any) {
             equals: formattedDate,
           },
           grade: {
-            equals: req.grade,
+            equals: req.query.grade,
           },
         },
       });
@@ -47,20 +48,22 @@ export default async function handler(req: any, res: any) {
         grade: req.body.grade,
       },
     });
-    if ((await dblength).length == 1) {
+    if (dblength.length == 1) {
       const data = req.body.firstcommitstudent;
       const text = JSON.stringify(data); // JSON 문자열로 변환
+
       const patch = await prisma.compareAT.updateMany({
         where: {
           grade: req.body.grade,
         },
         data: {
           data: text, // 변환된 JSON 문자열을 저장
+          createdAt: formattedDate,
         },
       });
 
       res.status(200).json({ patch });
-    } else if ((await dblength).length == 0) {
+    } else if (dblength.length == 0) {
       try {
         const data = req.body.firstcommitstudent;
         const text = JSON.stringify(data); // JSON 문자열로 변환
@@ -89,7 +92,7 @@ export default async function handler(req: any, res: any) {
       } finally {
         await prisma.$disconnect();
       }
-    } else if ((await dblength).length !== 1 && (await dblength).length !== 0) {
+    } else if (dblength.length !== 1 && dblength.length !== 0) {
       try {
         const data = req.body.firstcommitstudent;
         const text = JSON.stringify(data); // JSON 문자열로 변환

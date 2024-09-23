@@ -116,7 +116,7 @@ export default function PlusStudentModal(props: {
                   type="text"
                   value={studentData[index]?.studentnumber || ""}
                   placeholder="번호"
-                  maxLength={1}
+                  maxLength={2}
                   onChange={(e) =>
                     handleInputChange(index, "studentnumber", e.target.value)
                   }

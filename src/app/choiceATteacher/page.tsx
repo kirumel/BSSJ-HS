@@ -38,7 +38,9 @@ export default function ChoiceAT() {
     console.log(afterdata);
     if (firstdata.length > 0 || afterdata.length > 0) {
       if (!afterdata || afterdata.length === 0) {
-        toast("데이터를 찾지 못했습니다");
+        toast(
+          "2차 출석에 반 학생들이 등록되어있지 않거나 데이터를 찾을 수 없습니다"
+        );
       } else if (firstdata[0]?.updatedAt === afterdata[0]?.updatedAt) {
         window.location.href = "/compareAT";
       } else {
@@ -63,14 +65,27 @@ export default function ChoiceAT() {
       try {
         const response = await axios.get<{ data: string }>(
           "/api/post/compareAT",
-          session?.user?.grade
+          {
+            params: {
+              grade: session?.user?.grade,
+            },
+          }
         );
 
         if (response.status === 200) {
           const afterdata = JSON.parse(response.data[0].data) as DataItem[];
-          setAfterdata(afterdata);
+          const filteredData = afterdata.filter(
+            (item) =>
+              item.class === session?.user?.class &&
+              item.grade === session?.user?.grade
+          );
+
+          setAfterdata(filteredData);
         } else {
-          console.log("2차 출석의 내부 데이터가 없습니다");
+          console.log(
+            "데이터를 불러오는데 오류가 발생하였습니다",
+            response.data
+          );
         }
       } catch (error) {
         console.error("Error fetching data from server:", error);
