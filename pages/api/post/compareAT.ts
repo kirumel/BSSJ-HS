@@ -20,8 +20,12 @@ export default async function handler(req: any, res: any) {
           createdAt: {
             equals: formattedDate,
           },
+          grade: {
+            equals: req.grade,
+          },
         },
       });
+
       res.status(200).json(posts);
     } catch (error) {
       if (error.code === "P2002") {

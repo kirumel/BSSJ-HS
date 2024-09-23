@@ -777,3 +777,27 @@ html {
     height: 0px;
   }
 }
+.display-flex-school {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding-left: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.display-flex-school p {
+  margin: 0;
+}
+.school-text {
+  margin: 0;
+  padding-right: 10px;
+  padding-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.school-text-title {
+  margin: 0;
+
+  white-space: nowrap;
+}

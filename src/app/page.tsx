@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Hello from "./hellohome";
 import "./style.css";
 import Graph from "./graph";
+import School from "./school";
 
 export default async function home() {
   return (
@@ -103,6 +104,10 @@ export default async function home() {
               </div>
             </div>
           </div>
+        </div>
+
+        <div style={{ paddingTop: "0px" }} className="main-container">
+          <School />
         </div>
         <div className="line"></div>
         <div className="main-container">

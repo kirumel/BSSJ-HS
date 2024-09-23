@@ -286,7 +286,7 @@
 
 .commentbar {
   position: fixed;
-  bottom: 0;
+  bottom: 30px;
   display: flex;
   align-items: center;
   padding: 5px;
@@ -314,7 +314,8 @@
 @media screen and (min-width: 768px) {
   .commentbar {
     position: fixed;
-    bottom: 0;
+    bottom: 30px;
+
     display: flex;
     align-items: center;
     padding: 5px;

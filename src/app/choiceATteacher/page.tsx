@@ -35,6 +35,7 @@ export default function ChoiceAT() {
   const { data: session } = useSession();
 
   function handleATcompare() {
+    console.log(afterdata);
     if (firstdata.length > 0 || afterdata.length > 0) {
       if (!afterdata || afterdata.length === 0) {
         toast("데이터를 찾지 못했습니다");
@@ -61,20 +62,13 @@ export default function ChoiceAT() {
     const fetchAfterData = async (): Promise<void> => {
       try {
         const response = await axios.get<{ data: string }>(
-          "/api/post/compareAT"
+          "/api/post/compareAT",
+          session?.user?.grade
         );
-        if (response.status === 200 && response.data.data) {
-          const afterdata = JSON.parse(response.data.data) as DataItem[];
-          const filteredData = afterdata.filter(
-            (item) =>
-              item.class === (session?.user as SessionUser)?.class &&
-              item.grade === (session?.user as SessionUser)?.grade
-          );
-          const data = filteredData.map((item) => ({
-            ...item,
-            check: item.check === "2" ? "0" : item.check,
-          }));
-          setAfterdata(data);
+
+        if (response.status === 200) {
+          const afterdata = JSON.parse(response.data[0].data) as DataItem[];
+          setAfterdata(afterdata);
         } else {
           console.log("2차 출석의 내부 데이터가 없습니다");
         }
@@ -83,7 +77,7 @@ export default function ChoiceAT() {
       }
     };
 
-    if (session) fetchAfterData();
+    fetchAfterData();
   }, [session]);
 
   return (

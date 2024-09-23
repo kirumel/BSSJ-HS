@@ -71,36 +71,38 @@ export default function CommentComponent({ post }: { post: Post }) {
   };
 
   return (
-    <div className="cafe-left-right">
-      <div className="comment">
-        {posts.map((post) => (
-          <div key={post.id}>
-            {post.comments.length > 0 ? (
-              post.comments.map((comment) => (
-                <div key={comment.id}>
-                  <div className="bordercomment">
-                    <div className="display-postinfo-content">
-                      <img
-                        className="cafe-postinfo-content-img"
-                        src="https://www.studiopeople.kr/common/img/default_profile.png"
-                      ></img>
-                      <div>
-                        <p className="cafe-postinfo-nickname">익명</p>
+    <>
+      <div className="cafe-left-right">
+        <div className="comment">
+          {posts.map((post) => (
+            <div key={post.id}>
+              {post.comments.length > 0 ? (
+                post.comments.map((comment) => (
+                  <div key={comment.id}>
+                    <div className="bordercomment">
+                      <div className="display-postinfo-content">
+                        <img
+                          className="cafe-postinfo-content-img"
+                          src="https://www.studiopeople.kr/common/img/default_profile.png"
+                        ></img>
+                        <div>
+                          <p className="cafe-postinfo-nickname">익명</p>
 
-                        <p className="cafe-postinfo-nickname-sub">
-                          {comment.userId}
-                        </p>
+                          <p className="cafe-postinfo-nickname-sub">
+                            {comment.userId}
+                          </p>
+                        </div>
                       </div>
+                      <p className="postinfo-content">{comment.content}</p>
                     </div>
-                    <p className="postinfo-content">{comment.content}</p>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p>첫번째 댓글을 남겨보세요!</p>
-            )}
-          </div>
-        ))}
+                ))
+              ) : (
+                <p>첫번째 댓글을 남겨보세요!</p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="commentbar">
         <input
@@ -120,6 +122,6 @@ export default function CommentComponent({ post }: { post: Post }) {
         </button>
       </div>
       <div className="margin"></div>
-    </div>
+    </>
   );
 }

@@ -30,7 +30,11 @@ interface Difference {
 
 const fetchAfterData = async (session: any): Promise<DataItem[]> => {
   try {
-    const response = await axios.get<{ data: string }>("/api/post/compareAT");
+    const response = await axios.get<{ data: string }>(
+      "/api/post/compareAT",
+      session?.user?.grade
+    );
+
     if (response.status === 200) {
       const todayDate = new Date();
       const today = new Date();
@@ -43,15 +47,14 @@ const fetchAfterData = async (session: any): Promise<DataItem[]> => {
         month: "2-digit",
         day: "2-digit",
       });
-      const afterdata = JSON.parse(response.data.data);
-      const datefilteredData = afterdata.filter(
-        (item: DataItem) => item.createdAt === formattedDate
-      );
-      const filteredData = datefilteredData.filter(
+      const afterdata = JSON.parse(response.data[0].data);
+
+      const filteredData = afterdata.filter(
         (item: DataItem) =>
           item.class === session?.user?.class &&
           item.grade === session?.user?.grade
       );
+
       const data = filteredData.map((item: DataItem) => ({
         ...item,
         check: item.check === "2" ? "0" : item.check,
