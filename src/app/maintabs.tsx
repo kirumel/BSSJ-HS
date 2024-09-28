@@ -32,6 +32,11 @@ const maintabs = [
     icon: faClock,
     label: "공지사항",
   },
+  {
+    route: "https://www.hscredit.net/common/greeting.do",
+    icon: faClock,
+    label: "공지사항",
+  },
 ];
 
 export default maintabs;

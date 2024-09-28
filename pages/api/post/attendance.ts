@@ -41,8 +41,6 @@ export default async function handler(req: any, res: any) {
     }
   } else if (req.method === "PATCH") {
     try {
-      const compareATdata = await prisma.compareAT.findFirst();
-      const parsedata = JSON.parse(compareATdata?.data || "[]");
       const todayDate = new Date();
       const today = new Date();
 
@@ -54,6 +52,19 @@ export default async function handler(req: any, res: any) {
         month: "2-digit",
         day: "2-digit",
       });
+      console.log(req.body.grade);
+      const compareATdata = await prisma.compareAT.findMany({
+        where: {
+          createdAt: {
+            equals: formattedDate,
+          },
+          grade: {
+            equals: req.body.grade.toString(),
+          },
+        },
+      });
+
+      const parsedata = JSON.parse(compareATdata[0].data as string);
 
       if (parsedata.length > 0 && parsedata[0].updatedAt == formattedDate) {
         res.status(202).json("2차 출석이 완료된 상태입니다");
@@ -75,12 +86,12 @@ export default async function handler(req: any, res: any) {
         });
       }
     } catch (error) {
-      res.status(500).json({ message: "ㄴㄴ" });
+      console.log(error);
+      res.status(500).json({ message: "오류" });
     } finally {
       await prisma.$disconnect();
     }
   } else {
-    // 추가적인 HTTP 메서드 처리 로직을 여기에 추가할 수 있습니다.
     res.status(405).json({ message: "Method Not Allowed" });
   }
 }

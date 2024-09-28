@@ -31,31 +31,28 @@ interface Difference {
 const fetchAfterData = async (session: any): Promise<DataItem[]> => {
   try {
     const response = await axios.get<{ data: string }>("/api/post/compareAT", {
-      params: {
-        grade: session?.user?.grade, // 쿼리 파라미터로 포함
-      },
+      params: { grade: session?.user?.grade },
     });
 
     if (response.status === 200) {
-      const todayDate = new Date();
       const today = new Date();
 
-      //날자 보기좋게
-      let formattedDate: string;
-
-      formattedDate = todayDate.toLocaleDateString("ko-KR", {
+      // Format date
+      const formattedDate: string = today.toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
 
-      const afterdata = JSON.parse(response.data[0].data);
-      const filteredData = afterdata.filter(
-        (item) =>
+      // Parse and filter the response data
+      const afterData = JSON.parse(response.data[0].data);
+      const filteredData = afterData.filter(
+        (item: DataItem) =>
           item.class === session?.user?.class &&
           item.grade === session?.user?.grade
       );
 
+      // Update the 'check' field
       const data = filteredData.map((item: DataItem) => ({
         ...item,
         check: item.check === "2" ? "0" : item.check,

@@ -121,7 +121,7 @@ export default function Page() {
     axios
       .patch(
         "/api/post/attendance",
-        { firstcommitstudent },
+        { firstcommitstudent, grade: session?.user?.grade },
         {
           headers: {
             "Content-Type": "application/json",
