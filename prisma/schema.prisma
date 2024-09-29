@@ -149,6 +149,7 @@ model Post {
   video        String?
   comments     Comment[] @relation("PostComments")
   likes        Like[]    @relation("PostLikes")
+  type         String?  @default("post")
 }
 
 model Comment {

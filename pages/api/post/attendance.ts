@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { compare } from "bcrypt";
 import { json } from "stream/consumers";
 
 const prisma = new PrismaClient();
@@ -63,12 +64,7 @@ export default async function handler(req: any, res: any) {
           },
         },
       });
-
-      const parsedata = JSON.parse(compareATdata[0].data as string);
-
-      if (parsedata.length > 0 && parsedata[0].updatedAt == formattedDate) {
-        res.status(202).json("2차 출석이 완료된 상태입니다");
-      } else {
+      if (compareATdata.length === 0 || !compareATdata[0]?.data) {
         req.body.firstcommitstudent.map(async (a: any, i: any) => {
           const { id, comment, check, author } = a;
           const updateAttendance = await prisma.attendanceObject.update({
@@ -84,6 +80,28 @@ export default async function handler(req: any, res: any) {
 
           res.status(200).json(updateAttendance);
         });
+      } else {
+        const parsedata = JSON.parse(compareATdata[0].data as string);
+
+        if (parsedata.length > 0 && parsedata[0].updatedAt == formattedDate) {
+          res.status(202).json("2차 출석이 완료된 상태입니다");
+        } else {
+          req.body.firstcommitstudent.map(async (a: any, i: any) => {
+            const { id, comment, check, author } = a;
+            const updateAttendance = await prisma.attendanceObject.update({
+              where: {
+                id: id,
+              },
+              data: {
+                comment,
+                check,
+                author,
+              },
+            });
+
+            res.status(200).json(updateAttendance);
+          });
+        }
       }
     } catch (error) {
       console.log(error);

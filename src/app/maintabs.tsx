@@ -25,7 +25,7 @@ const maintabs = [
   {
     route: "/choiceAT",
     icon: faClock,
-    label: "8교시 출첵",
+    label: "8교시 체크",
   },
   {
     route: "/schooltest",
@@ -35,7 +35,7 @@ const maintabs = [
   {
     route: "https://www.hscredit.net/common/greeting.do",
     icon: faClock,
-    label: "공지사항",
+    label: "수강신청",
   },
 ];
 

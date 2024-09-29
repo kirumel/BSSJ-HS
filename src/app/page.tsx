@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Homeschedule from "./homeschedules";
+import Mealcontainer from "./mealcontainer";
 import Hometimetable from "./hometimetable";
 import maintaps from "./maintabs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -128,24 +128,11 @@ export default async function home() {
                 <Hometimetable />
               </div>
             </div>
-            <div className="main-container-50">
-              <div className="etc-container ">
-                <Link
-                  href="./meals"
-                  className="main-container-display margin-bottom-15"
-                >
-                  <p>
-                    오늘의 식단 <br />
-                    🍚🥢
-                  </p>
-                </Link>
-                <Homeschedule />
-              </div>
-            </div>
+            <Mealcontainer />
           </div>
         </div>
         <div className="line"></div>
-        <div className="main-container">
+        {/* <div className="main-container">
           <div className="graph-display">
             <div className="graph-title-blue">
               <div>
@@ -158,7 +145,7 @@ export default async function home() {
               <Graph />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="margin"></div>
     </>

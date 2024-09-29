@@ -369,3 +369,39 @@
 
   margin-bottom: 3px;
 }
+.feed {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+  line-height: 1;
+}
+.feed-text-post {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgb(195, 195, 195, 0.5);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.feed-post-content {
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+.feed-post-date {
+  font-size: 10px;
+  color: gray;
+}
+.feed-insta-img {
+  max-width: 500px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.cafe-post-title {
+  margin-top: 1rem;
+}

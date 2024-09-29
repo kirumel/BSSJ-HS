@@ -2,6 +2,7 @@
 import "./style.css";
 import dayjs from "dayjs";
 import React, { useState, useEffect, useRef } from "react";
+import Planer from "./planer";
 
 const targetDate = dayjs("2024-10-17");
 const today = dayjs();
@@ -207,6 +208,7 @@ const Home: React.FC = () => {
           ))}
         </div>
       </div>
+
       <div className="margin"></div>
     </>
   );

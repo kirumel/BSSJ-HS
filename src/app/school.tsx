@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function SchoolPosts() {
   const [posts, setPosts] = useState([]);
@@ -17,14 +18,24 @@ export default function SchoolPosts() {
 
     fetchPosts();
   }, []);
-  const rendomindex = Math.floor(Math.random() * posts.length);
+
+  const rendomindex =
+    posts.length > 0 ? Math.floor(Math.random() * posts.length) : null;
 
   return (
     <div className="etc-container">
-      <p className="main-title display-flex-school">
-        <p className="school-text-title">학교 공지사항 :</p>
-        <p className="school-text"> {posts[rendomindex]?.text}</p>
-      </p>
+      {rendomindex !== null && posts[rendomindex] && (
+        <Link
+          href={`https://school.busanedu.net/${
+            posts[rendomindex]?.link || "schooltest"
+          }`}
+        >
+          <div className="display-flex-school">
+            <div className="school-text-title">학교 공지사항 :</div>
+            <div className="school-text">{posts[rendomindex]?.text}</div>
+          </div>
+        </Link>
+      )}
     </div>
   );
 }

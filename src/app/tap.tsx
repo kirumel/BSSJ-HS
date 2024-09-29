@@ -12,7 +12,11 @@ const tabs = [
     icon: faHome,
     label: "홈",
   },
-
+  {
+    route: "/feed",
+    icon: faHome,
+    label: "피드",
+  },
   {
     route: "/cafe",
     icon: faBowlFood,
