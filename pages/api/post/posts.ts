@@ -6,6 +6,9 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       const posts = await prisma.post.findMany({
+        where: {
+          type: "post",
+        },
         include: {
           comments: true,
           likes: true,
