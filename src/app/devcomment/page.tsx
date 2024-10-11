@@ -38,7 +38,7 @@ export default function dev() {
             <h5>
               special thanks :<br />
               <br />
-              <p style={{ textDecoration: "none" }}>@ekal_.index / 다미</p>
+              <p>@ekal_.index / 다미</p>
               <div>교무기획부 장은경 선생님 </div>
             </h5>
           </div>
