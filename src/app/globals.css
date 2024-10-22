@@ -836,3 +836,45 @@ html {
   border-radius: 8px;
   transform: rotateX(180deg);
 }
+/* Events.css */
+.event-slide {
+  position: relative;
+}
+
+.event-slide img {
+  width: 100%;
+  height: 50vw;
+  object-fit: cover;
+}
+
+.event-overlay {
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0)
+  ); /* Darker gradient */
+  display: flex;
+  flex-direction: column;
+
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 20px;
+  text-align: left;
+  color: white;
+  text-align: center;
+}
+
+.event-overlay h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.event-overlay p {
+  margin: 0;
+  font-size: 16px;
+}

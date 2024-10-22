@@ -39,7 +39,8 @@ export default function dev() {
               special thanks :<br />
               <br />
               <p>@ekal_.index / 다미</p>
-              <div>교무기획부 장은경 선생님 </div>
+              <br />
+              <p>교무기획부 장은경 선생님 </p>
             </h5>
           </div>
           <div style={{ textAlign: "right" }}>
