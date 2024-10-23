@@ -16,6 +16,7 @@ export default function Nav() {
     "/cafe",
     "/accountregister",
     "/accountdelete",
+    "/",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

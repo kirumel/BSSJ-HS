@@ -171,7 +171,7 @@ html {
 }
 
 .tab-icon {
-  height: 19px;
+  height: 20px;
 }
 .tab-label {
   font-size: 12px;
@@ -764,8 +764,8 @@ html {
     height: 80px;
   }
   .main-container {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 @media screen and (min-width: 800px) {

@@ -8,16 +8,37 @@ import "./style.css";
 import Graph from "./graph";
 import School from "./school";
 import Event from "./events";
+import logo from "../../public/logo.png";
+import Image from "next/image";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
 
 export default async function home() {
+  const session = await getServerSession(authOptions);
   return (
     <>
+      <div className="nav">
+        <Link href="/">
+          <Image src={logo} alt="logo" width={71} height={25} />
+        </Link>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "10px", fontSize: "12px" }}>
+            안녕하세요 {session?.user?.name}님!
+          </div>
+          <Link href="./setting" className="main-container-display">
+            <img
+              className="morebutton"
+              src={session?.user?.image}
+              alt="Profile Image"
+            />
+          </Link>
+        </div>
+      </div>
       <div className="home-layout">
         <div>
           <Event />
         </div>
         <div className="margin-bottom-15"></div>
-
         <div className="main-container" style={{ paddingTop: "0" }}>
           <div className="scroll-containercenter">
             <div className="scroll-container">
@@ -53,6 +74,7 @@ export default async function home() {
         </div>
         <div className="line"></div>
         <div className="main-container">
+          <p className="home-title">급식 및 시간표</p>
           <div className="main-container-display">
             <div className="main-container-50">
               <div className="etc-container ">

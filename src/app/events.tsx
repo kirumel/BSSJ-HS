@@ -8,22 +8,26 @@ export default function Events() {
       spaceBetween={0}
       slidesPerView={1}
       onSlideChange={(swiper) => console.log("slide change", swiper)}
+      autoplay={{
+        delay: 3000,
+        disableOnInteraction: false,
+      }}
     >
       <SwiperSlide className="event-slide">
-        <div style={{ width: "100%", height: "40vh" }}>
+        <div style={{ width: "100%", height: "33vh" }}>
           <img className="home-event-img" src="altisto.png" alt="Slide 1" />
           <div className="event-overlay">
-            <h2 className="event-title">test1</h2>
-            <p>폰 ui</p>
+            <h2 className="event-title">beta test</h2>
+            <p>version 1.2</p>
           </div>
         </div>
       </SwiperSlide>
       <SwiperSlide className="event-slide">
-        <div style={{ width: "100%", height: "40vh" }}>
+        <div style={{ width: "100%", height: "33vh" }}>
           <img className="home-event-img" src="logofull.jpg" alt="Slide 1" />
           <div className="event-overlay">
-            <h2 className="event-title">test2</h2>
-            <p>test textarea</p>
+            <h2 className="event-title">이벤트 부분</h2>
+            <p>이벤트 부분</p>
           </div>
         </div>
       </SwiperSlide>
