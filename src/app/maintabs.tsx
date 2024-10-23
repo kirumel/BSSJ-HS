@@ -26,6 +26,7 @@ const maintabs = [
     route: "/choiceAT",
     icon: faClock,
     label: "8교시 체크",
+    type: "SJadmin",
   },
   {
     route: "/schooltest",

@@ -118,6 +118,7 @@ export default function Page() {
     setFirstCommitStudent(newData);
   };
   const handlePatch = () => {
+    setIsLoading(true);
     axios
       .patch(
         "/api/post/attendance",
@@ -130,13 +131,17 @@ export default function Page() {
       )
       .then((response) => {
         if (response.status === 202) {
+          setIsLoading(false);
           toast(response.data);
         } else {
+          setIsLoading(false);
           setSuccessModalTimer();
         }
       })
       .catch((error) => {
         console.error("Error:", error);
+        setIsLoading(false);
+        toast("예상치 못한 오류가 발생하였습니다");
       });
 
     localStorage.setItem("compareAT", JSON.stringify(firstcommitstudent));
@@ -157,7 +162,7 @@ export default function Page() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading">잠시만 기다려주세요...</div>;
   }
 
   if (attendance.length === 0) {

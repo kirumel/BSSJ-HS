@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       res.status(500).json({ message: `${error.message}` });
     } finally {
-      await prisma.$disconnect();
+      prisma.$disconnect();
     }
   } else if (req.method === "POST") {
     const { title, content, nickname, authorId } = req.body;

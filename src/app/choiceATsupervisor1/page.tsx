@@ -188,7 +188,7 @@ export default function Page() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading">잠시만 기다려주세요...</div>;
   }
 
   if (attendance.length === 0) {
