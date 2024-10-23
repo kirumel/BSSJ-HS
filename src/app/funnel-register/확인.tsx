@@ -142,7 +142,7 @@ export default function StartRegister(props: any) {
         .then((res) => {
           if (res.status === 200) {
             toast("회원가입이 완료되었습니다", { type: "success" });
-            router.push("/");
+            router.push("/success");
           } else {
             toast("오류", { type: "error" });
           }

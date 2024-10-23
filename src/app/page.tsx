@@ -16,18 +16,31 @@ export default async function home() {
         <div>
           <Event />
         </div>
+        <div className="margin-bottom-15"></div>
+
         <div className="main-container" style={{ paddingTop: "0" }}>
           <div className="scroll-containercenter">
             <div className="scroll-container">
               <div className="scroll-list">
                 {maintaps.map((tab, index) => (
-                  <a href={tab.route} className="box" key={index}>
+                  <a
+                    href={tab.route}
+                    className="box"
+                    style={{ backgroundColor: `${tab.color}` }}
+                    key={index}
+                  >
                     <div className="maintab-container">
                       <FontAwesomeIcon
                         className="maintab-icon"
+                        style={{ color: `${tab.color2}` }}
                         icon={tab.icon}
                       />
-                      <div className="maintab-label">{tab.label}</div>
+                      <div
+                        className="maintab-label"
+                        style={{ color: `${tab.color3}` }}
+                      >
+                        {tab.label}
+                      </div>
                     </div>
                   </a>
                 ))}
@@ -35,13 +48,11 @@ export default async function home() {
             </div>
           </div>
         </div>
-
         <div style={{ paddingTop: "0px" }} className="main-container">
           <School />
         </div>
         <div className="line"></div>
         <div className="main-container">
-          <p className="home-title">급식 및 시간표</p>
           <div className="main-container-display">
             <div className="main-container-50">
               <div className="etc-container ">

@@ -46,6 +46,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
+    "react-swiper": "^0.1.5",
     "react-timer-hook": "^3.0.7",
     "react-toastify": "^10.0.5",
     "sharp": "^0.33.5",

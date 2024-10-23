@@ -23,7 +23,7 @@ export default function SchoolPosts() {
     posts.length > 0 ? Math.floor(Math.random() * posts.length) : null;
 
   return (
-    <div className="etc-container">
+    <div className="school-etc">
       {rendomindex !== null && posts[rendomindex] && (
         <Link
           href={`https://school.busanedu.net/${
