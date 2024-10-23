@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import gsap from "gsap";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function StartRegister(props: any) {
   const { email, password, name, nickname, clss, grade } = props;
@@ -7,6 +10,8 @@ export default function StartRegister(props: any) {
   const [buttonComment, setButtonComment] = useState("");
   const [stage, setStage] = useState(1);
   const [isClicked, setIsClicked] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (showPassword) {
@@ -90,7 +95,7 @@ export default function StartRegister(props: any) {
     const tl = gsap.timeline({
       onComplete: () => {
         setStage(2);
-        setIsClicked(true);
+
         gsap.fromTo(
           ".start-register-title",
           { y: 100, opacity: 0, color: "white" },
@@ -114,11 +119,51 @@ export default function StartRegister(props: any) {
   };
 
   const handleSecondClick = () => {
-    document.forms[0].submit();
+    setIsClicked(true);
+    if (
+      email == undefined ||
+      password == undefined ||
+      name == undefined ||
+      nickname == undefined ||
+      clss == undefined ||
+      grade == undefined
+    ) {
+      toast("데이터가 비어있습니다");
+    } else {
+      axios
+        .post("/api/post/regist", {
+          email,
+          password,
+          name,
+          nickname,
+          clss,
+          grade,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            toast("회원가입이 완료되었습니다", { type: "success" });
+            router.push("/");
+          } else {
+            toast("오류", { type: "error" });
+          }
+        });
+    }
   };
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={true}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        closeButton={false}
+      />
       <video className="grident" autoPlay muted loop src="/grident.mp4" />
       <div className="funnel-layout home-layout">
         <div className="register-main">
@@ -199,51 +244,14 @@ export default function StartRegister(props: any) {
             </div>
           </div>
           <div className="ok-button-div">
-            <form action="/api/post/regist" method="POST">
-              <input
-                style={{ display: "none" }}
-                name="email"
-                placeholder="이메일"
-                value={email}
-              />
-              <input
-                style={{ display: "none" }}
-                name="password"
-                placeholder="비밀번호"
-                value={password}
-              />
-              <input
-                style={{ display: "none" }}
-                name="name"
-                placeholder="이름"
-                value={name}
-              />
-              <input
-                style={{ display: "none" }}
-                name="nickname"
-                placeholder="닉네임"
-                value={nickname}
-              />
-              <input
-                style={{ display: "none" }}
-                name="grade"
-                placeholder="학년"
-                value={grade}
-              />
-              <input
-                style={{ display: "none" }}
-                name="clss"
-                placeholder="반"
-                value={clss}
-              />
-              <button
-                className="ok-button"
-                type="button"
-                onClick={stage === 1 ? handleFirstClick : handleSecondClick}
-              >
-                {stage === 1 ? "맞아요" : "맞아요"}
-              </button>
-            </form>
+            <button
+              className="ok-button"
+              type="button"
+              disabled={isClicked == true ? true : false}
+              onClick={stage === 1 ? handleFirstClick : handleSecondClick}
+            >
+              {stage === 1 ? "확인하기" : "맞아요"}
+            </button>
           </div>
         </div>
       </div>

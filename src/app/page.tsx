@@ -7,84 +7,14 @@ import Hello from "./hellohome";
 import "./style.css";
 import Graph from "./graph";
 import School from "./school";
+import Event from "./events";
 
 export default async function home() {
   return (
     <>
       <div className="home-layout">
-        <div style={{ marginRight: "1.5rem", marginLeft: "1.5rem" }}>
-          <Hello />
-        </div>
         <div>
-          <div className="main-container">
-            <div className="scroll-containercenter">
-              <div className="scroll-container">
-                <div className="main-event-imgbox">
-                  <img className="main-event-img" src="altisto.png"></img>
-                  <div
-                    className="main-event-overlay2"
-                    style={{ backgroundColor: "rgb(132, 146, 209)" }}
-                  ></div>
-                  <div
-                    className="main-event-overlay1"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(180deg, transparent 48.15%, rgba(132, 146, 209,1) 94.91%)",
-                      color: "white",
-                    }}
-                  ></div>
-                  <p className="main-event-title" style={{ color: "white" }}>
-                    SJHS helper
-                    <br />
-                    beta version 1.0
-                  </p>
-                </div>
-                <div className="main-event-imgbox">
-                  <img
-                    className="main-event-img"
-                    src="instagram-logo2.jpg"
-                  ></img>
-                  <div
-                    className="main-event-overlay2"
-                    style={{ backgroundColor: "rgb(280,150,150)" }}
-                  ></div>
-                  <div
-                    className="main-event-overlay1"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(180deg, transparent 48.15%, rgba(280,150,150) 94.91%)",
-                      color: "white",
-                    }}
-                  ></div>
-                  <p className="main-event-title" style={{ color: "white" }}>
-                    sjhs helper 인스타그램 홍보하고
-                    <br />
-                    치킨 받아가자!
-                  </p>
-                </div>
-                <div className="main-event-imgbox">
-                  <img className="main-event-img" src="main.jpg"></img>
-                  <div
-                    className="main-event-overlay2"
-                    style={{ backgroundColor: "rgb(280,160,160)" }}
-                  ></div>
-                  <div
-                    className="main-event-overlay1"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(180deg, transparent 48.15%, rgba(280,160,160) 94.91%)",
-                      color: "white",
-                    }}
-                  ></div>
-                  <p className="main-event-title" style={{ color: "white" }}>
-                    성지고 교복 나눔제
-                    <br />
-                    관심있다면 클릭!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Event />
         </div>
         <div className="main-container" style={{ paddingTop: "0" }}>
           <div className="scroll-containercenter">
