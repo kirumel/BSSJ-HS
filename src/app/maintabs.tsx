@@ -26,7 +26,7 @@ const maintabs = [
   },
   {
     route: "../schedules",
-    icon: faCalendarDays,
+    icon: faClock,
     label: "시간표",
     color: "none",
     color2: "none",

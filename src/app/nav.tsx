@@ -17,6 +17,7 @@ export default function Nav() {
     "/accountregister",
     "/accountdelete",
     "/",
+    "/study",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

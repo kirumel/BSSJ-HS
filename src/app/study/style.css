@@ -1,3 +1,6 @@
+body {
+  background-color: black;
+}
 @media screen and (min-width: 750px) {
   .phone-display-none {
     display: none;
@@ -43,22 +46,26 @@
   background-color: rgb(218, 218, 218);
 }
 .studybar-text {
-  font-size: 16px;
+  font-size: 12px;
   margin: 0;
   box-sizing: border-box;
   overflow: hidden;
 }
 .studybar {
   box-sizing: border-box;
-  background-color: #a7a7a77e;
+  background-color: #212121;
   border-radius: 0.5rem;
   text-align: right;
 }
 .studybar-title {
   text-align: center;
   font-size: 10vw;
-  font-weight: 800;
+  font-weight: 500;
   margin: 0;
+}
+.study-buttons-display {
+  display: flex;
+  justify-content: center;
 }
 .buttons {
   display: flex;
@@ -167,4 +174,7 @@
 .study-top-display {
   display: flex;
   justify-content: space-between;
+}
+.study {
+  color: white;
 }
