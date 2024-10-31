@@ -57,18 +57,18 @@ export default function Meals() {
         <div key={index}>
           {Array.isArray(meal.data) && meal.data.length > 0 ? (
             <div className="home-dish-list">
-              {meal.data.map((dish, i) =>
-                i % 4 === 0 ? (
-                  <div key={i} className="dish-group">
-                    {[
-                      meal.data[i],
-                      meal.data[i + 1],
-                      meal.data[i + 2],
-                      meal.data[i + 3],
-                    ].map((d, j) => d && <p key={j}>{d} #</p>)}
-                  </div>
-                ) : null
-              )}
+              {meal.data.map((dish, i) => (
+                <div key={i} className="dish-group">
+                  <p>
+                    <div className="dish-list-box">
+                      <span className="dish-number">{i + 1}.</span>
+                      {"  "}
+                      {"  "}
+                      {dish}
+                    </div>
+                  </p>
+                </div>
+              ))}
             </div>
           ) : null}
         </div>

@@ -46,18 +46,18 @@ export default function Meals({
             <div className="meal-content front">
               {meal.data && Array.isArray(meal.data) && meal.data.length > 0 ? (
                 <div className="home-dish-list">
-                  {meal.data.map((dish, i) =>
-                    i % 4 === 0 ? (
-                      <div key={i} className="dish-group">
-                        {[
-                          meal.data?.[i],
-                          meal.data?.[i + 1],
-                          meal.data?.[i + 2],
-                          meal.data?.[i + 3],
-                        ].map((d, j) => d && <p key={j}>{d} #</p>)}
-                      </div>
-                    ) : null
-                  )}
+                  {meal.data.map((dish, i) => (
+                    <div key={i} className="dish-group">
+                      <p>
+                        <div className="dish-list-box">
+                          <span className="dish-number">{i + 1}.</span>
+                          {"  "}
+                          {"  "}
+                          {dish}
+                        </div>
+                      </p>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="home-dish-list">
@@ -76,18 +76,18 @@ export default function Meals({
                   <div key={index2} className="home-dish-list">
                     {meal2.data && Array.isArray(meal2.data) ? (
                       <div className="home-dish-list">
-                        {meal.data.map((dish, i) =>
-                          i % 4 === 0 ? (
-                            <div key={i} className="dish-group">
-                              {[
-                                meal.data?.[i],
-                                meal.data?.[i + 1],
-                                meal.data?.[i + 2],
-                                meal.data?.[i + 3],
-                              ].map((d, j) => d && <p key={j}>{d} #</p>)}
-                            </div>
-                          ) : null
-                        )}
+                        {meal2.data.map((dish, i) => (
+                          <div key={i} className="dish-group">
+                            <p>
+                              <div className="dish-list-box">
+                                <span className="dish-number">{i + 1}.</span>
+                                {"  "}
+                                {"  "}
+                                {dish}
+                              </div>
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       <div className="home-dish-list">

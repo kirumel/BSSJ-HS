@@ -121,6 +121,15 @@ html {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+.dish-list-box {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+.dish-number {
+  margin: 0;
+  color: #8a8a8a;
+}
 @media screen and (min-width: 750px) {
   .navout {
     display: none;
@@ -537,17 +546,6 @@ html {
   margin-bottom: 10px;
 }
 
-.home-dish-list {
-  display: flex;
-  justify-content: right;
-  text-align: right;
-}
-@media screen and (max-width: 680px) {
-  .home-dish-list {
-    text-align: right;
-    display: block;
-  }
-}
 .home-dish-list p {
   font-weight: 600;
   font-family: "Noto Sans KR", sans-serif;
