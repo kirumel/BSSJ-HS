@@ -6,6 +6,20 @@
   display: none;
 }
 
+.event-button {
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: 0px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.event-button-container {
+  display: flex;
+  justify-content: left;
+  padding: 8px;
+}
+
 .right-left-margin {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
@@ -78,7 +92,14 @@ html {
   align-items: center;
   font-size: 16px;
 }
-
+.nav-home {
+  padding-left: 15px;
+  padding-right: 15px;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .sidenavout-display {
   display: flex;
   height: 100%;
