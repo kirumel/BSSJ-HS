@@ -8,11 +8,15 @@ export default function SchoolPosts() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const response = await fetch("/api/schooltest");
+        const response = await fetch("/api/schooltest2");
         const data = await response.json();
         setPosts(data);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        alert("학교 공지사항을 불러온는데 오류가 발생하였습니다");
+        console.error(
+          "학교 공지사항을 불러온는데 오류가 발생하였습니다",
+          error
+        );
       }
     }
 

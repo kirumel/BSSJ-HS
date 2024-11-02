@@ -2,7 +2,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 
 export default async function handler(req: any, res: any) {
-  const maxPages = 10;
+  const maxPages = 1;
   const allPosts: { link: string; text: string }[] = [];
   const uniqueLinks = new Set();
 
@@ -30,9 +30,9 @@ export default async function handler(req: any, res: any) {
         index === self.findIndex((p) => p.link === post.link)
     );
 
-    res.status(200).json(uniquePosts); // 모든 게시물 데이터 응답
+    res.status(200).json(uniquePosts);
   } catch (error) {
     console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Failed to fetch data" }); // 에러 응답
+    res.status(500).json({ error: "Failed to fetch data" });
   }
 }
