@@ -4,6 +4,8 @@ import Link from "next/link";
 import axios from "axios";
 import "../cafe/cafe.css";
 
+import { useSession } from "next-auth/react";
+
 interface Post {
   author: any;
   id: string;
@@ -35,9 +37,10 @@ interface CafeProps {
   session: any; // Adjust the type as needed
 }
 
-export default function Cafe({ session }: CafeProps) {
+export default function Cafe() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { data: session } = useSession();
 
   useEffect(() => {
     setIsLoading(true);
@@ -59,6 +62,63 @@ export default function Cafe({ session }: CafeProps) {
       </div>
     );
   }
+  const handleLike = async (id: any) => {
+    const userId = session?.user?.id;
+
+    setPosts((prevPosts) =>
+      prevPosts.map((post) => {
+        if (post.id === id) {
+          const hasLiked = post.likes.some(
+            (like: Like) => like.userId === userId
+          );
+
+          if (hasLiked) {
+            return {
+              ...post,
+              likes: post.likes.filter((like: Like) => like.userId !== userId), // 현재 userId 삭제
+            };
+          } else {
+            return {
+              ...post,
+              likes: [
+                ...post.likes,
+                {
+                  id: "temp-id",
+                  postId: post.id,
+                  userId,
+                  createdAt: new Date(),
+                },
+              ],
+            };
+          }
+        }
+        return post;
+      })
+    );
+
+    if (!userId) {
+      console.error("User ID is missing");
+      return;
+    }
+
+    try {
+      await axios.post(`/api/post/likes/${id}`, { userId });
+      axios.get(`/api/post/likes/${id}`).then((res) => {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === id
+              ? {
+                  ...post,
+                  likes: res.data,
+                }
+              : post
+          )
+        );
+      });
+    } catch (error) {
+      console.error("좋아요 처리 오류:", error);
+    }
+  };
   return (
     <div
       style={{ marginLeft: "0.5rem", marginRight: "0.5rem", marginTop: "1rem" }}
@@ -168,6 +228,7 @@ export default function Cafe({ session }: CafeProps) {
           })}
         </>
       )}
+      <div className="margin"></div>
     </div>
   );
 }

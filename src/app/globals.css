@@ -5,7 +5,61 @@
 *::-webkit-scrollbar {
   display: none;
 }
-
+.event-text {
+  margin: 0;
+  color: white;
+}
+.event-text-container {
+  padding: 20px;
+}
+.event-text-title {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+}
+.event-long-button {
+  margin-top: 20px;
+  color: black;
+  background-color: white;
+  border-radius: 1rem;
+  border: none;
+}
+.event-box-container {
+  display: flex;
+  margin: 10px;
+  margin-bottom: 20px;
+}
+.event-box-button {
+  margin-right: 5px;
+  margin-left: 5px;
+  padding: 10px;
+  height: 15vw;
+  width: 15vw;
+  max-width: 200px;
+  max-height: 200px;
+  min-height: 80px;
+  min-width: 80px;
+  font-size: 1.8vh;
+  font-weight: 500;
+  color: white;
+  border-radius: 0.5rem;
+  border: none;
+}
+.event-feed {
+  margin-top: 20px;
+  color: black;
+  background-color: white;
+  border-radius: 100px;
+  border: none;
+  padding: 5px;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+.event-feed:hover {
+  cursor: pointer;
+  background-color: #8a8a8a;
+}
 .event-button {
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
@@ -13,13 +67,11 @@
   font-size: 13px;
   font-weight: 500;
 }
-
 .event-button-container {
   display: flex;
   justify-content: left;
   padding: 8px;
 }
-
 .right-left-margin {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
@@ -99,16 +151,6 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.event-container {
-  transition: all 0.5s; /* Smooth transition for height change */
-}
-
-.expand {
-  height: 88vh;
-}
-.collapse {
-  height: 33vh;
 }
 
 .event-button-container {

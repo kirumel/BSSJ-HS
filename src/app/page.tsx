@@ -21,7 +21,6 @@ export default async function home() {
         <Link href="/">
           <Image src={logo} alt="logo" width={71} height={25} />
         </Link>
-
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ marginRight: "10px", fontSize: "12px" }}>
             안녕하세요 {session?.user?.name}님!

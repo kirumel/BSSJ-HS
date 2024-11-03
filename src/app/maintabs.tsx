@@ -33,15 +33,6 @@ const maintabs = [
     color3: "none",
   },
   {
-    route: "/choiceAT",
-    icon: faClock,
-    label: "8교시 체크",
-    type: "SJadmin",
-    color: "none",
-    color2: "none",
-    color3: "none",
-  },
-  {
     route: "/schooltest",
     icon: faClock,
     label: "공지사항",

@@ -153,6 +153,10 @@ model Post {
   comments     Comment[] @relation("PostComments")
   likes        Like[]    @relation("PostLikes")
   type         String?  @default("post")
+  
+  type2      String?
+  tags         String[]
+  subtags         String[]
 }
 
 model Comment {

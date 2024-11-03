@@ -18,6 +18,7 @@ export default function Nav() {
     "/accountdelete",
     "/",
     "/study",
+    "/admin",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

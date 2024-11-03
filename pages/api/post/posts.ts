@@ -23,8 +23,8 @@ export default async function handler(req: any, res: any) {
       prisma.$disconnect();
     }
   } else if (req.method === "POST") {
-    const { title, content, nickname, authorId } = req.body;
-
+    const { title, content, nickname, authorId, type, tags, subtags } =
+      req.body;
     if (!title) {
       return res.status(400).json({ message: "제목이 비어있습니다" });
     }
@@ -45,6 +45,9 @@ export default async function handler(req: any, res: any) {
           content,
           nickname,
           authorId,
+          type,
+          tags,
+          subtags,
         },
       });
       res.redirect(307, `/cafe`);
