@@ -126,19 +126,6 @@ export default function Cafe({ session }: CafeProps) {
           <span>&larr;</span>
         </button>
       </a>
-      <div className="display-flex">
-        <div className="border-box">
-          <div
-            className="cafe-text-post"
-            style={{ color: "white", backgroundColor: "rgb(138, 156, 255)" }}
-          >
-            <p>
-              알림 : 베타버전 동안은 닉네임이 <br />
-              아닌 익명으로 표시됩니다
-            </p>
-          </div>
-        </div>
-      </div>
 
       {posts.length > 0 && (
         <>

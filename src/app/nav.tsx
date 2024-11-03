@@ -19,6 +19,7 @@ export default function Nav() {
     "/",
     "/study",
     "/admin",
+    "/feed",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;
@@ -26,9 +27,9 @@ export default function Nav() {
     return (
       <>
         <div className="nav">
-          <Link href="/">
+          <a href="/">
             <Image src={logo} alt="logo" width={71} height={25} />
-          </Link>
+          </a>
         </div>
       </>
     );

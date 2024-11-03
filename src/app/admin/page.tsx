@@ -40,20 +40,24 @@ export default function Page() {
         </div>
         <div>
           <div className="event-box-container">
-            <button
-              style={{ backgroundColor: "#5656E3" }}
-              className="event-box-button"
-            >
-              8교시 <br />
-              출석
-            </button>
-            <button
-              style={{ backgroundColor: "#9A9AF6" }}
-              className="event-box-button"
-            >
-              8교시 <br />
-              감독관
-            </button>
+            <Link href="/attendance">
+              <button
+                style={{ backgroundColor: "#5656E3" }}
+                className="event-box-button"
+              >
+                8교시 <br />
+                출석
+              </button>
+            </Link>
+            <Link href="choiceATgrade">
+              <button
+                style={{ backgroundColor: "#9A9AF6" }}
+                className="event-box-button"
+              >
+                8교시 <br />
+                감독관
+              </button>
+            </Link>
           </div>
 
           <div className="event-box-container">

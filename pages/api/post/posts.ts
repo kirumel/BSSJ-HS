@@ -23,8 +23,19 @@ export default async function handler(req: any, res: any) {
       prisma.$disconnect();
     }
   } else if (req.method === "POST") {
-    const { title, content, nickname, authorId, type, tags, subtags } =
-      req.body;
+    const {
+      title,
+      content,
+      nickname,
+      authorId,
+      type2,
+      subjectTags,
+      subSubjectTags,
+      gradeTags,
+      type,
+    } = req.body;
+
+    // Validation
     if (!title) {
       return res.status(400).json({ message: "제목이 비어있습니다" });
     }
@@ -45,9 +56,11 @@ export default async function handler(req: any, res: any) {
           content,
           nickname,
           authorId,
-          type,
-          tags,
-          subtags,
+          type: type || "post",
+          type2,
+          subjectTags,
+          subSubjectTags,
+          gradeTags,
         },
       });
       res.redirect(307, `/cafe`);

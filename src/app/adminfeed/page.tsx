@@ -8,9 +8,11 @@ import "./style.css";
 interface PostData {
   title: string;
   content: string;
+  type2: string[];
   type: string;
-  tags: string[];
-  subtags: string[];
+  subjectTags: string[];
+  subSubjectTags: string | null;
+  gradeTags: string[];
   authorId: string;
   nickname: string;
 }
@@ -18,13 +20,17 @@ interface PostData {
 export default function CreatePost() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [subTags, setSubTags] = useState<{ [key: string]: string }>({});
+  const [type2, setType2] = useState<string[]>([]);
+  const [subjectTags, setSubjectTags] = useState<string[]>([]);
+  const [subSubjectTags, setSubSubjectTags] = useState<{
+    [key: string]: string;
+  }>({});
+  const [gradeTags, setGradeTags] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [showSubject, setShowSubject] = useState<boolean>(false);
   const [showGrade, setShowGrade] = useState<boolean>(false);
-  const [button, setbutton] = useState(false);
+  const [button, setButton] = useState(false);
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -48,7 +54,7 @@ export default function CreatePost() {
 
   const handleTypeClick = (type: string) => {
     setSelectedType(type);
-    setTags([type]);
+    setType2([type]);
 
     if (type === "공지사항") {
       setShowSubject(false);
@@ -63,37 +69,41 @@ export default function CreatePost() {
   const handleSubjectClick = (subject: string) => {
     if (selectedSubject === subject) {
       setSelectedSubject(null);
+      setSubjectTags([]);
     } else {
       setSelectedSubject(subject);
-      if (!subTags[subject]) {
-        setSubTags({ ...subTags, [subject]: "" });
+      setSubjectTags([subject]);
+      if (!subSubjectTags[subject]) {
+        setSubSubjectTags({ ...subSubjectTags, [subject]: "" });
       }
     }
     setShowGrade(!selectedSubject || selectedSubject === subject);
   };
 
   const handleGradeClick = (grade: string) => {
-    if (tags.includes(grade)) {
-      setTags(tags.filter((t) => t !== grade));
+    if (gradeTags.includes(grade)) {
+      setGradeTags(gradeTags.filter((g) => g !== grade));
     } else {
-      setTags([...tags, grade]);
+      setGradeTags([...gradeTags, grade]);
     }
   };
 
   const handleSubTagChange = (subject: string, value: string) => {
-    setSubTags({ ...subTags, [subject]: value });
+    setSubSubjectTags({ ...subSubjectTags, [subject]: value });
   };
 
   const isButtonDisabled = () => {
     const isBasicFieldsFilled = title && content && selectedType;
     if (selectedType === "공지사항") {
-      return !(isBasicFieldsFilled && tags.some((tag) => grades.includes(tag)));
+      return !(
+        isBasicFieldsFilled && gradeTags.some((grade) => grades.includes(grade))
+      );
     } else {
       return !(
         isBasicFieldsFilled &&
         selectedSubject &&
-        subTags[selectedSubject]?.trim() &&
-        tags.some((tag) => grades.includes(tag))
+        subSubjectTags[selectedSubject]?.trim() &&
+        gradeTags.some((grade) => grades.includes(grade))
       );
     }
   };
@@ -105,23 +115,25 @@ export default function CreatePost() {
       authorId: session?.user?.id || "",
       content,
       type: "feed",
-      tags,
-      subtags: Object.values(subTags).filter((subtag) => subtag),
+      type2,
+      subjectTags,
+      subSubjectTags: Object.values(subSubjectTags).find((sub) => sub) || null,
+      gradeTags,
     };
-    setbutton(true);
+    setButton(true);
     alert("잠시만 기다려주세요!");
     axios
       .post("/api/post/posts", postData)
       .then((response) => {
         if (response.status === 200) {
-          setbutton(false);
+          setButton(false);
           alert("feed 작성 성공!");
           router.push("/feed");
         }
       })
       .catch((error) => {
         alert("이런 오류가 발생했어요!");
-        setbutton(false);
+        setButton(false);
         console.error(error);
       });
   };
@@ -194,7 +206,7 @@ export default function CreatePost() {
                   className="adminfeed-input"
                   type="text"
                   placeholder={`${selectedSubject} 세부 과목`}
-                  value={subTags[selectedSubject] || ""}
+                  value={subSubjectTags[selectedSubject] || ""}
                   onChange={(e) =>
                     handleSubTagChange(selectedSubject, e.target.value)
                   }
@@ -214,7 +226,7 @@ export default function CreatePost() {
                   key={grade}
                   onClick={() => handleGradeClick(grade)}
                   style={{
-                    backgroundColor: tags.includes(grade)
+                    backgroundColor: gradeTags.includes(grade)
                       ? "lightgreen"
                       : "#CFD0D1",
                   }}

@@ -77,7 +77,7 @@ export default function PlusStudentModal(props: {
     <>
       <div className="modal">
         <div className="modal-content" style={{ margin: "30px" }}>
-          <span className="close" onClick={closeModal}>
+          <span className="modal-close-button" onClick={closeModal}>
             &times;
           </span>
           <p>인원을 입력해주세요</p>

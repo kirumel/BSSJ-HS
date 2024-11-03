@@ -53,7 +53,7 @@ export default function SignIn({
             height={36}
             style={{ marginBottom: "30px" }}
           />
-          <span className="close" onClick={() => data(false)}>
+          <span className="modal-close-button" onClick={() => data(false)}>
             &times;
           </span>
           <>
@@ -81,7 +81,7 @@ export default function SignIn({
                 로그인
               </button>
             </div>
-
+            {/* 
             <p
               className="subtitle"
               style={{
@@ -111,7 +111,7 @@ export default function SignIn({
               onClick={() => handleSocialLogin("kakao")}
             >
               kakao
-            </button>
+            </button> */}
           </>
         </div>
       </div>
