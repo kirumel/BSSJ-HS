@@ -5,14 +5,10 @@ const prisma = new PrismaClient();
 export default async function handler(req: any, res: any) {
   console.log(req.body);
   if (req.method === "POST") {
-    const createdAt = req.body.date.replace(
-      /(\d{4})\. (\d{2})\. (\d{2})/,
-      "$1-$2-$3"
-    );
     try {
-      const findDB = await prisma.attendanceObjectDB.findMany({
+      const findDB = await prisma.attendanceObjectDB2.findMany({
         where: {
-          createdAt: createdAt,
+          createdAt: req.body.date,
           type: req.body.type,
         },
       });

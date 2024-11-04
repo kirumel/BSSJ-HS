@@ -7,18 +7,19 @@ import { PrismaClient } from "@prisma/client";
 
 export default async function handler(req: any, res: any) {
   const prisma = new PrismaClient();
+  const todayDate = new Date();
+  const today = new Date();
+
+  // 날짜 보기 좋게 설정
+  let formattedDate: string;
+
+  formattedDate = todayDate.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
   if (req.method === "POST") {
-    const todayDate = new Date();
-    const today = new Date();
-
-    // 날짜 보기 좋게 설정
-    let formattedDate: string;
-
-    formattedDate = todayDate.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
     const dbcompare = await prisma.attendanceObjectDB2.findMany({
       where: {
         createdAt: {
@@ -53,15 +54,10 @@ export default async function handler(req: any, res: any) {
     const 세로: any[] = [];
 
     students.firstcommitstudent.forEach((student: any) => {
-      // 날짜 포맷을 ISO 형식으로 변환
-      const formattedDate = student.createdAt.replace(
-        /(\d{4})\. (\d{2})\. (\d{2})/,
-        "$1-$2-$3"
-      );
       const studentsData = [
         formattedDate,
         student.name,
-        student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
+        student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
       ];

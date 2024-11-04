@@ -25,6 +25,7 @@
     "cheerio": "^1.0.0",
     "cloudinary": "^2.4.0",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "exceljs": "^4.4.0",
     "formidable": "^3.5.1",

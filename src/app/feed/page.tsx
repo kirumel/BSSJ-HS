@@ -21,6 +21,10 @@ interface Post {
   createdAt: Date;
   likes: Like[];
   comments: Comment[];
+  type2: string[];
+  gradetags: string[];
+  subjecttags: string[];
+  subsubjecttags: string | null;
 }
 
 interface Like {
@@ -51,7 +55,7 @@ export default function Cafe() {
   const [selectedGrade, setSelectedGrade] = useState("");
   const [subTags, setSubTags] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
-
+  console.log(posts);
   const handleTypeClick = (type) => {
     setSelectedType((prevType) => (prevType === type ? "" : type)); // Toggle selection
   };
@@ -356,11 +360,42 @@ export default function Cafe() {
                           ></img>
                           <div>
                             <p className="cafe-nickname">성지고 알리미</p>
-                            <p className="cafe-nickname-sub">공지사항</p>
+                            <p className="cafe-nickname-sub">
+                              /{post.type2.join("")}/{post.subSubjectTags}
+                            </p>
                           </div>
                         </div>
                         <p className="cafe-post-title">{post.title}</p>
                         <p className="feed-post-content">{post.content}</p>
+                        <p className="tagtitle" style={{ marginTop: "10px" }}>
+                          tag:
+                        </p>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            marginTop: "10px",
+                          }}
+                        >
+                          <div>
+                            {post.subjectTags &&
+                              post.subjectTags.map((subject) => (
+                                <p className="tags" key={subject}>
+                                  {subject}
+                                </p>
+                              ))}
+                          </div>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            {post.gradeTags &&
+                              post.gradeTags.map((grade) => (
+                                <p className="tags" key={grade}>
+                                  {grade}
+                                </p>
+                              ))}
+                          </div>
+                        </div>
                         <div className="display-between">
                           <p className="feed-post-date">{formattedDate}</p>
                         </div>

@@ -3,91 +3,133 @@ import axios from "axios";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/locale";
 
+import "./style.css";
 export default function Page() {
-  const [link, setlink] = useState("");
-  const [type, settype] = useState("");
-  function pdfDownload() {
-    axios
-      .post("/api/post/attendancedb", {
-        date: datavisible,
-        type: "pdf",
-      })
-      .then((response) => {
-        setlink(response.data[0].link);
-        settype("pdf");
-      })
-      .catch((error) => {
-        if (error.response) {
-          // 서버가 응답을 했지만, 응답 코드가 오류인 경우
-          console.error("서버 응답 오류 메시지:", error.response.data.message);
-          alert(error.response.data.message);
-        } else if (error.request) {
-          // 요청이 서버로 전송되었지만 응답이 없는 경우
-          console.error("서버 응답 없음:", error.request);
-        } else {
-          // 오류를 발생시킨 요청을 설정하는 중에 오류가 발생한 경우
-          console.error("요청 설정 오류:", error.message);
-        }
-      });
-  }
-  function excelDownload() {
-    axios
-      .post("/api/post/attendancedb", {
-        date: datavisible,
-        type: "excel",
-      })
-      .then((response) => {
-        const base64Data = response.data[0].link;
-        settype("xlsx");
-
-        // Base64 문자열을 이진 데이터로 변환
-        const byteCharacters = atob(base64Data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-
-        // Blob URL 생성
-        const url = URL.createObjectURL(blob);
-        setlink(url);
-      })
-      .catch((error) => {
-        if (error.response) {
-          // 서버가 응답을 했지만, 응답 코드가 오류인 경우
-          console.error("서버 응답 오류 메시지:", error.response.data.message);
-          alert(error.response.data.message);
-        } else if (error.request) {
-          // 요청이 서버로 전송되었지만 응답이 없는 경우
-          console.error("서버 응답 없음:", error.request);
-        } else {
-          // 오류를 발생시킨 요청을 설정하는 중에 오류가 발생한 경우
-          console.error("요청 설정 오류:", error.message);
-        }
-      });
-  }
+  const [link, setLink] = useState("");
+  const [type, setType] = useState("");
+  const [grade, setGrade] = useState("null");
   const [startDate, setStartDate] = useState(new Date());
+
   const datavisible = startDate.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   });
 
+  const pdfDownload = () => {
+    if (grade === "null") {
+      alert("학년을 선택해주세요");
+    } else {
+      axios
+        .post(`/api/post/attendancedb${grade}`, {
+          date: datavisible,
+          type: "pdf",
+        })
+        .then((response) => {
+          setLink(response.data[0].link);
+          setType("pdf");
+        })
+        .catch(handleError);
+    }
+  };
+
+  const excelDownload = () => {
+    if (grade === "null") {
+      alert("학년을 선택해주세요");
+    } else {
+      axios
+        .post(`/api/post/attendancedb${grade}`, {
+          date: datavisible,
+          type: "excel",
+        })
+        .then((response) => {
+          const base64Data = response.data[0].link;
+          setType("xlsx");
+
+          const byteCharacters = atob(base64Data);
+          const byteNumbers = Array.from(byteCharacters, (char) =>
+            char.charCodeAt(0)
+          );
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          const url = URL.createObjectURL(blob);
+          setLink(url);
+        })
+        .catch(handleError);
+    }
+  };
+
+  const handleError = (error) => {
+    if (error.response) {
+      console.error("서버 응답 오류 메시지:", error.response.data.message);
+      alert(error.response.data.message);
+    } else if (error.request) {
+      console.error("서버 응답 없음:", error.request);
+    } else {
+      console.error("요청 설정 오류:", error.message);
+    }
+  };
+
+  const handleDownload = () => {
+    if (link) {
+      const anchor = document.createElement("a");
+      anchor.href = link;
+      anchor.download = `attendanceDB.${type}`;
+      anchor.click();
+      URL.revokeObjectURL(link); // Clean up URL
+    }
+  };
+
   return (
-    <>
-      <DatePicker
-        selected={startDate}
-        onChange={(date) => date !== null && setStartDate(date)}
-      />
-      <button onClick={pdfDownload}>PDF</button>
-      <button onClick={excelDownload}>Excel</button>
-      <a href={link} download={`attendanceDB.${type}`}>
-        다운
-      </a>
-    </>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "calc(100vh - 115px)",
+      }}
+    >
+      <div>
+        <DatePicker
+          className="datepicker"
+          selected={startDate}
+          locale={ko}
+          dateFormat="yyyy-MM-dd"
+          onChange={(date) => date !== null && setStartDate(date)}
+        />
+      </div>
+      <div>
+        <select
+          className="grade"
+          value={grade}
+          onChange={(e) => setGrade(e.target.value)}
+        >
+          <option value="null">학년 선택</option>
+          <option value="1">1학년</option>
+          <option value="2">2학년</option>
+          <option value="3">3학년</option>
+        </select>
+      </div>
+      <div>
+        <button className="grade" onClick={pdfDownload}>
+          PDF
+        </button>
+        <button className="grade" onClick={excelDownload}>
+          Excel
+        </button>
+      </div>
+
+      <div style={{ width: "80vw", marginTop: "10px" }}>
+        <button className="ok-button" onClick={handleDownload} disabled={!link}>
+          다운
+        </button>
+      </div>
+    </div>
   );
 }

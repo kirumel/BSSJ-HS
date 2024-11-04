@@ -9,7 +9,9 @@ import { useRouter } from "next/navigation";
 export default function Page() {
   const { data: session } = useSession();
   const router = useRouter();
-
+  if (!session) {
+    alert("권환 오류! 다시 로그인 해주세요");
+  }
   if (session?.user?.role !== "SjAdMin") {
     router.push("/");
     alert("관리자 권환이 없습니다");
@@ -58,6 +60,15 @@ export default function Page() {
                 감독관
               </button>
             </Link>
+            <Link href="compareAT">
+              <button
+                style={{ backgroundColor: "#9A9AF6" }}
+                className="event-box-button"
+              >
+                8교시 <br />
+                출석 대조
+              </button>
+            </Link>
           </div>
 
           <div className="event-box-container">
@@ -75,13 +86,22 @@ export default function Page() {
               야자 <br />
               감독관
             </button>
+            <button
+              style={{ backgroundColor: "#F495B9" }}
+              className="event-box-button"
+            >
+              야자 <br />
+              출석 대조
+            </button>
           </div>
 
           <div className="event-box-container">
-            <button className="event-box-button" style={{ color: "black" }}>
-              출석부 <br />
-              다운
-            </button>
+            <Link href="attendanceDB">
+              <button className="event-box-button" style={{ color: "black" }}>
+                출석부 <br />
+                다운
+              </button>
+            </Link>
             <button style={{ color: "black" }} className="event-box-button">
               이벤트 <br />
               등록
