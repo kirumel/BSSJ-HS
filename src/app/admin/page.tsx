@@ -66,7 +66,7 @@ export default function Page() {
                 className="event-box-button"
               >
                 8교시 <br />
-                출석 대조
+                출석대조
               </button>
             </Link>
           </div>
@@ -91,7 +91,7 @@ export default function Page() {
               className="event-box-button"
             >
               야자 <br />
-              출석 대조
+              출석대조
             </button>
           </div>
 
@@ -106,6 +106,11 @@ export default function Page() {
               이벤트 <br />
               등록
             </button>
+            <Link href="sessiondelete">
+              <button style={{ color: "black" }} className="event-box-button">
+                학생 <br />밴
+              </button>
+            </Link>
           </div>
         </div>
       </div>
