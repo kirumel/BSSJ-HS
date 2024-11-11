@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 const ProtectedPage = ({ children }: { children: any }) => {
   const { data: session, status } = useSession();
   const pathname = usePathname();
+
   if (session?.user == null && status === "authenticated") {
     alert("오류가 발생하였거나 부적절한 사용으로 차단되었습니다");
   }

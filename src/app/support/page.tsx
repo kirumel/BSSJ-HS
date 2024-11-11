@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import "./style.css";
 
-const Support = () => {
+export default function Support() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -74,6 +74,4 @@ const Support = () => {
       )}
     </div>
   );
-};
-
-export default Support;
+}

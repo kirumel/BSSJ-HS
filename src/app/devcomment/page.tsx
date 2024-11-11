@@ -1,14 +1,22 @@
 import Link from "next/link";
+import Image from "next/image";
+import logo from "../../../public/newlogo.png";
+import "./style.css";
 
 export default function dev() {
   return (
     <>
       <div className="home-layout">
         <div className="devcomment-white">
-          <div className="comment-imgbox">
-            <div className="comment-img"></div>
+          <div>
+            <Image
+              className="devcomment-logo"
+              src={logo}
+              alt="logo"
+              width={80}
+              height={80}
+            />
           </div>
-
           <div className="devcomment-layout">
             <h3 className="title">성지고 학습 도우미</h3>
             <p>
@@ -23,28 +31,21 @@ export default function dev() {
               <br />
               <br />
             </p>
-            <h3 className="title">문의</h3>
-            <p>
-              혹시 건의사항이나 궁금한 점, 오류가 있으면 <br /> 인스타그램
-              @th.yestar로 알려주세요
-              <br />
-              <br />
-              <br />
-            </p>
             Copyright © 2024 Altisto All rights reserved.
             <br />
-            <br />
+            <p>개발진</p>
             <h5>developer / UI/UX design : 2309서현웅</h5>
             <h5>
-              special thanks :<br />
+              도움을 주신분들
+              <br />
               <br />
               <p>@ekal_.index / 다미</p>
               <br />
-              <p>교무기획부 장은경 선생님 </p>
+              <p>교무기획부 장은경 선생님</p>
+              <p>제 18대 교장 정우승 교장선생님</p>
+              <p>제 18대 교감 선생님</p>
+              <p>유동호 선생님</p>
             </h5>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <button className="subject-button">고객센터</button>
           </div>
         </div>
       </div>

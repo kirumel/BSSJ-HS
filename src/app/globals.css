@@ -9,6 +9,22 @@
   margin: 0;
   color: white;
 }
+@media screen and (min-width: 750px) {
+  .phone-display-none {
+    display: none;
+  }
+  .day-box {
+    width: 38%;
+  }
+}
+@media screen and (max-width: 750px) {
+  .pad-display-none {
+    display: none;
+  }
+  .day-box {
+    width: 100%;
+  }
+}
 .event-text-container {
   padding: 20px;
 }

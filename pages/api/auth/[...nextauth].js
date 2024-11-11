@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { randomUUID } from "crypto";
+import { randomUUID, sign } from "crypto";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import NaverProvider from "next-auth/providers/naver";
@@ -7,6 +7,7 @@ import KakaoProvider from "next-auth/providers/kakao";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
+import { signOut } from "next-auth/react";
 
 const prisma = new PrismaClient();
 
@@ -86,7 +87,7 @@ export const authOptions = {
         });
 
         if (!sessionExists) {
-          return { user: null }; // 세션이 삭제되었으면 null 반환
+          return signOut();
         }
 
         session.user = token.user;
