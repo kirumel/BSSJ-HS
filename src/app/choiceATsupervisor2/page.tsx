@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 
@@ -51,6 +51,10 @@ export default function Page() {
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [longPressedStudentId, setLongPressedStudentId] = useState<
+    string | null
+  >(null);
+  const pressTimer = useRef<any>(null);
 
   const getFilteredStudents = () => {
     if (selectedClass === null || selectedClass == "") {
@@ -64,6 +68,26 @@ export default function Page() {
     return Array.from(classSet).sort();
   };
 
+  const startPress = (id: string) => {
+    pressTimer.current = setTimeout(() => {
+      setLongPressedStudentId(id);
+    }, 1000);
+  };
+
+  const endPress = () => {
+    clearTimeout(pressTimer.current);
+  };
+
+  const handleLongPressAction = (id: string) => {
+    alert(`${id}선택!`);
+  };
+
+  useEffect(() => {
+    if (longPressedStudentId) {
+      handleLongPressAction(longPressedStudentId);
+      setLongPressedStudentId(null); // Reset after action
+    }
+  }, [longPressedStudentId]);
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
 
@@ -229,6 +253,11 @@ export default function Page() {
             ) || { check: "", comment: "" };
             return (
               <div
+                onMouseDown={() => startPress(data.id)}
+                onMouseUp={endPress}
+                onMouseLeave={endPress}
+                onTouchStart={() => startPress(data.id)}
+                onTouchEnd={endPress}
                 style={{
                   backgroundColor: `${
                     studentCommit.check === "0"

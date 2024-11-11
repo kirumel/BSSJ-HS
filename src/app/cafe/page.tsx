@@ -22,7 +22,13 @@ export default async function Page() {
           </div>
         </Link>
         <input className="cafe-top-search" placeholder="검색"></input>
-        <img className="cafe-profileimg" src={session?.user?.image}></img>
+        <img
+          className="cafe-profileimg"
+          src={
+            session?.user?.image ||
+            "https://www.studiopeople.kr/common/img/default_profile.png"
+          }
+        ></img>
       </div>
       <div className="line"></div>
       <div className="cafe-middle-container">
