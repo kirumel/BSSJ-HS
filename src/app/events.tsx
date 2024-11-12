@@ -34,8 +34,8 @@ export default function Events() {
             <div style={{ width: "100%", height: "33vh" }}>
               <img className="home-event-img" src="altisto.png" alt="Slide 1" />
               <div className="event-overlay">
-                <h2 className="event-title">beta test</h2>
-                <p>version 1.2</p>
+                <h2 className="event-title">SJHS helper</h2>
+                <p>정식 출시!</p>
               </div>
             </div>
           </SwiperSlide>
@@ -77,7 +77,7 @@ export default function Events() {
               <p className="main-event-title" style={{ color: "white" }}>
                 SJHS helper
                 <br />
-                beta version 1.0
+                정식 출시!
               </p>
             </div>
             <div className="main-event-imgbox">

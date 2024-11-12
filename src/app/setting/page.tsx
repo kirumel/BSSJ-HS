@@ -76,11 +76,15 @@ export default function Setting() {
               <h3>계정 삭제</h3>
               <input
                 type="password"
+                className="text-input"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                style={{ marginBottom: "10px" }}
               />
-              <button onClick={handleDeleteAccount}>삭제하기</button>
+              <button className="ok-button" onClick={handleDeleteAccount}>
+                계정 삭제하기
+              </button>
               {deletionMessage && <p>{deletionMessage}</p>}
             </div>
           </div>
