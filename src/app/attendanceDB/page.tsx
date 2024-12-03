@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ko } from "date-fns/locale";
 
 import "./style.css";
+
 export default function Page() {
   const [link, setLink] = useState("");
   const [type, setType] = useState("");
@@ -75,16 +76,6 @@ export default function Page() {
     }
   };
 
-  const handleDownload = () => {
-    if (link) {
-      const anchor = document.createElement("a");
-      anchor.href = link;
-      anchor.download = `attendanceDB.${type}`;
-      anchor.click();
-      URL.revokeObjectURL(link); // Clean up URL
-    }
-  };
-
   return (
     <div
       style={{
@@ -125,11 +116,13 @@ export default function Page() {
         </button>
       </div>
 
-      <div style={{ width: "80vw", marginTop: "10px" }}>
-        <button className="ok-button" onClick={handleDownload} disabled={!link}>
-          다운
-        </button>
-      </div>
+      {link && (
+        <div style={{ width: "80vw", marginTop: "10px" }}>
+          <a href={link} download={`attendanceDB.${type}`}>
+            <button className="ok-button">다운</button>
+          </a>
+        </div>
+      )}
     </div>
   );
 }

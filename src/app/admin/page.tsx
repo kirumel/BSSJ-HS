@@ -71,7 +71,7 @@ export default function Page() {
             </Link>
           </div>
 
-          <div className="event-box-container">
+          {/* <div className="event-box-container">
             <button
               style={{ backgroundColor: "#F06196" }}
               className="event-box-button"
@@ -93,7 +93,7 @@ export default function Page() {
               야자 <br />
               출석대조
             </button>
-          </div>
+          </div> */}
 
           <div className="event-box-container">
             <Link href="attendanceDB">

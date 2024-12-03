@@ -11,9 +11,6 @@ export default function Events() {
   return (
     <div>
       <div className="event-button-container">
-        <a href="/events">
-          <button className="event-button">이벤트</button>
-        </a>
         <a href="/admin">
           <button className="event-button">관리자</button>
         </a>
@@ -47,8 +44,8 @@ export default function Events() {
                 alt="Slide 2"
               />
               <div className="event-overlay">
-                <h2 className="event-title">이벤트 부분</h2>
-                <p>이벤트 부분</p>
+                <h2 className="event-title">인스타그램 홍보하고</h2>
+                <p>치킨 받아가자!</p>
               </div>
             </div>
           </SwiperSlide>
