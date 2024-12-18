@@ -149,11 +149,13 @@ export default function Page() {
         grade: "1",
         formattedDate,
       });
+      const reset = await axios.patch("/api/post/resetAttendance", {});
 
       if (
         response.status === 200 &&
         response2.status === 200 &&
-        response3.status === 200
+        response3.status === 200 &&
+        reset.status === 200
       ) {
         setSuccessModalTimer();
         setIsLoading(false);

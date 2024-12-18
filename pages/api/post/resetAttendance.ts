@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
   try {
-    if (req.method === "POST") {
-      await prisma.attendanceObject.create({
+    if (req.method === "PATCH") {
+      await prisma.attendanceObject.updateMany({
         data: {
           comment: null,
           check: null,

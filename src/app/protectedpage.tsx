@@ -31,7 +31,8 @@ const ProtectedPage = ({ children }: { children: any }) => {
     pathname !== "/verify-email" &&
     pathname !== "/accountdelete" &&
     pathname !== "/success" &&
-    pathname !== "/support"
+    pathname !== "/support" &&
+    pathname !== "/teacherregister"
   ) {
     return <Nosign />;
   }

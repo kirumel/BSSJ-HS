@@ -12,7 +12,6 @@ export default function SchoolPosts() {
         const data = await response.json();
         setPosts(data);
       } catch (error) {
-        alert("학교 공지사항을 불러온는데 오류가 발생하였습니다");
         console.error(
           "학교 공지사항을 불러온는데 오류가 발생하였습니다",
           error

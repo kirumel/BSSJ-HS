@@ -18,7 +18,7 @@ export default function Page() {
         <button className="back-button" onClick={handleBackClick}>
           <span>&larr;</span>
         </button>
-        <strong>Altisto 개인정보처리방침</strong>
+        <strong style={{ marginTop: "30px" }}>Altisto 개인정보처리방침</strong>
         <p>
           본 개인정보처리방침은 모바일 장치용 SJHS-앱(이하 "애플리케이션")에
           적용되며, Altisto(이하 "서비스 제공자")가 제공하는 무료 서비스로,

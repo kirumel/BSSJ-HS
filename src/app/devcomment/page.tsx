@@ -19,7 +19,7 @@ export default function dev() {
           </div>
           <div className="devcomment-layout">
             <h3 className="title">성지고 학습 도우미</h3>
-            <p>
+            <h5>
               성지고 학습 도우미 - B.SJHS helper는
               <br />
               성지고등학교 학생들을 위해 개발된 앱이에요!
@@ -30,21 +30,48 @@ export default function dev() {
               웹과 앱 모두 쉽게 접속 가능해요
               <br />
               <br />
-            </p>
-            Copyright © 2024 Altisto All rights reserved.
-            <br />
-            <p>개발진</p>
-            <h5>developer / UI/UX design : 2309서현웅</h5>
-            <h5>
-              도움을 주신분들
-              <br />
-              <br />
-              <p>@ekal_.index / 다미</p>
-              <br />
-              <p>교무기획부 장은경 선생님</p>
-              <p>제 18대 교장 정우승 교장선생님</p>
-              <p>제 18대 교감 선생님</p>
-              <p>유동호 선생님</p>
+            </h5>
+            <h3
+              className="title"
+              style={{ marginTop: "20px", marginBottom: "0" }}
+            >
+              dev 💻
+            </h3>
+            <div className="line"></div>
+            <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
+              developer | UI / UX design : 2309서현웅
+            </h5>
+            <h3
+              className="title"
+              style={{ marginTop: "30px", marginBottom: "0" }}
+            >
+              도움을 주신분들 ✨
+            </h3>
+            <div className="line"></div>
+            <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
+              ✨ 교무기획부 장은경 선생님
+            </h5>
+            <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
+              🔧 @ekal_.index / 다미
+            </h5>
+            <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
+              🦅 제 18대 교장 정우승 선생님
+            </h5>
+            <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
+              🩺 제 18대 교감 김옥녀 선생님
+            </h5>
+            <h5
+              style={{
+                marginTop: "30px",
+                marginBottom: "0",
+                backgroundColor: "gray",
+                color: "white",
+                padding: "5px",
+                textAlign: "right",
+                fontSize: "10px",
+              }}
+            >
+              Copyright © 2024 Altisto All rights reserved.
             </h5>
           </div>
         </div>

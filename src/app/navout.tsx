@@ -9,7 +9,7 @@ export default function NavOut() {
   const pathname = usePathname();
   const notshow = [
     "/funnel-register",
-    "/devcomment",
+    "/teacherregister",
     "/success",
     "/nosign",
     "/signin",

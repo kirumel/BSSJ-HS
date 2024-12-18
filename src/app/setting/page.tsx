@@ -31,9 +31,7 @@ export default function Setting() {
       if (response.status === 200) {
         signOut(); // Log out the user after deletion
       } else {
-        setDeletionMessage(
-          "Account deletion failed. Please check your password."
-        );
+        setDeletionMessage("오류 비밀번호가 일치하지 않습니다");
       }
     } catch (error) {
       setDeletionMessage("An error occurred during account deletion.");
@@ -77,7 +75,7 @@ export default function Setting() {
               <input
                 type="password"
                 className="text-input"
-                placeholder="Enter your password"
+                placeholder="비밀번호를 입력해주세요"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{ marginBottom: "10px" }}

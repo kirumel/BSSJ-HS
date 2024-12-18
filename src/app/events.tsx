@@ -92,29 +92,9 @@ export default function Events() {
                 }}
               ></div>
               <p className="main-event-title" style={{ color: "white" }}>
-                sjhs helper 인스타그램 홍보하고
+                성림축제 메이커부스
                 <br />
-                치킨 받아가자!
-              </p>
-            </div>
-            <div className="main-event-imgbox">
-              <img className="main-event-img" src="main.jpg"></img>
-              <div
-                className="main-event-overlay2"
-                style={{ backgroundColor: "rgb(280,160,160)" }}
-              ></div>
-              <div
-                className="main-event-overlay1"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, transparent 48.15%, rgba(280,160,160) 94.91%)",
-                  color: "white",
-                }}
-              ></div>
-              <p className="main-event-title" style={{ color: "white" }}>
-                성지고 교복 나눔제
-                <br />
-                관심있다면 클릭!
+                체험하고 음식받아가자!
               </p>
             </div>
           </div>
