@@ -45,7 +45,7 @@ export default function dev() {
               className="title"
               style={{ marginTop: "30px", marginBottom: "0" }}
             >
-              도움을 주신분들 ✨
+              special thanks✨
             </h3>
             <div className="line"></div>
             <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
