@@ -58,6 +58,18 @@ model attendanceObject {
   studentnumber Int?
   updatedAt     String?
 }
+model nightAttendanceObject{
+  id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  updatedAt     String?
+}
 
 model compareAT {
   id   String  @id @default(cuid())
@@ -88,6 +100,29 @@ model attendanceObjectDB3 {
   link      String?
   createdAt String?
   type      String?
+}
+model nightCompareAT {
+  id   String  @id @default(cuid())
+  createdAt String
+  data String?
+  grade String
+}
+model nightAtSupervisor{
+id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  outTime       String?
+  updatedAt     String?
+}
+model etcData{
+  id String @id @default(cuid())
+  inTime String?
 }
 
 model User {

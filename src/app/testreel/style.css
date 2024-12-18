@@ -3,3 +3,22 @@
   justify-content: center;
   align-items: center;
 }
+.reel div {
+  padding: 30px;
+  margin: 10px;
+  font-size: 32px;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  background-color: #f1f1f1;
+}
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 144px);
+}
+.flex-container:focus {
+  border: none;
+  outline: none;
+}

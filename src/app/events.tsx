@@ -44,8 +44,8 @@ export default function Events() {
                 alt="Slide 2"
               />
               <div className="event-overlay">
-                <h2 className="event-title">인스타그램 홍보하고</h2>
-                <p>치킨 받아가자!</p>
+                <h2 className="event-title">성림축제 메이커부스</h2>
+                <p>체험하고 음식받아가자!</p>
               </div>
             </div>
           </SwiperSlide>

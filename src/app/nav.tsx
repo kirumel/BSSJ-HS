@@ -20,6 +20,7 @@ export default function Nav() {
     "/study",
     "/admin",
     "/feed",
+    "/nightAT",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;

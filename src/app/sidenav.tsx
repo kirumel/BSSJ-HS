@@ -14,6 +14,7 @@ export default function NavOut() {
     "/nosign",
     "/signin",
     "/accountregister",
+    "/nightAT",
   ];
   if (pathname && notshow.includes(pathname)) {
     return null;
