@@ -63,7 +63,7 @@ export default function Nosign() {
           >
             BSSJ로그인
           </button>
-          <a href="/funnel-register">
+          <a href="/choiceRegister">
             <button className="nsign-register">회원가입하기</button>
           </a>
         </div>
