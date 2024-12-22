@@ -230,10 +230,12 @@ export default function Page() {
                 다운
               </button>
             </Link>
-            <button style={{ color: "black" }} className="event-box-button">
-              이벤트 <br />
-              등록
-            </button>
+            <Link href="qrScan">
+              <button style={{ color: "black" }} className="event-box-button">
+                qr <br />
+                scaner
+              </button>
+            </Link>
             <Link href="sessiondelete">
               <button style={{ color: "black" }} className="event-box-button">
                 학생 <br />밴
