@@ -65,9 +65,9 @@ export default function Page() {
       </div>
       <div className="scanner">
         <Scanner
+          allowMultiple={true}
           components={{ zoom: true }}
           onScan={(data) => {
-            alert(data[0].rawValue);
             handleScan(data[0].rawValue);
           }}
         />

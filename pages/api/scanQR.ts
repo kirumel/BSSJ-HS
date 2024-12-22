@@ -6,13 +6,20 @@ export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
       const { qr, nameid } = req.body;
-      const post = await prisma.eventQR.create({
-        data: {
-          nameid: nameid,
-          qrcode: qr,
-        },
-      });
-      res.status(200).json({ message: qr.toString().slice(2) });
+      const qrArray = ["sj1", "sj2", "sj3", "sj4", "sj5", "sj6", "sj7"];
+      if (!qrArray.includes(qr)) {
+        res.status(202).json({
+          message: `이미 스켄한 ${qr.toString().slice(2)}번째 코드입니다`,
+        });
+      } else {
+        const post = await prisma.eventQR.create({
+          data: {
+            nameid: nameid,
+            qrcode: qr,
+          },
+        });
+        res.status(200).json({ message: qr.toString().slice(2) });
+      }
     } catch (error) {
       res.status(202).json({ message: `오류발생${error} ` });
     }
