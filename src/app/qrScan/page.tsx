@@ -60,6 +60,7 @@ export default function Page() {
         <div>
           <button>힌트보기</button>
           <button>상품보기</button>
+          <button>상품받기QR</button>
         </div>
       </div>
       <div className="scanner">
