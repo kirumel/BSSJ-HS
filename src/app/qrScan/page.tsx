@@ -67,6 +67,7 @@ export default function Page() {
         <Scanner
           components={{ finder: true }}
           onScan={(data) => {
+            alert(data[0].rawValue);
             handleScan(data[0].rawValue);
           }}
         />
