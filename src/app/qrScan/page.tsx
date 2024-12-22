@@ -43,14 +43,12 @@ export default function Page() {
   }
   return (
     <>
-      <div className="scanner">
-        <Scanner
-          components={{ finder: true }}
-          onScan={(data) => {
-            handleScan(data[0].rawValue);
-          }}
-        />
-      </div>
+      <Scanner
+        components={{ finder: true }}
+        onScan={(data) => {
+          handleScan(data[0].rawValue);
+        }}
+      />
     </>
   );
 }
