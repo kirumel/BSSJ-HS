@@ -13,19 +13,7 @@ export default function Page() {
   function handlesuccess(a: any) {
     toast.success(a);
   }
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        console.log("카메라에 접근 성공", stream);
-      })
-      .catch((error) => {
-        console.error("카메라 권한 거부", error);
-        if (error.name === "NotAllowedError") {
-          alert("브라우저 설정에서 카메라 권한을 다시 활성화해주세요.");
-        }
-      });
-  }, []);
+
   function handleScan(data: any) {
     try {
       axios
