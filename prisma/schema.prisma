@@ -8,7 +8,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
+model eventQR{
+  id            String   @id @default(cuid())
+  nameid        String
+  createdAt     DateTime @default(now())
+  qrcode        String
+}
         
 model UnverifiedUser {
   id        Int      @id @default(autoincrement())

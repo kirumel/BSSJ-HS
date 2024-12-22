@@ -1,0 +1,30 @@
+.scanner {
+  padding-right: 23vw;
+  padding-left: 23vw;
+}
+.stemp {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.stemp-box div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vw;
+  width: 10vw;
+  min-width: 30px;
+  min-height: 30px;
+  background-color: darkgray;
+  margin-right: 3px;
+  margin-left: 3px;
+  border-radius: 100px;
+}
+.stemp-box {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
