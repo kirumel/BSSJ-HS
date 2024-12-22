@@ -4,7 +4,7 @@ import "./style.css";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Slide, ToastContainer, toast } from "react-toastify";
-
+import { useEffect } from "react";
 export default function Page() {
   const session = useSession();
   function handleScanError(a: any) {
@@ -13,6 +13,20 @@ export default function Page() {
   function handlesuccess(a: any) {
     toast.success(a);
   }
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        console.log("카메라에 접근 성공", stream);
+        // 카메라 스트림 사용 코드
+      })
+      .catch((error) => {
+        console.error("카메라 권한 거부", error);
+        if (error.name === "NotAllowedError") {
+          alert("브라우저 설정에서 카메라 권한을 다시 활성화해주세요.");
+        }
+      });
+  }, []);
   function handleScan(data: any) {
     try {
       axios

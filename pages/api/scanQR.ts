@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
           qrcode: qr,
         },
       });
-      res.status(200).json(qr.toString().slice(2));
+      res.status(200).json({ message: qr.toString().slice(2) });
     } catch (error) {
       res.status(202).json({ message: `오류발생${error} ` });
     }
