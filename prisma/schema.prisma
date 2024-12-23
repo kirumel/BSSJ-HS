@@ -29,7 +29,7 @@ model Account {
 }
 
 model Comment {
-  id         String   @id
+  id         String   @id @default(cuid())
   postId     String
   userId     String?
   author     String?
@@ -41,7 +41,7 @@ model Comment {
 }
 
 model Like {
-  id         String   @id
+  id         String  @id @default(cuid())
   postId     String
   userId     String?
   createdAt  DateTime @default(now())
@@ -51,7 +51,7 @@ model Like {
 }
 
 model Post {
-  id             String    @id
+  id             String   @id @default(cuid())
   nickname       String?
   title          String
   content        String
@@ -70,7 +70,7 @@ model Post {
 }
 
 model SJHSUser {
-  id                String   @id
+  id                String   @id @default(cuid())
   name              String?
   email             String   @unique
   image             String?
@@ -115,7 +115,7 @@ model UnverifiedUser {
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(cuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
@@ -136,7 +136,7 @@ model User {
 }
 
 model attendanceObject {
-  id            String   @id
+  id            String  @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
   check         String?
@@ -149,7 +149,7 @@ model attendanceObject {
 }
 
 model attendanceObjectDB {
-  id        String  @id
+  id        String  @id @default(cuid())
   author    String?
   link      String?
   createdAt String?
@@ -157,7 +157,7 @@ model attendanceObjectDB {
 }
 
 model attendanceObjectDB2 {
-  id        String  @id
+  id        String  @id @default(cuid())
   author    String?
   link      String?
   createdAt String?
@@ -165,7 +165,7 @@ model attendanceObjectDB2 {
 }
 
 model attendanceObjectDB3 {
-  id        String  @id
+  id        String  @id @default(cuid())
   author    String?
   link      String?
   createdAt String?
@@ -173,26 +173,26 @@ model attendanceObjectDB3 {
 }
 
 model compareAT {
-  id        String  @id
+  id        String @id @default(cuid())
   data      String?
   grade     String
   createdAt String
 }
 
 model etcData {
-  id     String  @id
+  id     String  @id @default(cuid())
   inTime String?
 }
 
 model eventQR {
-  id        String   @id
+  id        String  @id @default(cuid())
   nameid    String
   createdAt DateTime @default(now())
   qrcode    String
 }
 
 model nightAtSupervisor {
-  id            String   @id
+  id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
   check         String?
@@ -206,7 +206,7 @@ model nightAtSupervisor {
 }
 
 model nightAttendanceObject {
-  id            String   @id
+  id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
   check         String?
@@ -219,7 +219,7 @@ model nightAttendanceObject {
 }
 
 model nightCompareAT {
-  id        String  @id
+  id        String  @id @default(cuid())
   createdAt String
   data      String?
   grade     String

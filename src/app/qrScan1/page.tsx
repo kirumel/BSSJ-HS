@@ -286,7 +286,7 @@ export default function Page() {
               allowMultiple={true}
               components={{ zoom: true }}
               onScan={(data) => {
-                handleScan(data[0].rawValue);
+                alert(`${data[0].rawValue}`);
               }}
             />
           </div>
