@@ -25,7 +25,7 @@ export default async function handler(req: any, res: any) {
         "Sj5",
         "Sj6",
         "Sj7",
-        "DB98-32905B-00<NUL>",
+        "DB98-32905B-00",
       ];
       if (!qrArray.includes(qr)) {
         res.status(202).json({
