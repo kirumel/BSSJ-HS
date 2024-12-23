@@ -33,7 +33,6 @@ export default async function handler(req: any, res: any) {
           class: parseInt(clss, 10),
           name,
           nickname,
-          role: "SjAdMin",
         },
       });
 

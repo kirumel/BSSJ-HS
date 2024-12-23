@@ -16,6 +16,7 @@ export default function NavOut() {
     "/accountregister",
     "/posts",
     "/support",
+    "/guest",
   ];
   if (pathname && notshow.includes(pathname)) {
     return null;

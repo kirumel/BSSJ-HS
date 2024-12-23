@@ -15,7 +15,7 @@ export default function ChoiceAT() {
           >
             <div style={{ width: "100%", marginBottom: "10px" }}>
               <div className="etc-container display-flex">
-                <Link href="/funnel-register">학생 계정</Link>
+                <Link href="/guest">학생 게스트 계정</Link>
               </div>
             </div>
             <div style={{ width: "100%", marginBottom: "10px" }}>

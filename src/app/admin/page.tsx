@@ -230,7 +230,7 @@ export default function Page() {
                 다운
               </button>
             </Link>
-            <Link href="qrScan">
+            <Link href="qrScanSj0010">
               <button style={{ color: "black" }} className="event-box-button">
                 qr <br />
                 scaner

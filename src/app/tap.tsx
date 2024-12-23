@@ -17,11 +17,11 @@ const tabs = [
     icon: faHome,
     label: "피드",
   },
-  {
-    route: "/cafe",
-    icon: faBowlFood,
-    label: "커뮤니티",
-  },
+  // {
+  //   route: "/cafe",
+  //   icon: faBowlFood,
+  //   label: "커뮤니티",
+  // },
   // {
   //   route: "/study",
   //   icon: faUserCircle,

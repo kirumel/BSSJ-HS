@@ -4,17 +4,23 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
 import SwiperCore from "swiper";
 import { Autoplay } from "swiper/modules";
+import { useSession } from "next-auth/react";
 
 SwiperCore.use([Autoplay]); // Use the Autoplay module
 
 export default function Events() {
+  const { data: session } = useSession();
   return (
     <div>
-      <div className="event-button-container">
-        <a href="/admin">
-          <button className="event-button">관리자</button>
-        </a>
-      </div>
+      {session?.user?.role === "SjAdMin" ? (
+        <div className="event-button-container">
+          <a href="/admin">
+            <button className="event-button">관리자</button>
+          </a>
+        </div>
+      ) : (
+        <div></div>
+      )}
 
       <div className="phone-display-none">
         <Swiper
@@ -28,26 +34,19 @@ export default function Events() {
           loop={true}
         >
           <SwiperSlide className="event-slide">
-            <div style={{ width: "100%", height: "33vh" }}>
-              <img className="home-event-img" src="altisto.png" alt="Slide 1" />
-              <div className="event-overlay">
-                <h2 className="event-title">SJHS helper</h2>
-                <p>정식 출시!</p>
+            <a href="/qrScan">
+              <div style={{ width: "100%", height: "33vh" }}>
+                <img
+                  className="home-event-img"
+                  src="makers.png"
+                  alt="Slide 2"
+                />
+                <div className="event-overlay">
+                  <h2 className="event-title">동아리 한마당 메이커부스</h2>
+                  <p> qr 보물 찾고 상품 받아가자!</p>
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide className="event-slide">
-            <div style={{ width: "100%", height: "33vh" }}>
-              <img
-                className="home-event-img"
-                src="logofull.jpg"
-                alt="Slide 2"
-              />
-              <div className="event-overlay">
-                <h2 className="event-title">성림축제 메이커부스</h2>
-                <p>체험하고 음식받아가자!</p>
-              </div>
-            </div>
+            </a>
           </SwiperSlide>
         </Swiper>
       </div>
@@ -57,46 +56,28 @@ export default function Events() {
       >
         <div className="scroll-containercenter">
           <div className="scroll-container">
-            <div className="main-event-imgbox">
-              <img className="main-event-img" src="altisto.png"></img>
-              <div
-                className="main-event-overlay2"
-                style={{ backgroundColor: "rgb(132, 146, 209)" }}
-              ></div>
-              <div
-                className="main-event-overlay1"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, transparent 48.15%, rgba(132, 146, 209,1) 94.91%)",
-                  color: "white",
-                }}
-              ></div>
-              <p className="main-event-title" style={{ color: "white" }}>
-                SJHS helper
-                <br />
-                정식 출시!
-              </p>
-            </div>
-            <div className="main-event-imgbox">
-              <img className="main-event-img" src="instagram-logo2.jpg"></img>
-              <div
-                className="main-event-overlay2"
-                style={{ backgroundColor: "rgb(280,150,150)" }}
-              ></div>
-              <div
-                className="main-event-overlay1"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, transparent 48.15%, rgba(280,150,150) 94.91%)",
-                  color: "white",
-                }}
-              ></div>
-              <p className="main-event-title" style={{ color: "white" }}>
-                성림축제 메이커부스
-                <br />
-                체험하고 음식받아가자!
-              </p>
-            </div>
+            <a href="/qrScan">
+              <div className="main-event-imgbox">
+                <img className="main-event-img" src="makers.png"></img>
+                <div
+                  className="main-event-overlay2"
+                  style={{ backgroundColor: "rgb(0, 0, 0)" }}
+                ></div>
+                <div
+                  className="main-event-overlay1"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(180deg, transparent 48.15%, rgba(0, 0, 0) 94.91%)",
+                    color: "white",
+                  }}
+                ></div>
+                <p className="main-event-title" style={{ color: "white" }}>
+                  동아리 한마당 메이커부스
+                  <br />
+                  qr 보물 찾고 상품 받아가자!
+                </p>
+              </div>
+            </a>
           </div>
         </div>
       </div>
