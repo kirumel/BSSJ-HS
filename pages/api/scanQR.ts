@@ -6,10 +6,10 @@ export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
       const { qr, nameid } = req.body;
-      const qrArray = ["sj1", "sj2", "sj3", "sj4", "sj5", "sj6", "sj7"];
-      if (qrArray.includes(qr)) {
+      const qrArray = ["Sj1", "Sj2", "Sj3", "Sj4", "Sj5", "Sj6", "Sj7"];
+      if (!qrArray.includes(qr)) {
         res.status(202).json({
-          message: `허용되지 않는 코드입니다다`,
+          message: `허용되지 않는 코드입니다`,
         });
       } else {
         const findDB = await prisma.eventQR.findMany({
