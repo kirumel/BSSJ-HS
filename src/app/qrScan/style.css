@@ -28,3 +28,24 @@
   justify-content: center;
   align-items: center;
 }
+.qr-Button {
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.hint-image {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-sizing: border-box;
+  display: flex;
+}
+.hint-title {
+  margin-top: 10px;
+  margin-bottom: 0;
+  font-weight: 700;
+  font-size: 18px;
+}
