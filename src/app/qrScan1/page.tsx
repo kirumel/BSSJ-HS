@@ -28,7 +28,7 @@ export default function Page() {
           .get("/api/scanQR2", { params: { nameid: session.data.user.id } })
           .then((res) => {
             if (res.status === 200) {
-              if (res.data.length > 0) {
+              if (res.data.QRcode === session.data?.user?.id) {
                 setispresent(true);
               }
             } else {

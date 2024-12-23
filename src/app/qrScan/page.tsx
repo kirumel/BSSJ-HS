@@ -28,7 +28,11 @@ export default function Page() {
           .get("/api/scanQR2", { params: { nameid: session.data.user.id } })
           .then((res) => {
             if (res.status === 200) {
-              if (res.data.length > 0) {
+              const data = res.data;
+              const isPresent = data.some(
+                (item) => item.qrcode === `${session.data?.user?.id}`
+              );
+              if (isPresent) {
                 setispresent(true);
               }
             } else {
@@ -79,34 +83,6 @@ export default function Page() {
         });
     } catch (e: any) {
       handleScanError(e.message);
-    }
-  }
-  function turnOnFlashlight() {
-    if (
-      navigator &&
-      navigator.mediaDevices &&
-      navigator.mediaDevices.getUserMedia
-    ) {
-      const constraints = { video: { facingMode: "environment", torch: true } };
-
-      navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then((stream) => {
-          const videoElement = document.createElement("video");
-          videoElement.srcObject = stream;
-          videoElement.play();
-
-          // Store the video element to access later if needed
-          window.flashlightStream = stream;
-        })
-        .catch((error) => {
-          console.error("Failed to access flashlight:", error);
-          alert(
-            "Failed to turn on the flashlight. Make sure your device supports it."
-          );
-        });
-    } else {
-      alert("Flashlight feature not supported in this browser or device.");
     }
   }
 
@@ -176,13 +152,6 @@ export default function Page() {
                   style={{ backgroundColor: "#A9F5BC" }}
                 >
                   상품받기QR
-                </button>
-                <button
-                  className="qr-Button"
-                  onClick={() => setmodal2(true)}
-                  style={{ backgroundColor: "#A9F5BC" }}
-                >
-                  라이트 켜기
                 </button>
               </div>
             </div>

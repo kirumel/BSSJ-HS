@@ -17,6 +17,7 @@ export default async function handler(req: any, res: any) {
   } else if (req.method === "POST") {
     try {
       const { qr, nameid } = req.body;
+      alert(qr);
       const qrArray = [
         "Sj1",
         "Sj2",
