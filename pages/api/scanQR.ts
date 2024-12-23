@@ -17,7 +17,6 @@ export default async function handler(req: any, res: any) {
   } else if (req.method === "POST") {
     try {
       const { qr, nameid } = req.body;
-      alert(qr);
       const qrArray = [
         "Sj1",
         "Sj2",
@@ -26,7 +25,7 @@ export default async function handler(req: any, res: any) {
         "Sj5",
         "Sj6",
         "Sj7",
-        "DB98-32905B-00",
+        "DB98-32905B-00<NUL>",
       ];
       if (!qrArray.includes(qr)) {
         res.status(202).json({
