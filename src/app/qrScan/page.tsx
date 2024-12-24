@@ -20,6 +20,12 @@ export default function Page() {
   const qrArray2 = ["Sj5", "Sj6", "Sj7"];
 
   const session = useSession();
+  if (session.status === "loading") {
+    return <p>Loading...</p>;
+  }
+  if (!session) {
+    return <p>로그인 상태가 아닌드</p>;
+  }
 
   useEffect(() => {
     if (session.data?.user?.id) {
@@ -53,14 +59,8 @@ export default function Page() {
         handleScanError(e.message);
       }
     }
+    console.log(stemp);
   }, [session.data?.user?.id]);
-
-  if (session.status === "loading") {
-    return <p>Loading...</p>;
-  }
-  if (!session) {
-    return <p>로그인 상태가 아닙니다</p>;
-  }
 
   function handleScanError(a: any) {
     toast.error(a);
