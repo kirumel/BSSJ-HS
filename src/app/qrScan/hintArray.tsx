@@ -9,7 +9,7 @@ export const hintArray = [
   },
   {
     img: "/Sj3.jpg",
-    subTitle: "피라미드를 잘 찾아보세요!",
+    subTitle: "사진 자리에서 위를 바라보세요",
   },
   {
     img: "/Sj4.jpg",
