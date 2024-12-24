@@ -47,13 +47,12 @@ export default async function handler(req: any, res: any) {
       } else {
         await prisma.user.create({
           data: {
-            id: finduser?.id,
+            id: finduser.id,
             email,
             grade: parseInt(grade, 10),
             class: parseInt(clss, 10),
             name,
             nickname,
-            role: "SjAdMin",
           },
         });
 
