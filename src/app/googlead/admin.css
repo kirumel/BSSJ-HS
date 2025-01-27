@@ -1,0 +1,24 @@
+.admin-color-box {
+  background-color: rgb(61, 61, 61);
+  color: white;
+  height: 150px;
+  width: 150px;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: right;
+  padding: 1rem;
+  align-items: flex-end;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  margin-right: 12px;
+}
+
+.admin-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+a {
+  text-decoration: none;
+}

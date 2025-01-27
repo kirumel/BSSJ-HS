@@ -1,0 +1,31 @@
+.title-input {
+  width: 100%;
+  border: none;
+  background-color: rgb(219, 219, 219);
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 12px;
+  color: black;
+  margin-bottom: 10px;
+}
+.title-input:focus {
+  outline: none;
+}
+.content-input {
+  width: 100%;
+  height: calc(100vh - 500px);
+  border: none;
+  background-color: rgb(219, 219, 219);
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 12px;
+  color: black;
+  margin-bottom: 10px;
+  resize: none;
+}
+
+.content-input:focus {
+  outline: none;
+}

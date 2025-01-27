@@ -1,0 +1,40 @@
+/* src/App.css */
+.support-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1,
+h2 {
+  color: #333;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.faq {
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+}

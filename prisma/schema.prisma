@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime
+  refresh_token_expires_in Int?
+  User                     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  postId     String
+  userId     String?
+  author     String?
+  content    String
+  createdAt  DateTime @default(now())
+  sjhsUserId String?
+  Post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  User       User?    @relation(fields: [userId], references: [id])
+}
+
+model Like {
+  id         String  @id @default(cuid())
+  postId     String
+  userId     String?
+  createdAt  DateTime @default(now())
+  sjhsUserId String?
+  Post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  User       User?    @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id             String   @id @default(cuid())
+  nickname       String?
+  title          String
+  content        String
+  createdAt      DateTime  @default(now())
+  image          String?
+  video          String?
+  authorId       String
+  type           String?   @default("post")
+  gradeTags      String[]  @default([])
+  subSubjectTags String?
+  subjectTags    String[]  @default([])
+  type2          String[]  @default([])
+  Comment        Comment[]
+  Like           Like[]
+  User           User      @relation(fields: [authorId], references: [id])
+}
+
+model SJHSUser {
+  id                String   @id @default(cuid())
+  name              String?
+  email             String   @unique
+  image             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime? @default(now())
+  nickname          String?
+  password          String?
+  verificationToken String?
+  handle            String?
+  class             Int?
+  grade             Int?
+  role              String   @default("user")
+  User              User?
+
+  @@unique([id, email, class, grade, image, role, name, nickname])
+  @@unique([id, name, nickname])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UnverifiedUser {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  nickname  String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+  handle    String?
+  class     Int?
+  grade     Int?
+  image     String?
+  role      String   @default("user")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?  @default(now())
+  role          String    @default("user")
+  class         Int?
+  grade         Int?
+  nickname      String?
+  handle        String?
+  Account       Account[]
+  Comment       Comment[]
+  Like          Like[]
+  Post          Post[]
+  Session       Session[]
+  SJHSUser      SJHSUser? @relation(fields: [id], references: [id])
+}
+
+model attendanceObject {
+  id            String  @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  updatedAt     String?
+}
+
+model attendanceObjectDB {
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
+}
+
+model attendanceObjectDB2 {
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
+}
+
+model attendanceObjectDB3 {
+  id        String  @id @default(cuid())
+  author    String?
+  link      String?
+  createdAt String?
+  type      String?
+}
+
+model compareAT {
+  id        String @id @default(cuid())
+  data      String?
+  grade     String
+  createdAt String
+}
+
+model etcData {
+  id     String  @id @default(cuid())
+  inTime String?
+}
+
+model eventQR {
+  id        String  @id @default(cuid())
+  nameid    String
+  createdAt DateTime @default(now())
+  qrcode    String
+}
+
+model nightAtSupervisor {
+  id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  outTime       String?
+  updatedAt     String?
+}
+
+model nightAttendanceObject {
+  id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  updatedAt     String?
+}
+
+model nightCompareAT {
+  id        String  @id @default(cuid())
+  createdAt String
+  data      String?
+  grade     String
+}

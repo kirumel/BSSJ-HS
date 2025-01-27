@@ -1,0 +1,180 @@
+body {
+  background-color: black;
+}
+@media screen and (min-width: 750px) {
+  .phone-display-none {
+    display: none;
+  }
+  .day-box {
+    width: 38%;
+  }
+}
+@media screen and (max-width: 750px) {
+  .pad-display-none {
+    display: none;
+  }
+  .day-box {
+    width: 100%;
+  }
+}
+.day-box {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  padding-top: 5vh;
+  padding-bottom: 5vh;
+  background-color: rgb(131, 129, 255);
+  border-radius: 1rem;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+}
+.day-box p {
+  margin: 0;
+}
+.day {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}
+.studybar-container {
+  border-radius: 0.5rem;
+  background-color: rgb(218, 218, 218);
+}
+.studybar-text {
+  font-size: 12px;
+  margin: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.studybar {
+  box-sizing: border-box;
+  background-color: #212121;
+  border-radius: 0.5rem;
+  text-align: right;
+}
+.studybar-title {
+  text-align: center;
+  font-size: 10vw;
+  font-weight: 500;
+  margin: 0;
+}
+.study-buttons-display {
+  display: flex;
+  justify-content: center;
+}
+.buttons {
+  display: flex;
+  margin-top: 8vh;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+.buttons-top {
+  display: flex;
+  justify-content: right;
+}
+.studybar-subtitle {
+  text-align: center;
+  font-size: 3vw;
+  font-weight: 600;
+  margin: 0;
+}
+.studybar-top-subtitle {
+  text-align: center;
+  margin: 0;
+  margin-bottom: 5vh;
+}
+.studybar-top-title {
+  text-align: center;
+  padding-top: 5vh;
+  font-size: 6vw;
+  font-weight: 800;
+  margin: 0;
+}
+.start-button {
+  background-color: rgb(131, 129, 255);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+.pause-button {
+  background-color: rgb(83, 83, 83);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+.stop-button {
+  background-color: rgb(255, 129, 129);
+  color: white;
+  border: none;
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+.time-box {
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  padding: 10px;
+
+  width: 60%;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgb(139, 139, 139);
+  border-radius: 1rem;
+  color: black;
+  font-weight: 500;
+  font-size: 16px;
+}
+.study-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.study-buttons button {
+  background-color: rgb(255, 255, 255);
+  color: black;
+  border: 1px solid rgb(139, 139, 139);
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+}
+.study-top-display {
+  display: flex;
+  justify-content: space-between;
+}
+.study {
+  color: white;
+}

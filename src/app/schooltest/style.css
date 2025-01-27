@@ -1,0 +1,24 @@
+.post {
+  text-decoration: none;
+  color: black;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 1rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(179, 179, 179);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+.post p {
+  margin: 0;
+}
+.main-title {
+  font-weight: 600;
+  font-size: 23px;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  margin-top: 20px;
+}
