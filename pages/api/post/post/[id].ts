@@ -16,8 +16,8 @@ export default async function handler(
           id: id as string,
         },
         include: {
-          Comment: true,
-          Like: true,
+          comments: true,
+          likes: true,
           User: true,
         },
       });

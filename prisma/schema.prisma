@@ -64,9 +64,9 @@ model Post {
   subSubjectTags String?
   subjectTags    String[]  @default([])
   type2          String[]  @default([])
-  Comment        Comment[]
-  Like           Like[]
-  User           User      @relation(fields: [authorId], references: [id])
+  comments        Comment[]
+  likes           Like[]
+  author               User      @relation(fields: [authorId], references: [id])
 }
 
 model SJHSUser {
@@ -83,10 +83,7 @@ model SJHSUser {
   class             Int?
   grade             Int?
   role              String   @default("user")
-  User              User?
-
-  @@unique([id, email, class, grade, image, role, name, nickname])
-  @@unique([id, name, nickname])
+  User              User?    @relation(fields: [id], references: [id] ,onDelete: Cascade)
 }
 
 model Session {
@@ -132,7 +129,7 @@ model User {
   Like          Like[]
   Post          Post[]
   Session       Session[]
-  SJHSUser      SJHSUser? @relation(fields: [id], references: [id])
+  SJHSUser      SJHSUser? 
 }
 
 model attendanceObject {

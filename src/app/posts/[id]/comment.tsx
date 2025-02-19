@@ -5,6 +5,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 
 interface Comment {
+  userId: string;
   id: string;
   content: string;
   author: string;
@@ -12,6 +13,7 @@ interface Comment {
 }
 
 interface Post {
+  authorId: string;
   id: string;
   title: string;
   content: string;
@@ -20,6 +22,7 @@ interface Post {
   video: string | null;
   createdAt: Date;
   comments: Comment[];
+  userId: string;
 }
 
 export default function CommentComponent({ post }: { post: Post }) {
@@ -36,7 +39,7 @@ export default function CommentComponent({ post }: { post: Post }) {
     if (!newComment.trim()) return;
 
     try {
-      setIsLoading(true); // 로딩 상태 시작
+      setIsLoading(true);
       await axios.post(
         `/api/post/comments/${id}`,
         {
@@ -69,6 +72,7 @@ export default function CommentComponent({ post }: { post: Post }) {
       setIsLoading(false);
     }
   };
+  console.log(posts);
 
   return (
     <>
@@ -84,12 +88,23 @@ export default function CommentComponent({ post }: { post: Post }) {
                         <img
                           className="cafe-postinfo-content-img"
                           src="https://www.studiopeople.kr/common/img/default_profile.png"
-                        ></img>
+                        />
                         <div>
-                          <p className="cafe-postinfo-nickname">익명</p>
-
+                          <p className="cafe-postcomment-nickname">
+                            {comment.author}
+                            {post.authorId === comment.userId ? (
+                              <span
+                                style={{
+                                  color: "rgb(138, 156, 255)",
+                                  marginLeft: "5px",
+                                }}
+                              >
+                                (작성자)
+                              </span>
+                            ) : null}
+                          </p>
                           <p className="cafe-postinfo-nickname-sub">
-                            {comment.userId}
+                            {new Date(comment.createdAt).toLocaleString()}
                           </p>
                         </div>
                       </div>

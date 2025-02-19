@@ -25,9 +25,9 @@ export default async function handler(req: any, res: any) {
             : {}),
         },
         include: {
-          Comment: true,
-          Like: true,
-          User: true,
+          comments: true,
+          likes: true,
+          author: true,
         },
       });
       res.status(200).json(posts);

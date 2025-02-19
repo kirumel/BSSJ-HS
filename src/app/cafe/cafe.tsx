@@ -42,15 +42,18 @@ export default function Cafe({ session }: CafeProps) {
 
   useEffect(() => {
     setIsLoading(true);
-    try {
-      axios.get("/api/post/posts").then((response) => {
-        setPosts(response.data);
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    axios
+      .get("/api/post/posts")
+      .then((response) => {
+        const sortedPosts = response.data.sort((a: any, b: any) => {
+          const dateA = new Date(a.createdAt as string);
+          const dateB = new Date(b.createdAt as string);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setPosts(sortedPosts);
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
@@ -66,6 +69,7 @@ export default function Cafe({ session }: CafeProps) {
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === id) {
+          console.log(post);
           const hasLiked = post.likes.some(
             (like: Like) => like.userId === userId
           );
@@ -174,7 +178,7 @@ export default function Cafe({ session }: CafeProps) {
                             }}
                           ></img>
                           <div>
-                            <p className="cafe-nickname">익명</p>
+                            <p className="cafe-nickname">{post.nickname}</p>
                             <p className="cafe-nickname-sub">
                               성지고등학교 자유게시판
                             </p>
