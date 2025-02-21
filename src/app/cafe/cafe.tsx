@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import "./cafe.css";
+import Loading from "../loding/page";
 
 interface Post {
   id: string;
@@ -59,7 +60,7 @@ export default function Cafe({ session }: CafeProps) {
   if (isLoading) {
     return (
       <div className="video-container">
-        <video className="로딩" src="/로딩.mp4" autoPlay muted loop></video>
+        <Loading />
       </div>
     );
   }
@@ -126,9 +127,7 @@ export default function Cafe({ session }: CafeProps) {
   return (
     <div style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
       <a href="/write">
-        <button className="back-button">
-          <span>&larr;</span>
-        </button>
+        <button className="write-button">작성하기</button>
       </a>
 
       {posts.length > 0 && (
@@ -175,6 +174,8 @@ export default function Cafe({ session }: CafeProps) {
                               width: "7%",
                               height: "auto",
                               borderRadius: "0.3rem",
+                              minWidth: "20px",
+                              maxWidth: "30px",
                             }}
                           ></img>
                           <div>

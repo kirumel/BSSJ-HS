@@ -30,6 +30,7 @@ export default function dev() {
               웹과 앱 모두 쉽게 접속 가능해요
               <br />
               <br />
+              version : 1.0.1
             </h5>
             <h3
               className="title"
@@ -39,7 +40,7 @@ export default function dev() {
             </h3>
             <div className="line"></div>
             <h5 style={{ marginTop: "5px", marginBottom: "0" }}>
-              developer | UI / UX design : 2309서현웅
+              developer | UI / UX design : 서현웅
             </h5>
             <h3
               className="title"

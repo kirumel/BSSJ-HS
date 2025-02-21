@@ -3,7 +3,8 @@ import { useState } from "react";
 import Head from "next/head";
 import ExcelJS from "exceljs";
 import "./style.css";
-import "../attendance/style.css";
+import "../../attendance/style.css";
+import axios from "axios";
 
 interface Student {
   name: string;
@@ -90,15 +91,11 @@ export default function Home() {
 
   const saveToDatabase = async (students: Student[]) => {
     try {
-      const response = await fetch("/api/upload-students", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ students }),
+      const response = await axios.post("/api/post/upload-students", {
+        students,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         console.log("학생들이 데이터베이스에 저장되었습니다.");
       } else {
         console.log("학생 저장 중 오류가 발생했습니다.");

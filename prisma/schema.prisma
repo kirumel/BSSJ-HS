@@ -132,6 +132,19 @@ model User {
   SJHSUser      SJHSUser? 
 }
 
+model mainAttendanceObject {
+  id            String   @id @default(cuid())
+  name          String?
+  createdAt     DateTime @default(now())
+  check         String?
+  comment       String?
+  author        String?
+  class         Int?
+  grade         Int?
+  studentnumber Int?
+  updatedAt     String?
+}
+
 model attendanceObject {
   id            String  @id @default(cuid())
   name          String?

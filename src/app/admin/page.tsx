@@ -174,7 +174,7 @@ export default function Page() {
         </div>
 
         <div className="admin-mainMiddle">
-          <Link href="/addStudentObject">
+          <Link href="/studentobject">
             <button>출석 학생관리</button>
           </Link>
 

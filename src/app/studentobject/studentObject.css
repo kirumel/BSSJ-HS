@@ -1,0 +1,31 @@
+.student-buttons button {
+  background-color: rgb(230, 230, 230);
+  color: black;
+  border: none;
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  margin-bottom: 10px;
+}
+.student-buttons button:hover {
+  cursor: pointer;
+  background-color: rgb(192, 183, 240);
+}
+.student-buttons {
+  overflow-x: scroll;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+.studentObject-title {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
