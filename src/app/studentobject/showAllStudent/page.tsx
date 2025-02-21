@@ -1,3 +1,4 @@
+"use client";
 import axios from "axios";
 import "../addStudentObject/style.css";
 import { useEffect, useState } from "react";
