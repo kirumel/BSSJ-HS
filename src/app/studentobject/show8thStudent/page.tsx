@@ -41,7 +41,7 @@ export default function Page() {
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(
     new Set()
   );
-  const [copyDB, setCopyDB] = useState("attendanceObject");
+  const [copyDB, setCopyDB] = useState("mainAttendanceObject");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
@@ -53,7 +53,7 @@ export default function Page() {
     const fetchStudents = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/post/getAllStudentObject");
+        const response = await axios.get("/api/post/attendance");
 
         setStudents(response.data);
       } catch (error) {
@@ -235,7 +235,7 @@ export default function Page() {
               onChange={(e) => setCopyDB(e.target.value)}
               style={{ width: "100%", padding: "5px", marginTop: "10px" }}
             >
-              <option value="attendanceObject">8교시 학생 목록</option>
+              <option value="mainAttendanceObject">모든 학생 목록</option>
               <option value="nightAttendanceObject">야자 학생 목록</option>
             </select>
           </>

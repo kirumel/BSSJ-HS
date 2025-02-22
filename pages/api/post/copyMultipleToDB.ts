@@ -14,6 +14,9 @@ export default async function handler(req, res) {
         prisma.nightAttendanceObject as Prisma.nightAttendanceObjectDelegate;
     } else if (targetDB === "attendanceObject") {
       model = prisma.attendanceObject as Prisma.attendanceObjectDelegate;
+    } else if (targetDB === "mainAttendanceObject") {
+      model =
+        prisma.mainAttendanceObject as Prisma.mainAttendanceObjectDelegate;
     } else {
       return res.status(400).send("잘못된 모델 이름");
     }

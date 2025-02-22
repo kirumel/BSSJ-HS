@@ -3,6 +3,8 @@ import Addstudent from "./addStudentObject/page";
 import ShowAllStudent from "./showAllStudent/page";
 import { useEffect, useState } from "react";
 import "./studentObject.css";
+import Show8thStudent from "./show8thStudent/page";
+import ShowNightStudent from "./showNightStudent/page";
 
 export default function Page() {
   const [student, setstudent] = useState<string[]>([]);
@@ -53,7 +55,7 @@ export default function Page() {
             8교시 학생 목록
           </button>
           <button
-            style={{ backgroundColor: getButtonColor("show8thStudent") }}
+            style={{ backgroundColor: getButtonColor("showNightStudent") }}
             onClick={() => setstudent(["showNightStudent"])}
           >
             야자 학생 목록
@@ -62,6 +64,8 @@ export default function Page() {
       </div>
       {student.includes("addstudent") && <Addstudent />}
       {student.includes("showAllStudent") && <ShowAllStudent />}
+      {student.includes("show8thStudent") && <Show8thStudent />}
+      {student.includes("showNightStudent") && <ShowNightStudent />}
     </div>
   );
 }

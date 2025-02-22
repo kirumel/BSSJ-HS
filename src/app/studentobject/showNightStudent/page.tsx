@@ -53,7 +53,7 @@ export default function Page() {
     const fetchStudents = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/post/getAllStudentObject");
+        const response = await axios.get("/api/post/nightAT/nightAT");
 
         setStudents(response.data);
       } catch (error) {
