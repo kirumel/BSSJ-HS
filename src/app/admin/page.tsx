@@ -214,7 +214,7 @@ export default function Page() {
             </button>
           </div>
           <div className="line"></div>
-          <p className="admin-title">8교시 출석</p>
+          <p className="admin-title">야자 출석 / 개발중입니다 </p>
           <div className="event-box-container">
             <Link href="/nightattendance">
               <button
@@ -225,13 +225,15 @@ export default function Page() {
                 출석
               </button>
             </Link>
-            <button
-              style={{ backgroundColor: "#F495B9" }}
-              className="event-box-button"
-            >
-              야자 <br />
-              감독
-            </button>
+            <Link href="choiceNightATgrade">
+              <button
+                style={{ backgroundColor: "#F495B9" }}
+                className="event-box-button"
+              >
+                야자 <br />
+                감독
+              </button>
+            </Link>
             <Link href="/nightAT">
               <button
                 style={{ backgroundColor: "#F495B9" }}

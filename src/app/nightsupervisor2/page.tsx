@@ -68,7 +68,7 @@ export default function Page() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("/api/post/attendance")
+    fetch("/api/post/nightAT/page")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
@@ -76,7 +76,7 @@ export default function Page() {
             (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
           );
           const sortedData1 = sortedData.filter(
-            (student) => student.grade == "1"
+            (student) => student.grade == "2"
           );
 
           const presentStudents = sortedData1.filter(

@@ -212,6 +212,8 @@ model nightAtSupervisor {
   grade         Int?
   studentnumber Int?
   outTime       String?
+  outTimeT       String?
+  outTimeST       String?
   updatedAt     String?
 }
 
@@ -226,6 +228,8 @@ model nightAttendanceObject {
   grade         Int?
   studentnumber Int?
   updatedAt     String?
+  outTimeT       String?
+  
 }
 
 model nightCompareAT {
