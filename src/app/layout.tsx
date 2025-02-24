@@ -20,7 +20,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthSession>
-          <ProtectedPage children={children} />
+          <>
+            <div>서버 점검중입니다</div>
+            <div>
+              db 최대 연결 초과로 인한 문제를 해결하고있습니다
+              <br />
+              version 1.0.2 beta
+              <br />
+              2/24
+            </div>
+          </>
         </AuthSession>
       </body>
     </html>
