@@ -297,14 +297,16 @@ export default function Page() {
                     ) : null}
 
                     <div style={{ display: "flex", justifyContent: "right" }}>
-                      <input
-                        className="time-input"
-                        type="time"
-                        value={firstcommitstudent[i]?.outTimeT || ""}
-                        onChange={(e) =>
-                          handleTimeChange(i, "outTimeT", e.target.value)
-                        }
-                      />
+                      <div style={{ marginRight: "20px" }}>
+                        <input
+                          className="time-input"
+                          type="time"
+                          value={firstcommitstudent[i]?.outTimeT || ""}
+                          onChange={(e) =>
+                            handleTimeChange(i, "outTimeT", e.target.value)
+                          }
+                        />
+                      </div>
 
                       <input
                         type="checkbox"

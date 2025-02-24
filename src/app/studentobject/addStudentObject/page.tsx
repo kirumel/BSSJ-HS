@@ -96,7 +96,8 @@ export default function Home() {
       });
 
       if (response.status === 200) {
-        console.log("학생들이 데이터베이스에 저장되었습니다.");
+        alert("학생 정보 저장 완료");
+        setStudents([]);
       } else {
         console.log("학생 저장 중 오류가 발생했습니다.");
       }
@@ -107,9 +108,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>엑셀 업로드</title>
-      </Head>
       {students.length > 0 && (
         <div className="modal">
           <div className="modal-content">
@@ -179,9 +177,11 @@ export default function Home() {
       )}
       <div className="container">
         <div className="upload-box">
-          <h3 style={{ marginBottom: 0 }}>엑셀 업로드</h3>
+          <h3 style={{ marginBottom: 0 }}>학생 업로드</h3>
           <p className="subtitle" style={{ fontSize: "10px", margin: 0 }}>
-            컴퓨터에서만 사용해주세요!
+            (이름/학년/번호/반) 항목이 있는지 확인해주세요!
+            <br />
+            (위 항목 제외 나머지 항목은 수집하지 않습니다)
           </p>
           <input
             className="file-input"

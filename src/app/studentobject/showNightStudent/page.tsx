@@ -111,7 +111,7 @@ export default function Page() {
   const deleteSelectedStudents = async () => {
     try {
       await axios
-        .post("/api/post/deleteStudent", {
+        .post("/api/post/nightdeleteStudent", {
           studentIds: Array.from(selectedStudents),
         })
         .then((response) => {
@@ -236,7 +236,7 @@ export default function Page() {
               style={{ width: "100%", padding: "5px", marginTop: "10px" }}
             >
               <option value="attendanceObject">8교시 학생 목록</option>
-              <option value="nightAttendanceObject">야자 학생 목록</option>
+              <option value="mainAttendanceObject">모든 학생 목록</option>
             </select>
           </>
         }

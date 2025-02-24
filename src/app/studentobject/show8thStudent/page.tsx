@@ -111,7 +111,7 @@ export default function Page() {
   const deleteSelectedStudents = async () => {
     try {
       await axios
-        .post("/api/post/deleteStudent", {
+        .post("/api/post/8thdeleteStudent", {
           studentIds: Array.from(selectedStudents),
         })
         .then((response) => {

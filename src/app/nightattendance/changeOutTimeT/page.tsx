@@ -40,6 +40,7 @@ export default function Page() {
     }[]
   >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [allSelected, setAllSelected] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -69,6 +70,14 @@ export default function Page() {
         setIsLoading(false);
       });
   }, [session]);
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedStudents(new Set());
+    } else {
+      setSelectedStudents(new Set(attendance.map((student) => student.id)));
+    }
+    setAllSelected(!allSelected);
+  };
 
   const handleTimeChange = (index: number, value: string) => {
     const newData = [...firstcommitstudent];
@@ -145,7 +154,7 @@ export default function Page() {
         theme="light"
         transition={Slide}
         closeButton={false}
-      />{" "}
+      />
       <div>
         {isModalOpen && (
           <div className="modal">
@@ -194,6 +203,9 @@ export default function Page() {
             onClick={() => setIsModalOpen(true)}
           >
             선택 메뉴
+          </button>
+          <button className="plus-attendance-button" onClick={handleSelectAll}>
+            {allSelected ? "전체 해제" : "전체 선택"}
           </button>
         </div>
         <div className="attendance-container">

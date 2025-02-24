@@ -8,6 +8,8 @@ import "./style.css";
 import axios from "axios";
 
 interface Attendance {
+  outTimeST: string;
+  outTimeT: string;
   name: string;
   updatedAt: string;
   comment: string;
@@ -37,6 +39,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
     {
+      outTimeST: string;
       name: string;
       updatedAt: string;
       comment: string;
@@ -65,6 +68,12 @@ export default function Page() {
 
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
+  const handleTimeChange = (index: number, field: string, value: string) => {
+    const newData = [...firstcommitstudent];
+    newData[index] = { ...newData[index], [field]: value };
+    setFirstCommitStudent(newData);
+    console.log(firstcommitstudent);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -96,6 +105,8 @@ export default function Page() {
             grade: student.grade,
             studentnumber: student.studentnumber,
             check: student.check === "0" ? "2" : "",
+            outTimeT: student.outTimeT || "",
+            outTimeST: student.outTimeT || "",
             comment: student.comment || "",
             author: session?.user?.name || "",
             createdAt: student.createdAt,
@@ -130,37 +141,18 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
-      setIsLoading(true);
-      const response = await axios.post(
-        "/api/post/filegenerater1/choiceATsupervisor2",
+      const response = await axios.patch(
+        "/api/post/nightAT/fetchTime2",
+        { firstcommitstudent },
         {
-          firstcommitstudent,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      const response2 = await axios.post(
-        "/api/post/filegenerater1/choiceATsupervisor",
-        {
-          firstcommitstudent,
-        }
-      );
-
-      const response3 = await axios.post("/api/post/compareAT", {
-        firstcommitstudent,
-        grade: "1",
-        formattedDate,
-      });
-
-      if (
-        response.status === 200 &&
-        response2.status === 200 &&
-        response3.status === 200
-      ) {
+      if (response.status === 200) {
+        setIsLoading(false);
         setSuccessModalTimer();
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-        console.log(response.data.message);
-        alert("저장 실패");
       }
     } catch (error) {
       console.log(error);
@@ -186,6 +178,21 @@ export default function Page() {
   const countAbsentStudentsOK = () => {
     return firstcommitstudent.filter((student) => student.check === "1").length;
   };
+
+  function convertTo12Hour(time24: string) {
+    if (!time24) return "설정된 시간 없음"; // 값이 없을 경우 기본 메시지 반환
+    // "19:30" -> 시간과 분을 분리
+    let [hours, minutes] = time24.split(":").map(Number);
+
+    // AM/PM 설정
+    let period = hours >= 12 ? "PM" : "AM";
+
+    // 12시간 형식으로 변환 (0시는 12로 변경, 13~23시는 1~11로 변경)
+    hours = hours % 12 || 12;
+
+    // 변환된 문자열 반환
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  }
 
   if (isLoading) {
     return <div className="loading">잠시만 기다려주세요...</div>;
@@ -261,6 +268,9 @@ export default function Page() {
                     <p className="attendance-student-number">
                       {data.studentnumber}번
                     </p>
+                    <p className="attendance-student-number">
+                      설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
+                    </p>
                   </div>
                   <div>
                     {studentCommit.check === "0" ? (
@@ -315,6 +325,23 @@ export default function Page() {
                       </>
                     ) : (
                       <div style={{ display: "flex", justifyContent: "right" }}>
+                        <div style={{ marginRight: "20px" }}>
+                          <input
+                            style={{
+                              backgroundColor:
+                                firstcommitstudent[i]?.outTimeST ===
+                                data.outTimeT
+                                  ? "#E8E8E8"
+                                  : "#E8E8FF",
+                            }}
+                            className="time-input"
+                            type="time"
+                            value={firstcommitstudent[i]?.outTimeST || ""}
+                            onChange={(e) =>
+                              handleTimeChange(i, "outTimeST", e.target.value)
+                            }
+                          />
+                        </div>
                         <input
                           type="checkbox"
                           className="no-check"
