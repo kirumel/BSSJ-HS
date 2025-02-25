@@ -3,10 +3,12 @@ import React, { useRef, useState, useEffect } from "react";
 import "./style.css";
 import dayjs from "dayjs";
 import axios from "axios";
+import { time } from "console";
 
 export default function FourDigitCodeInput() {
   const [code, setCode] = useState<string[]>(["", "", "", ""]);
   const [currenttime, setCurrentTime] = useState<string>("");
+  const [formattedTime, setFormattedTime] = useState<string>("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (
@@ -22,19 +24,22 @@ export default function FourDigitCodeInput() {
 
     inputRefs.current[index + 1]?.focus();
   };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(dayjs().format("A h:mm:ss"));
+      setFormattedTime(dayjs().format("HH:mm"));
     }, 1000);
     return () => clearInterval(timer);
-  });
+  }, []);
+
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && index < 3) {
       const newCode = [...code];
       newCode[index - 1] = "";
       setCode(newCode);
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "Backspace" && index === 3 && code[3] == "") {
+    } else if (e.key === "Backspace" && index === 3 && code[3] === "") {
       const newCode = [...code];
       newCode[index - 1] = "";
       setCode(newCode);
@@ -54,6 +59,7 @@ export default function FourDigitCodeInput() {
         axios
           .patch("/api/post/nightAT/page", {
             studentnumber: code.join(""),
+            outTime: formattedTime,
           })
           .then((response) => {
             if (response.status === 200) {
@@ -84,7 +90,10 @@ export default function FourDigitCodeInput() {
         height: "100vh",
       }}
     >
-      <div className="time">{currenttime}</div>
+      <div>
+        <div className="time">{currenttime}</div>
+        <div className="formatted-time">{formattedTime}</div>
+      </div>
       <div
         style={{
           display: "flex",
