@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthSession>
-          <ProtectedPage children={children} />
+          <div>점검중..</div>
         </AuthSession>
       </body>
     </html>
