@@ -146,3 +146,29 @@
   font-size: 12px;
   cursor: pointer;
 }
+.studentNum-button {
+  background-color: rgb(82, 82, 82);
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.studentNum-button:disabled {
+  background-color: rgba(39, 39, 39, 0.158);
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}

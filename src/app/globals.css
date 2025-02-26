@@ -5,6 +5,19 @@
 *::-webkit-scrollbar {
   display: none;
 }
+@font-face {
+  font-family: "JalnanGothic";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.textlogo {
+  font-family: "JalnanGothic", sans-serif;
+  height: 13px;
+}
+
 .event-text {
   margin: 0;
 }
@@ -152,15 +165,6 @@ html {
   border-bottom: 1px solid rgba(15, 15, 15, 0.102);
 }
 
-.nav a {
-  color: black;
-  text-decoration: none;
-  font-weight: 700;
-  font-family: "Noto Sans KR", sans-serif;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
 .nav-home {
   padding-left: 15px;
   padding-right: 15px;

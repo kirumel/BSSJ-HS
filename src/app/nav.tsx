@@ -28,8 +28,8 @@ export default function Nav() {
     return (
       <>
         <div className="nav">
-          <a href="/">
-            <Image src={logo} alt="logo" width={71} height={25} />
+          <a href="/" className="textlogo">
+            성지고등학교
           </a>
         </div>
       </>
