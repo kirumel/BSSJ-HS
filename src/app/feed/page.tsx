@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "../cafe/cafe.css";
 import "./style.css";
-import Loading from "../loding/page";
+import Loading from "../loading/page";
 import Feednav from "./feednav";
 
 interface Post {

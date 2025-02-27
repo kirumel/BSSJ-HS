@@ -6,7 +6,7 @@ import Nav from "./nav";
 import Navout from "./navout";
 import Nosign from "./nosign/page";
 import { toast } from "react-toastify";
-import Loading from "./loding/page";
+import Loading from "./loading/page";
 
 const ProtectedPage = ({ children }: { children: any }) => {
   const { data: session, status } = useSession();

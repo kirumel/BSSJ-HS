@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import "./cafe.css";
-import Loading from "../loding/page";
+import Loading from "../loading/page";
 
 interface Post {
   id: string;

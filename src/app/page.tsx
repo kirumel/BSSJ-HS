@@ -8,7 +8,7 @@ import "./style.css";
 import Graph from "./graph";
 import School from "./school";
 import Event from "./events";
-import logo from "../../public/logo.png";
+import Logo from "./logo/page";
 import Image from "next/image";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
@@ -19,7 +19,7 @@ export default async function home() {
     <>
       <div className="nav-home">
         <Link href="/">
-          <Image src={logo} alt="logo" width={71} height={25} />
+          <Logo />
         </Link>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ marginRight: "10px", fontSize: "12px" }}>

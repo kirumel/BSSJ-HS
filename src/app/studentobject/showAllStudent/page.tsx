@@ -2,7 +2,7 @@
 import axios from "axios";
 import "../addStudentObject/style.css";
 import { useEffect, useState } from "react";
-import Loading from "@/app/loding/page";
+import Loading from "@/app/loading/page";
 
 // 모달 컴포넌트 개선
 const Modal = ({ isOpen, onClose, onConfirm, title, modalContent }: any) => {
