@@ -162,6 +162,25 @@ export default function Page() {
   const countAbsentStudentsOK = () => {
     return firstcommitstudent.filter((student) => student.check === "1").length;
   };
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        // Find the corresponding student in the newState array
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
+
+        // If there's a match, update the student's check and comment, otherwise keep the student as is
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+            }
+          : student;
+      })
+    );
+  };
 
   if (isLoading) {
     return <div className="loading">잠시만 기다려주세요...</div>;
@@ -199,7 +218,12 @@ export default function Page() {
 
         <div className="right-left-margin">
           <div>
-            {successModal ? <SuccessModal props={successModal} /> : null}
+            {successModal ? (
+              <SuccessModal
+                setAttendance={handleStateChange}
+                props={successModal}
+              />
+            ) : null}
           </div>
           <div className="attendance-top-container-display">
             <div className="attendance-top-in1">
@@ -220,7 +244,10 @@ export default function Page() {
               >
                 학생 추가
               </button>
-              <SelectStudentModal props={firstcommitstudent} />
+              <SelectStudentModal
+                props={firstcommitstudent}
+                setAttendance={handleStateChange}
+              />
             </div>
           </div>
           <div className="attendance-container">

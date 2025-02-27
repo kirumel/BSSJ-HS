@@ -4,12 +4,20 @@ import { useDrag } from "@use-gesture/react";
 import "./style.css";
 
 interface Student {
+  id: any;
   studentnumber: string;
   name?: string;
   comment?: string;
+  check?: string;
 }
 
-export default function Page(props: any) {
+export default function Page({
+  setAttendance,
+  props,
+}: {
+  props: any;
+  setAttendance: (newState: Student[]) => void;
+}) {
   // 모달 관련 상태
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -25,7 +33,11 @@ export default function Page(props: any) {
   const [bulkAbsentSelection, setBulkAbsentSelection] = useState<Student[]>([]);
   // 미출석 모드에서 일괄 입력할 comment
   const [bulkAbsentComment, setBulkAbsentComment] = useState("");
-
+  const handleConfirm = () => {
+    setAttendance(state);
+    closeModal();
+  };
+  console.log(state);
   // 모달 애니메이션
   const modalAnimation = useSpring({
     transform: `translateY(${isModalOpen ? dragY : 100}%)`,
@@ -56,7 +68,7 @@ export default function Page(props: any) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
+  console.log(state);
   // 일반 모드에서는 학생 클릭 시 state에 출석(혹은 선택)으로 추가/제거
   // 미출석 모드에서는 bulkAbsentSelection에 추가/제거 (일괄 comment 적용 전)
   const handleStudentClick = (student: Student) => {
@@ -88,14 +100,14 @@ export default function Page(props: any) {
           );
         }
       } else {
-        setState((prev) => [...prev, student]);
+        setState((prev) => [...prev, { ...student, check: "1" }]);
       }
     }
   };
 
   // 전체 선택/해제 (일반 출석 모드에서만 작동)
   const handleSetStateAll = () => {
-    const allStudents: Student[] = props.props;
+    const allStudents: Student[] = props;
     if (state.length === allStudents.length) {
       setState([]);
     } else {
@@ -118,38 +130,45 @@ export default function Page(props: any) {
   // bulk로 선택된 학생들에게 입력한 comment를 일괄 적용
   const handleBulkConfirm = () => {
     if (bulkAbsentComment.trim() === "") return; // 사유가 없으면 아무 동작 안 함
-    const updatedStudents = bulkAbsentSelection.map((student) => ({
+    const updatedStudents: Student[] = bulkAbsentSelection.map((student) => ({
       ...student,
       comment: bulkAbsentComment,
     }));
-    // state에 추가 (이미 출석으로 선택된 학생과 중복되지 않으므로 별도 추가)
-    setState((prev) => [...prev, ...updatedStudents]);
-    // bulk 선택 영역 초기화
+    setState((prev) =>
+      prev.concat(
+        updatedStudents.map((student) => ({ ...student, check: "0" }))
+      )
+    );
     setBulkAbsentSelection([]);
     setBulkAbsentComment("");
   };
-
   // 이미 미출석 처리된 학생의 comment 제거 (출석 전환 가능)
   const removeAbsentComment = (studentnumber: string) => {
     setState((prev) =>
       prev.map((s) =>
-        s.studentnumber === studentnumber ? { ...s, comment: undefined } : s
+        s.studentnumber === studentnumber
+          ? { ...s, check: undefined, comment: undefined }
+          : s
       )
     );
   };
 
   // 미출석 모드에서, 이미 state 또는 bulk에 있는 학생은 버튼 비활성화
   const isStudentDisabled = (student: Student) => {
-    const existsInState = state.find(
-      (s) => s.studentnumber === student.studentnumber
-    );
+    const existsInState = state.find((s) => s.id === student.id);
     const existsInBulk = bulkAbsentSelection.find(
       (s) => s.studentnumber === student.studentnumber
     );
+
     if (isAbsentMode) {
       return Boolean(existsInState || existsInBulk);
     }
-    return existsInState && existsInState.comment ? true : false;
+    return existsInState ? true : false;
+  };
+  const handleAbsentClick = (student: Student) => {
+    if (isAbsentMode) {
+      setBulkAbsentSelection((prev) => prev.filter((s) => s !== student));
+    }
   };
 
   const bind = useDrag(({ down, movement: [, my] }) => {
@@ -208,96 +227,152 @@ export default function Page(props: any) {
               <div
                 {...bind()}
                 style={{
-                  width: "100%",
-                  height: "30px",
-                  borderRadius: "10px 10px 0 0",
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "center",
-                  cursor: "grab",
+                  width: "100%",
                 }}
-              ></div>
-              <div>
-                {/* 이미 선택(출석 혹은 미출석 확정)된 학생들 */}
-                <div className="line" style={{ marginTop: "10px" }}></div>
-                {state.map((item) => (
+              >
+                <div
+                  style={{
+                    width: "30%",
+                    height: "3px",
+                    marginBottom: "30px",
+                    borderRadius: "100px",
+                    cursor: "grab",
+                    backgroundColor: "rgb(179, 179, 179)",
+                  }}
+                ></div>
+              </div>
+              <div
+                className="display-flex"
+                style={{
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  marginBottom: "20px",
+                }}
+              >
+                <h3 className="margin0 modalTitle" style={{ fontSize: "20px" }}>
+                  선택메뉴
+                </h3>
+                <div>
+                  {/* 전체 선택 버튼 (일반 모드에서만 작동) */}
                   <button
                     className="studentNum-button"
-                    onClick={() => {
-                      // 일반 모드에서만 토글; 미출석 처리된 학생은 변경 불가
-                      if (!item.comment) handleStudentClick(item);
-                    }}
-                    key={item.studentnumber}
+                    onClick={handleSetStateAll}
+                    disabled={isAbsentMode}
                   >
-                    {viewByName ? item.name : item.studentnumber}{" "}
-                    {item.comment && `(${item.comment})`}
+                    {state.length === props.length ? "전체해제" : "전체선택"}
                   </button>
-                ))}
+                  <button
+                    onClick={toggleView}
+                    className="studentNum-button-show"
+                  >
+                    {viewByName ? "번호 보기" : "이름 보기"}
+                  </button>
+                  {/* 미출석 선택기 토글 버튼 */}
+                  <button
+                    onClick={toggleAbsentMode}
+                    className={
+                      isAbsentMode
+                        ? "studentNum-button-pink"
+                        : "studentNum-button-green"
+                    }
+                  >
+                    {isAbsentMode ? "선택해제" : "미출석 선택기"}
+                  </button>
+                </div>
+              </div>
+              <div className="slider">
+                {/* 이미 선택(출석 혹은 미출석 확정)된 학생들 */}
+                <div style={state.length > 0 ? {} : { display: "none" }}>
+                  <h3
+                    className="modalTitle margin0 "
+                    style={{ marginBottom: "5px" }}
+                  >
+                    출석 완료
+                  </h3>
+                  {state.map((item) => (
+                    <button
+                      className="studentNum-button"
+                      style={{
+                        backgroundColor: `${
+                          item.comment ? "rgb(201, 99, 125)" : "#59ad5c"
+                        }`,
+                      }}
+                      onClick={() => {
+                        if (!item.comment) handleStudentClick(item);
+                      }}
+                      key={item.studentnumber}
+                    >
+                      {viewByName ? item.name : item.studentnumber}{" "}
+                      {item.comment && `(미출석)`}
+                    </button>
+                  ))}
+                </div>
                 <div className="line" style={{ marginTop: "10px" }}></div>
                 {/* 전체 학생 리스트 */}
-                {props.props.map((item: Student) => (
-                  <button
-                    className="studentNum-button"
-                    onClick={() => handleStudentClick(item)}
-                    key={item.studentnumber}
-                    disabled={isStudentDisabled(item)}
+                <div className="notat-comment">
+                  <h3
+                    className="margin0 modalTitle"
+                    style={{ marginBottom: "5px" }}
                   >
-                    {viewByName ? item.name : item.studentnumber}
-                  </button>
-                ))}
-                <div className="line" style={{ marginTop: "10px" }}></div>
-                {/* 전체 선택 버튼 (일반 모드에서만 작동) */}
-                <button
-                  className="studentNum-button"
-                  onClick={handleSetStateAll}
-                  disabled={isAbsentMode}
-                >
-                  {state.length === props.props.length
-                    ? "전체해제"
-                    : "전체선택"}
-                </button>
-                <button onClick={toggleView} className="studentNum-button">
-                  {viewByName ? "번호 보기" : "이름 보기"}
-                </button>
-                {/* 미출석 선택기 토글 버튼 */}
-                <button
-                  onClick={toggleAbsentMode}
-                  className="studentNum-button"
-                >
-                  {isAbsentMode ? "선택해제" : "미출석 선택기"}
-                </button>
+                    학생 리스트
+                  </h3>
+                  {props.map((item: Student) => (
+                    <button
+                      className={
+                        isAbsentMode
+                          ? "studentNum-button-pink"
+                          : "studentNum-button"
+                      }
+                      onClick={() => handleStudentClick(item)}
+                      key={item.studentnumber}
+                      disabled={isStudentDisabled(item)}
+                    >
+                      {viewByName ? item.name : item.studentnumber}
+                    </button>
+                  ))}
 
+                  <div className="line" style={{ marginTop: "10px" }}></div>
+                </div>
                 {/* 미출석 모드일 경우, 선택된 학생 목록과 comment 입력 영역 노출 */}
                 {isAbsentMode && (
-                  <div
-                    style={{
-                      marginTop: "20px",
-                      border: "1px solid #ccc",
-                      padding: "10px",
-                    }}
-                  >
-                    <h3>선택됨</h3>
+                  <div className="notat-comment">
+                    <h3 className="margin0" style={{ marginBottom: "10px" }}>
+                      선택됨
+                    </h3>
                     {bulkAbsentSelection.length > 0 ? (
                       bulkAbsentSelection.map((student) => (
-                        <div key={student.studentnumber}>
+                        <button
+                          className=" studentNum-button-pink"
+                          key={student.studentnumber}
+                          onClick={() => handleAbsentClick(student)}
+                        >
                           {viewByName ? student.name : student.studentnumber}
-                        </div>
+                        </button>
                       ))
                     ) : (
                       <div>선택된 학생이 없습니다.</div>
                     )}
                     <div style={{ marginTop: "10px" }}>
                       <input
+                        className="text-input"
                         type="text"
                         placeholder="미출석 사유 입력"
                         value={bulkAbsentComment}
                         onChange={(e) => setBulkAbsentComment(e.target.value)}
                       />
-                      <button onClick={handleBulkConfirm}>확인</button>
+
+                      <button
+                        style={{ marginTop: "10px" }}
+                        className="studentNum-button"
+                        onClick={handleBulkConfirm}
+                      >
+                        확인
+                      </button>
                     </div>
                   </div>
                 )}
-
                 {/* 미출석 처리된 학생 목록 (확정된 학생들) */}
                 {state.filter((s) => s.comment).length > 0 && (
                   <div style={{ marginTop: "20px" }}>
@@ -306,22 +381,31 @@ export default function Page(props: any) {
                       .filter((s) => s.comment)
                       .map((student) => (
                         <div
+                          className="notat-comment"
                           key={student.studentnumber}
                           style={{
                             display: "flex",
                             alignItems: "center",
                             marginBottom: "5px",
+                            justifyContent: "space-between",
                           }}
                         >
-                          <span style={{ marginRight: "10px" }}>
-                            {viewByName ? student.name : student.studentnumber}{" "}
-                            ({student.comment})
-                          </span>
+                          <div>
+                            <div
+                              className="attendance-student-name"
+                              style={{ marginRight: "10px" }}
+                            >
+                              {student.name} ({student.studentnumber})
+                            </div>
+                            <div style={{ fontSize: "12px" }}>
+                              이유 : ({student.comment})
+                            </div>
+                          </div>
                           <button
                             onClick={() =>
                               removeAbsentComment(student.studentnumber)
                             }
-                            className="studentNum-button"
+                            className="studentNum-button-pink"
                           >
                             삭제
                           </button>
@@ -329,6 +413,11 @@ export default function Page(props: any) {
                       ))}
                   </div>
                 )}
+              </div>
+              <div>
+                <button className="ok-button" onClick={handleConfirm}>
+                  적용
+                </button>
               </div>
             </animated.div>
           </>

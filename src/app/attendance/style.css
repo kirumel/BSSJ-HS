@@ -159,6 +159,45 @@
   font-size: 12px;
   cursor: pointer;
 }
+.studentNum-button-green {
+  background-color: #59ad5c;
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.studentNum-button-pink {
+  background-color: #e599aa;
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.studentNum-button-show {
+  background-color: rgb(99, 101, 201);
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
 .studentNum-button:disabled {
   background-color: rgba(39, 39, 39, 0.158);
   border: none;
@@ -171,4 +210,31 @@
   color: white;
   font-size: 12px;
   cursor: pointer;
+}
+.studentNum-button-pink:disabled {
+  background-color: rgba(39, 39, 39, 0.158);
+  border: none;
+  border-radius: 0.3rem;
+  margin: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+.notat-comment {
+  margin-top: 8px;
+  border: 1px solid rgb(195, 195, 195, 0.5);
+  padding: 20px;
+  border-radius: 0.5rem;
+}
+.slider {
+  overflow-y: scroll;
+  height: 57vh;
+}
+.modalTitle {
+  font-size: 16px;
+  font-weight: 600;
 }

@@ -972,3 +972,6 @@ a {
 .school-etc:hover {
   box-shadow: rgb(123, 123, 123, 0.2) 0px 1px 3px;
 }
+.margin0 {
+  margin: 0;
+}
