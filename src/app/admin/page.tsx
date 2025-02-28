@@ -155,11 +155,6 @@ export default function Page() {
           transition={Slide}
           closeButton={false}
         />
-        <div className="nav">
-          <Link href="/">
-            <Image src={logo} alt="logo" width={71} height={25} />
-          </Link>
-        </div>
         <div className="admin-mainTop">
           <div className="event-text-container">
             <p className="event-text-title">
@@ -175,7 +170,7 @@ export default function Page() {
 
         <div className="admin-mainMiddle">
           <Link href="/studentobject">
-            <button>출석 학생관리</button>
+            <button style={{ width: "100%" }}>출석 학생관리</button>
           </Link>
 
           <button>커뮤니티 관리</button>

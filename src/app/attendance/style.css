@@ -232,9 +232,12 @@
 }
 .slider {
   overflow-y: scroll;
-  height: 57vh;
 }
 .modalTitle {
   font-size: 16px;
   font-weight: 600;
+}
+.ok-button-div {
+  display: flex;
+  justify-content: center;
 }

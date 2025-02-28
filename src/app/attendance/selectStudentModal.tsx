@@ -23,22 +23,54 @@ export default function Page({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dragY, setDragY] = useState(0);
 
-  // 출석(혹은 미출석 확인된) 학생들 저장
+  // 이미 확정된 학생들 (미출석은 comment가 있음)
   const [state, setState] = useState<Student[]>([]);
-  // 일반 출석 모드에서 이름 보기/번호 보기 토글
+  // 일반 모드에서 임시 선택한 학생들 (출석할 학생들)
+  const [tempSelection, setTempSelection] = useState<Student[]>([]);
+  // 이름/번호 보기 토글
   const [viewByName, setViewByName] = useState(false);
-  // 미출석 모드 여부 (미출석 선택기 토글)
+  // 미출석 모드 여부
   const [isAbsentMode, setIsAbsentMode] = useState(false);
-  // 미출석 모드에서 일괄 선택한 학생들(아직 comment 미적용)
+  // 미출석 모드에서 일괄 선택한 학생들 (아직 comment 미적용)
   const [bulkAbsentSelection, setBulkAbsentSelection] = useState<Student[]>([]);
   // 미출석 모드에서 일괄 입력할 comment
   const [bulkAbsentComment, setBulkAbsentComment] = useState("");
+
+  console.log(state, tempSelection, bulkAbsentSelection);
+
   const handleConfirm = () => {
     setAttendance(state);
+
     closeModal();
   };
-  console.log(state);
-  // 모달 애니메이션
+
+  // 초기화 버튼: tempSelection과 state 모두 초기화
+  const handleReset = () => {
+    setTempSelection([]);
+    setState([]);
+  };
+
+  // 출석 버튼: tempSelection에 담긴 학생들을 check:"1" 상태로 state에 옮기고 tempSelection 비우기
+  const handleAttendanceButton = () => {
+    if (tempSelection.length > 0) {
+      const committed = tempSelection.map((student) => ({
+        ...student,
+        check: "1",
+      }));
+      setState((prev) => [...prev, ...committed]);
+      setTempSelection([]);
+    }
+  };
+
+  // 미출석 버튼: 미출석 모드 활성화 후 tempSelection의 학생들을 bulkAbsentSelection에 옮기기
+  const handleAbsentButton = () => {
+    setIsAbsentMode(true);
+    if (tempSelection.length > 0) {
+      setBulkAbsentSelection((prev) => [...prev, ...tempSelection]);
+      setTempSelection([]);
+    }
+  };
+
   const modalAnimation = useSpring({
     transform: `translateY(${isModalOpen ? dragY : 100}%)`,
     opacity: isModalOpen ? 1 : 0,
@@ -46,7 +78,7 @@ export default function Page({
     onRest: () => {
       if (!isModalOpen) {
         setIsModalVisible(false);
-        // 모달 닫을 때 미출석 모드와 bulk 선택도 초기화
+        // 모달 닫힐 때 미출석 모드와 bulk 선택 초기화
         setIsAbsentMode(false);
         setBulkAbsentSelection([]);
         setBulkAbsentComment("");
@@ -68,9 +100,9 @@ export default function Page({
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  console.log(state);
-  // 일반 모드에서는 학생 클릭 시 state에 출석(혹은 선택)으로 추가/제거
-  // 미출석 모드에서는 bulkAbsentSelection에 추가/제거 (일괄 comment 적용 전)
+
+  // 일반 모드: 학생 클릭 시 tempSelection에 토글
+  // 미출석 모드: bulkAbsentSelection에 토글
   const handleStudentClick = (student: Student) => {
     if (isAbsentMode) {
       const existsInState = state.find(
@@ -79,7 +111,6 @@ export default function Page({
       const existsInBulk = bulkAbsentSelection.find(
         (s) => s.studentnumber === student.studentnumber
       );
-      // state나 bulk에 이미 있으면 toggle로 제거
       if (existsInBulk) {
         setBulkAbsentSelection((prev) =>
           prev.filter((s) => s.studentnumber !== student.studentnumber)
@@ -88,48 +119,61 @@ export default function Page({
         setBulkAbsentSelection((prev) => [...prev, student]);
       }
     } else {
-      // 일반 모드: 이미 선택되어 있으면 해제, 아니면 추가
-      const exists = state.find(
+      const exists = tempSelection.find(
         (s) => s.studentnumber === student.studentnumber
       );
       if (exists) {
-        // 미출석 처리된 학생(comment가 있는)은 토글 해제 불가
-        if (!exists.comment) {
-          setState((prev) =>
-            prev.filter((s) => s.studentnumber !== student.studentnumber)
-          );
-        }
+        setTempSelection((prev) =>
+          prev.filter((s) => s.studentnumber !== student.studentnumber)
+        );
       } else {
-        setState((prev) => [...prev, { ...student, check: "1" }]);
+        setTempSelection((prev) => [
+          ...prev,
+          { ...student, check: "1" }, // 출석은 check:"1"
+        ]);
       }
     }
   };
 
-  // 전체 선택/해제 (일반 출석 모드에서만 작동)
+  // 전체 선택/해제 (일반 모드에서만 작동)
   const handleSetStateAll = () => {
     const allStudents: Student[] = props;
-    if (state.length === allStudents.length) {
-      setState([]);
+    if (
+      tempSelection.length ==
+      allStudents.filter((student) => !state.some((s) => s.id === student.id))
+        .length
+    ) {
+      setTempSelection([]);
     } else {
-      setState(allStudents);
+      setTempSelection(
+        allStudents.filter((student) => !state.some((s) => s.id === student.id))
+      );
     }
+  };
+
+  const handleClickSuccess = (student: Student) => {
+    setState((prev) => prev.filter((s) => s.id !== student.id));
   };
 
   const toggleView = () => {
     setViewByName(!viewByName);
   };
 
-  // 미출석 모드 토글 (버튼 텍스트가 "미출석 선택기" / "선택해제"로 변함)
+  // 미출석 선택기 토글 버튼 (기존 기능 그대로)
   const toggleAbsentMode = () => {
-    // 미출석 모드 토글 시 bulk 선택 초기화
-    setBulkAbsentSelection([]);
-    setBulkAbsentComment("");
-    setIsAbsentMode((prev) => !prev);
+    if (isAbsentMode) {
+      setIsAbsentMode(false);
+      setTempSelection((prev) => [...prev, ...bulkAbsentSelection]);
+      setBulkAbsentSelection([]);
+      setBulkAbsentComment("");
+    } else {
+      setIsAbsentMode(true);
+    }
   };
 
-  // bulk로 선택된 학생들에게 입력한 comment를 일괄 적용
+  // bulk로 선택된 학생들에게 comment 적용 (미출석: check:"0")
   const handleBulkConfirm = () => {
-    if (bulkAbsentComment.trim() === "") return; // 사유가 없으면 아무 동작 안 함
+    if (bulkAbsentComment.trim() === "") return;
     const updatedStudents: Student[] = bulkAbsentSelection.map((student) => ({
       ...student,
       comment: bulkAbsentComment,
@@ -141,8 +185,10 @@ export default function Page({
     );
     setBulkAbsentSelection([]);
     setBulkAbsentComment("");
+    setIsAbsentMode(false);
   };
-  // 이미 미출석 처리된 학생의 comment 제거 (출석 전환 가능)
+
+  // 미출석 처리된 학생의 comment 제거 (출석 전환 가능)
   const removeAbsentComment = (studentnumber: string) => {
     setState((prev) =>
       prev.map((s) =>
@@ -153,21 +199,29 @@ export default function Page({
     );
   };
 
-  // 미출석 모드에서, 이미 state 또는 bulk에 있는 학생은 버튼 비활성화
+  // 학생 버튼 비활성화: 일반 모드에서는 tempSelection에 포함되면 비활성화, 미출석 모드에서는 이미 state 또는 bulkAbsentSelection에 포함되면 비활성화
   const isStudentDisabled = (student: Student) => {
-    const existsInState = state.find((s) => s.id === student.id);
+    const existsInState = state.find(
+      (s) => s.studentnumber === student.studentnumber
+    );
     const existsInBulk = bulkAbsentSelection.find(
       (s) => s.studentnumber === student.studentnumber
     );
-
+    const existsInTemp = tempSelection.find(
+      (s) => s.studentnumber === student.studentnumber
+    );
     if (isAbsentMode) {
       return Boolean(existsInState || existsInBulk);
     }
-    return existsInState ? true : false;
+
+    return Boolean(existsInState || existsInTemp || existsInBulk);
   };
+
   const handleAbsentClick = (student: Student) => {
     if (isAbsentMode) {
-      setBulkAbsentSelection((prev) => prev.filter((s) => s !== student));
+      setBulkAbsentSelection((prev) =>
+        prev.filter((s) => s.studentnumber !== student.studentnumber)
+      );
     }
   };
 
@@ -254,14 +308,21 @@ export default function Page({
                 <h3 className="margin0 modalTitle" style={{ fontSize: "20px" }}>
                   선택메뉴
                 </h3>
+                {/*버튼들*/}
                 <div>
-                  {/* 전체 선택 버튼 (일반 모드에서만 작동) */}
+                  {/* 전체 선택 버튼*/}
                   <button
                     className="studentNum-button"
                     onClick={handleSetStateAll}
                     disabled={isAbsentMode}
                   >
-                    {state.length === props.length ? "전체해제" : "전체선택"}
+                    {tempSelection.length ===
+                    props.filter(
+                      (student: Student) =>
+                        !state.some((s) => s.id === student.id)
+                    ).length
+                      ? "전체 해제"
+                      : "전체선택"}
                   </button>
                   <button
                     onClick={toggleView}
@@ -269,46 +330,138 @@ export default function Page({
                   >
                     {viewByName ? "번호 보기" : "이름 보기"}
                   </button>
-                  {/* 미출석 선택기 토글 버튼 */}
-                  <button
-                    onClick={toggleAbsentMode}
-                    className={
-                      isAbsentMode
-                        ? "studentNum-button-pink"
-                        : "studentNum-button-green"
-                    }
-                  >
-                    {isAbsentMode ? "선택해제" : "미출석 선택기"}
-                  </button>
+                  {/* 기존 미출석 선택기 토글 버튼 */}
+                  {isAbsentMode && (
+                    <button
+                      onClick={toggleAbsentMode}
+                      className={
+                        isAbsentMode
+                          ? "studentNum-button-pink"
+                          : "studentNum-button-green"
+                      }
+                    >
+                      {isAbsentMode ? "일반선택" : null}
+                    </button>
+                  )}
+
+                  {/* 새로 추가한 출석/미출석 버튼 */}
+                  {tempSelection.length > 0 && (
+                    <>
+                      <button
+                        onClick={handleAttendanceButton}
+                        className="studentNum-button"
+                        style={{
+                          backgroundColor: "rgb(138, 156, 255)",
+                        }}
+                      >
+                        출석
+                      </button>
+                      <button
+                        style={{
+                          backgroundColor: "rgb(201, 99, 125)",
+                        }}
+                        onClick={handleAbsentButton}
+                        className="studentNum-button"
+                      >
+                        미출석
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
-              <div className="slider">
-                {/* 이미 선택(출석 혹은 미출석 확정)된 학생들 */}
-                <div style={state.length > 0 ? {} : { display: "none" }}>
+              {/* tempSelection에 담긴 출석 학생들 표시 */}
+              {!isAbsentMode && state.length > 0 && (
+                <div>
                   <h3
-                    className="modalTitle margin0 "
+                    className="modalTitle margin0"
                     style={{ marginBottom: "5px" }}
                   >
-                    출석 완료
+                    출석완료
                   </h3>
                   {state.map((item) => (
                     <button
                       className="studentNum-button"
                       style={{
                         backgroundColor: `${
-                          item.comment ? "rgb(201, 99, 125)" : "#59ad5c"
+                          item.comment
+                            ? "rgb(201, 99, 125)"
+                            : "rgb(138, 156, 255)"
                         }`,
                       }}
                       onClick={() => {
-                        if (!item.comment) handleStudentClick(item);
+                        handleClickSuccess(item);
                       }}
                       key={item.studentnumber}
                     >
-                      {viewByName ? item.name : item.studentnumber}{" "}
-                      {item.comment && `(미출석)`}
+                      {viewByName ? item.name : item.studentnumber}
                     </button>
                   ))}
                 </div>
+              )}
+              <div
+                className="slider"
+                style={{ height: `${state.length > 0 ? "50vh" : "57.8vh"}` }}
+              >
+                {/* 미출석 모드: comment 입력 영역 */}
+                {isAbsentMode && (
+                  <div className="notat-comment">
+                    <h3 className="margin0" style={{ marginBottom: "10px" }}>
+                      미출석 선택됨
+                    </h3>
+                    {bulkAbsentSelection.length > 0 ? (
+                      bulkAbsentSelection.map((student) => (
+                        <button
+                          className="studentNum-button-pink"
+                          key={student.studentnumber}
+                          onClick={() => handleAbsentClick(student)}
+                        >
+                          {viewByName ? student.name : student.studentnumber}
+                        </button>
+                      ))
+                    ) : (
+                      <div>선택된 학생이 없습니다.</div>
+                    )}
+                    <div style={{ marginTop: "10px" }}>
+                      <input
+                        className="text-input"
+                        type="text"
+                        placeholder="미출석 사유 입력"
+                        value={bulkAbsentComment}
+                        onChange={(e) => setBulkAbsentComment(e.target.value)}
+                      />
+                      <button
+                        style={{ marginTop: "10px" }}
+                        className="studentNum-button"
+                        onClick={handleBulkConfirm}
+                      >
+                        확인
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {/* tempSelection에 담긴 출석 학생들 표시 */}
+                {!isAbsentMode && tempSelection.length > 0 && (
+                  <div className="notat-comment">
+                    <h3
+                      className="modalTitle margin0"
+                      style={{ marginBottom: "5px" }}
+                    >
+                      임시 선택됨
+                    </h3>
+                    {tempSelection.map((item) => (
+                      <button
+                        className="studentNum-button"
+                        style={{ backgroundColor: "#59ad5c" }}
+                        onClick={() => {
+                          handleStudentClick(item);
+                        }}
+                        key={item.studentnumber}
+                      >
+                        {viewByName ? item.name : item.studentnumber}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="line" style={{ marginTop: "10px" }}></div>
                 {/* 전체 학생 리스트 */}
                 <div className="notat-comment">
@@ -332,48 +485,9 @@ export default function Page({
                       {viewByName ? item.name : item.studentnumber}
                     </button>
                   ))}
-
                   <div className="line" style={{ marginTop: "10px" }}></div>
                 </div>
-                {/* 미출석 모드일 경우, 선택된 학생 목록과 comment 입력 영역 노출 */}
-                {isAbsentMode && (
-                  <div className="notat-comment">
-                    <h3 className="margin0" style={{ marginBottom: "10px" }}>
-                      선택됨
-                    </h3>
-                    {bulkAbsentSelection.length > 0 ? (
-                      bulkAbsentSelection.map((student) => (
-                        <button
-                          className=" studentNum-button-pink"
-                          key={student.studentnumber}
-                          onClick={() => handleAbsentClick(student)}
-                        >
-                          {viewByName ? student.name : student.studentnumber}
-                        </button>
-                      ))
-                    ) : (
-                      <div>선택된 학생이 없습니다.</div>
-                    )}
-                    <div style={{ marginTop: "10px" }}>
-                      <input
-                        className="text-input"
-                        type="text"
-                        placeholder="미출석 사유 입력"
-                        value={bulkAbsentComment}
-                        onChange={(e) => setBulkAbsentComment(e.target.value)}
-                      />
-
-                      <button
-                        style={{ marginTop: "10px" }}
-                        className="studentNum-button"
-                        onClick={handleBulkConfirm}
-                      >
-                        확인
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {/* 미출석 처리된 학생 목록 (확정된 학생들) */}
+                {/* 미출석 처리된 학생 목록*/}
                 {state.filter((s) => s.comment).length > 0 && (
                   <div style={{ marginTop: "20px" }}>
                     <h3>미출석 학생</h3>
@@ -414,7 +528,17 @@ export default function Page({
                   </div>
                 )}
               </div>
-              <div>
+              <div className="ok-button-div">
+                <button
+                  className="ok-button"
+                  style={{
+                    marginRight: "10px",
+                    backgroundColor: "rgb(63, 63, 63)",
+                  }}
+                  onClick={handleReset}
+                >
+                  초기화
+                </button>
                 <button className="ok-button" onClick={handleConfirm}>
                   적용
                 </button>

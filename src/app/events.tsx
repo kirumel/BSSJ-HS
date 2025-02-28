@@ -34,19 +34,13 @@ export default function Events() {
           loop={true}
         >
           <SwiperSlide className="event-slide">
-            <a href="/qrScan">
-              <div style={{ width: "100%", height: "33vh" }}>
-                <img
-                  className="home-event-img"
-                  src="logofull.jpg"
-                  alt="Slide 2"
-                />
-                <div className="event-overlay">
-                  <h2 className="event-title">event</h2>
-                  <p>event</p>
-                </div>
+            <div style={{ width: "100%", height: "33vh" }}>
+              <img className="home-event-img" src="altisto.png" alt="Slide 2" />
+              <div className="event-overlay">
+                <h2 className="event-title">성지고등학교 app</h2>
+                <p>version 1.0.1</p>
               </div>
-            </a>
+            </div>
           </SwiperSlide>
         </Swiper>
       </div>

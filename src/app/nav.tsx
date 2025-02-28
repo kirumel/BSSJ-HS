@@ -17,7 +17,6 @@ export default function Nav() {
     "/accountdelete",
     "/",
     "/study",
-    "/admin",
     "/feed",
     "/nightAT",
     "/nightattendance",
@@ -28,7 +27,9 @@ export default function Nav() {
     return (
       <>
         <div className="nav">
-          <Logo />
+          <Link href="/">
+            <Logo />
+          </Link>
         </div>
       </>
     );

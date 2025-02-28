@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import "./style.css";
 
 import PlusStudentModal from "./plusStudentModal";
-import SuccessModal from "./successModal";
+import SuccessModal from "../successModal/page";
 
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../choiceATteacher/style.css";
@@ -137,7 +137,7 @@ export default function Page() {
           toast(response.data);
         } else {
           setIsLoading(false);
-          setSuccessModalTimer();
+          setSuccessModal(true);
         }
       })
       .catch((error) => {
@@ -147,13 +147,6 @@ export default function Page() {
       });
 
     localStorage.setItem("compareAT", JSON.stringify(firstcommitstudent));
-  };
-
-  const setSuccessModalTimer = () => {
-    setSuccessModal(true);
-    setTimeout(() => {
-      setSuccessModal(false);
-    }, 2500);
   };
 
   const countAbsentStudentsNO = () => {
@@ -220,8 +213,10 @@ export default function Page() {
           <div>
             {successModal ? (
               <SuccessModal
-                setAttendance={handleStateChange}
-                props={successModal}
+                props={{
+                  name: "성공!",
+                  content: "1차 출석이 저장되었어요",
+                }}
               />
             ) : null}
           </div>
