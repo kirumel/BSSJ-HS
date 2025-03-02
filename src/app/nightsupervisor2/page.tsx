@@ -86,7 +86,7 @@ export default function Page() {
             (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
           );
           const sortedData1 = sortedData.filter(
-            (student) => student.grade == 2
+            (student) => student.grade == "2"
           );
 
           const presentStudents = sortedData1.filter(
