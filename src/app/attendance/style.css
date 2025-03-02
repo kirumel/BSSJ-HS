@@ -232,12 +232,25 @@
 }
 .slider {
   overflow-y: scroll;
+  margin-top: 10px;
+  border-radius: 1rem;
 }
 .modalTitle {
   font-size: 16px;
   font-weight: 600;
 }
 .ok-button-div {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
+  position: fixed; /* 화면에 고정 */
+  bottom: 0px; /* 화면 하단에서 10px 위로 위치 */
+  left: 50%; /* 화면 가로 가운데 */
+  transform: translateX(-50%); /* 정확히 가운데 정렬 */
+  padding: 20px;
   display: flex;
   justify-content: center;
+  width: 90%;
 }

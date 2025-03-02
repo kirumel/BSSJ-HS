@@ -6,6 +6,7 @@ import "../attendance/style.css";
 import SuccessModal from "./successModal";
 import "./style.css";
 import axios from "axios";
+import SelectStudentModal from "./selectStudentModal";
 
 const todayDate = new Date();
 const today = new Date();
@@ -25,8 +26,8 @@ interface Attendance {
   comment: string;
   check: string;
   author: string;
-  grade: string;
-  class: string;
+  grade: number;
+  class: number;
   studentnumber: string;
   createdAt: string;
   id: string;
@@ -50,10 +51,10 @@ export default function Page() {
   >([]);
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [selectedClass, setSelectedClass] = useState<number | null>(null);
 
   const getFilteredStudents = () => {
-    if (selectedClass === null || selectedClass == "") {
+    if (selectedClass === null || selectedClass == undefined) {
       return attendance;
     }
     return attendance.filter((student) => student.class == selectedClass);
@@ -73,12 +74,18 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          const sortedData = data.sort(
-            (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
-          );
+          // 반과 학생번호 순으로 정렬: 먼저 반 기준, 같은 반이면 학생번호 기준
+          const sortedData = data.sort((a, b) => {
+            const classA = parseInt(a.class);
+            const classB = parseInt(b.class);
+            if (classA !== classB) {
+              return classA - classB;
+            }
+            return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+          });
 
           const sortedData3 = sortedData.filter(
-            (student) => student.grade == "3"
+            (student) => student.grade == 3
           );
 
           const presentStudents = sortedData3.filter(
@@ -117,7 +124,25 @@ export default function Page() {
       )
     );
   };
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        // Find the corresponding student in the newState array
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
 
+        // If there's a match, update the student's check and comment, otherwise keep the student as is
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+            }
+          : student;
+      })
+    );
+  };
   const handleCheckboxChange = (
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
@@ -211,19 +236,31 @@ export default function Page() {
             <p>총 인원: {attendance.length}</p>
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
-          </div>
-          <select
-            className="class-select"
-            onChange={(e) => setSelectedClass(e.target.value)}
-            value={selectedClass || ""}
+          </div>{" "}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <option value="">모두 보기</option>
-            {classList.map((cls, index) => (
-              <option key={index} value={cls}>
-                {cls}반
-              </option>
-            ))}
-          </select>
+            <select
+              className="class-select"
+              onChange={(e) => setSelectedClass(e.target.value)}
+              value={selectedClass || ""}
+            >
+              <option value="">모두 보기</option>
+              {classList.map((cls, index) => (
+                <option key={index} value={cls}>
+                  {cls}반
+                </option>
+              ))}
+            </select>
+            <SelectStudentModal
+              props={attendance}
+              setAttendance={handleStateChange}
+            />
+          </div>
         </div>
 
         <div className="attendance-container">
@@ -232,112 +269,131 @@ export default function Page() {
               (student) => student.id === data.id
             ) || { check: "", comment: "" };
             return (
-              <div
-                style={{
-                  backgroundColor: `${
-                    studentCommit.check === "0"
-                      ? "#FFE8E8"
-                      : studentCommit.check === "1"
-                      ? "#E8E8FF"
-                      : data.check === "0"
-                      ? "#E8E8E8"
-                      : "white"
-                  }`,
-                }}
-                className="attendance-student"
-                key={data.id}
-              >
+              <div key={i}>
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: `${
-                      studentCommit.check == "0" ? "normal" : "center"
+                    backgroundColor: `${
+                      studentCommit.check === "0"
+                        ? "#FFE8E8"
+                        : studentCommit.check === "1"
+                        ? "#E8E8FF"
+                        : data.check === "0"
+                        ? "#E8E8E8"
+                        : "white"
                     }`,
                   }}
+                  className="attendance-student"
+                  key={data.id}
                 >
-                  <div className="attendance-student-title-display">
-                    <div className="attendance-student-title">
-                      <p className="attendance-student-name">{data.name}</p>
-                      <p className="attendance-student-gradeandclass">
-                        {data.grade}학년 {data.class}반
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: `${
+                        studentCommit.check == "0" ? "normal" : "center"
+                      }`,
+                    }}
+                  >
+                    <div className="attendance-student-title-display">
+                      <div className="attendance-student-title">
+                        <p className="attendance-student-name">{data.name}</p>
+                        <p className="attendance-student-gradeandclass">
+                          {data.grade}학년 {data.class}반
+                        </p>
+                      </div>
+                      <p className="attendance-student-number">
+                        {data.studentnumber}번
                       </p>
                     </div>
-                    <p className="attendance-student-number">
-                      {data.studentnumber}번
-                    </p>
-                  </div>
-                  <div>
-                    {studentCommit.check === "0" ? (
-                      <div
-                        style={{ marginBottom: "20px" }}
-                        className="attendance-student-nocheck-comment"
-                      >
-                        <p style={{ marginBottom: "5px" }} className="subtitle">
-                          미출석 사유
-                        </p>
-                        <input
-                          type="text"
-                          className="text-input"
+                    <div>
+                      {studentCommit.check === "0" ? (
+                        <div
+                          style={{ marginBottom: "20px" }}
+                          className="attendance-student-nocheck-comment"
+                        >
+                          <p
+                            style={{ marginBottom: "5px" }}
+                            className="subtitle"
+                          >
+                            미출석 사유
+                          </p>
+                          <input
+                            type="text"
+                            className="text-input"
+                            style={{
+                              padding: "5px",
+                              paddingRight: "10px",
+                              paddingLeft: "10px",
+                              boxSizing: "border-box",
+                              fontSize: "11px",
+                            }}
+                            value={studentCommit.comment || ""}
+                            onChange={(e) =>
+                              handleCommitChange(
+                                data.id,
+                                "comment",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      ) : null}
+                      {studentCommit.check === "1" ? (
+                        <p
                           style={{
-                            padding: "5px",
-                            paddingRight: "10px",
-                            paddingLeft: "10px",
-                            boxSizing: "border-box",
-                            fontSize: "11px",
+                            marginBottom: "5px",
+                            textAlign: "right",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            color: "#8176FE",
                           }}
-                          value={studentCommit.comment || ""}
-                          onChange={(e) =>
-                            handleCommitChange(
-                              data.id,
-                              "comment",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    ) : null}
-                    {studentCommit.check === "1" ? (
-                      <p
-                        style={{
-                          marginBottom: "5px",
-                          textAlign: "right",
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          color: "#8176FE",
-                        }}
-                      >
-                        출석
-                      </p>
-                    ) : null}
-                    {data.check === "0" ? (
-                      <>
-                        <h5>
-                          미출석
-                          <br />
-                          이유 : {data?.comment}
-                        </h5>
-                      </>
-                    ) : (
-                      <div style={{ display: "flex", justifyContent: "right" }}>
-                        <input
-                          type="checkbox"
-                          className="no-check"
-                          name="n"
-                          checked={studentCommit.check === "0"}
-                          onChange={(e) => handleCheckboxChange(data.id, e)}
-                        />
-                        <input
-                          type="checkbox"
-                          className="yes-check"
-                          name="y"
-                          checked={studentCommit.check === "1"}
-                          onChange={(e) => handleCheckboxChange(data.id, e)}
-                        />
-                      </div>
-                    )}
+                        >
+                          출석
+                        </p>
+                      ) : null}
+                      {data.check === "0" ? (
+                        <>
+                          <h5>
+                            미출석
+                            <br />
+                            이유 : {data?.comment}
+                          </h5>
+                        </>
+                      ) : (
+                        <div
+                          style={{ display: "flex", justifyContent: "right" }}
+                        >
+                          <input
+                            type="checkbox"
+                            className="no-check"
+                            name="n"
+                            checked={studentCommit.check === "0"}
+                            onChange={(e) => handleCheckboxChange(data.id, e)}
+                          />
+                          <input
+                            type="checkbox"
+                            className="yes-check"
+                            name="y"
+                            checked={studentCommit.check === "1"}
+                            onChange={(e) => handleCheckboxChange(data.id, e)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+                {(i === filteredStudents.length - 1 ||
+                  filteredStudents[i + 1].class !== data.class) && (
+                  <div
+                    className="line"
+                    style={{
+                      backgroundColor: "blue",
+                      height: "1px",
+                      marginTop: "20px",
+                      marginBottom: "20px",
+                    }}
+                  ></div>
+                )}
               </div>
             );
           })}

@@ -9,6 +9,7 @@ import SuccessModal from "./successModal";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../choiceATteacher/style.css";
 import axios from "axios";
+import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
   outTimeT: string;
@@ -162,7 +163,26 @@ export default function Page() {
       setSuccessModal(false);
     }, 2500);
   };
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        // Find the corresponding student in the newState array
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
 
+        // If there's a match, update the student's check and comment, otherwise keep the student as is
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+              outTimeT: updatedStudent.outTimeT,
+            }
+          : student;
+      })
+    );
+  };
   const countAbsentStudentsNO = () => {
     return firstcommitstudent.filter((student) => student.check === "0").length;
   };
@@ -214,12 +234,24 @@ export default function Page() {
               <p>미출석: {countAbsentStudentsNO()}</p>
               <p>출석: {countAbsentStudentsOK()}</p>
             </div>
-            <button
-              className="plus-attendance-button"
-              onClick={() => setModalOpen(true)}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              학생 추가
-            </button>
+              <button
+                className="plus-attendance-button"
+                onClick={() => setModalOpen(true)}
+              >
+                학생 추가
+              </button>
+              <SelectStudentModal
+                props={firstcommitstudent}
+                setAttendance={handleStateChange}
+              />
+            </div>
           </div>
           <div className="attendance-container">
             {attendance.map((data, i) => (

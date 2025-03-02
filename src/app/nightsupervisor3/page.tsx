@@ -6,6 +6,7 @@ import "../attendance/style.css";
 import SuccessModal from "./successModal";
 import "./style.css";
 import axios from "axios";
+import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
   outTimeST: string;
@@ -165,7 +166,26 @@ export default function Page() {
       setSuccessModal(false);
     }, 2500);
   };
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        // Find the corresponding student in the newState array
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
 
+        // If there's a match, update the student's check and comment, otherwise keep the student as is
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+              outTimeT: updatedStudent.outTimeT,
+            }
+          : student;
+      })
+    );
+  };
   const countAbsentStudentsNO = () => {
     const count1 = firstcommitstudent.filter(
       (student) => student.check === "0"
@@ -226,6 +246,10 @@ export default function Page() {
               </option>
             ))}
           </select>
+          <SelectStudentModal
+            props={firstcommitstudent}
+            setAttendance={handleStateChange}
+          />
         </div>
 
         <div className="attendance-container">

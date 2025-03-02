@@ -4,6 +4,8 @@ import { useDrag } from "@use-gesture/react";
 import "./style.css";
 
 interface Student {
+  outTimeT2: ReactNode;
+  outTimeT: ReactNode;
   id: any;
   studentnumber: string;
   name?: string;
@@ -33,12 +35,19 @@ export default function Page({
   const [isAbsentMode, setIsAbsentMode] = useState(false);
   const [bulkAbsentSelection, setBulkAbsentSelection] = useState<Student[]>([]);
   const [bulkAbsentComment, setBulkAbsentComment] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
 
   console.log(studentsData, tempSelection, bulkAbsentSelection);
+  console.log(props);
 
   // 적용 버튼: 최종 studentsData를 부모 컴포넌트에 전달
   const handleConfirm = () => {
-    setAttendance(studentsData);
+    setAttendance(
+      studentsData.map((student) => ({
+        ...student,
+        outTimeT: student.outTimeT2 ? student.outTimeT2 : student.outTimeT,
+      }))
+    );
     closeModal();
   };
 
@@ -61,12 +70,18 @@ export default function Page({
         if (
           tempSelection.find((s) => s.studentnumber === student.studentnumber)
         ) {
-          return { ...student, check: "1", comment: undefined };
+          return {
+            ...student,
+            check: "1",
+            comment: undefined,
+            outTimeT2: selectedTime,
+          };
         }
         return student;
       });
       setStudentsData(updatedData);
       setTempSelection([]);
+      setSelectedTime(""); // 시간 선택값 초기화
     }
   };
 
@@ -159,7 +174,7 @@ export default function Page({
     setStudentsData((prev) =>
       prev.map((s) =>
         s.studentnumber === student.studentnumber
-          ? { ...s, check: undefined, comment: undefined }
+          ? { ...s, check: undefined, comment: undefined, outTimeT2: undefined }
           : s
       )
     );
@@ -190,7 +205,12 @@ export default function Page({
           (s) => s.studentnumber === student.studentnumber
         )
       ) {
-        return { ...student, comment: bulkAbsentComment, check: "0" };
+        return {
+          ...student,
+          comment: bulkAbsentComment,
+          check: "0",
+          outTimeT2: selectedTime,
+        };
       }
       return student;
     });
@@ -285,61 +305,83 @@ export default function Page({
                 backgroundColor: "white",
                 padding: "20px",
                 borderRadius: "10px 10px 0 0",
-                height: "80vh",
+                height: "90vh",
                 overflowY: "hidden",
                 touchAction: "none",
               }}
             >
               <div
-                {...bind()}
                 style={{
                   display: "flex",
                   justifyContent: "center",
                   width: "100%",
                 }}
+                {...bind()}
               >
                 <div
                   style={{
                     width: "30%",
                     height: "3px",
-                    marginBottom: "30px",
+                    marginBottom: "20px",
                     borderRadius: "100px",
                     cursor: "grab",
                     backgroundColor: "rgb(179, 179, 179)",
                   }}
                 ></div>
               </div>
-              <div
-                className="display-flex"
-                style={{
-                  justifyContent: "space-between",
-                  flexDirection: "row",
-                  marginBottom: "20px",
-                }}
-              >
-                <h3 className="margin0 modalTitle" style={{ fontSize: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3
+                  className="margin0 modalTitle"
+                  style={{
+                    fontSize: "20px",
+                    display: "inline",
+                  }}
+                >
                   선택메뉴
                 </h3>
                 <div>
-                  <button
-                    className="studentNum-button"
-                    onClick={handleSetStateAll}
-                    disabled={isAbsentMode}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
                   >
-                    {tempSelection.length ===
-                    studentsData.filter(
-                      (student) => !(student.check || student.comment)
-                    ).length
-                      ? "전체 해제"
-                      : "전체선택"}
-                  </button>
-                  <button
-                    onClick={toggleView}
-                    className="studentNum-button-show"
-                  >
-                    {viewByName ? "번호 보기" : "이름 보기"}
-                  </button>
-                  {isAbsentMode && (
+                    <button
+                      className="studentNum-button"
+                      onClick={handleSetStateAll}
+                      disabled={isAbsentMode}
+                    >
+                      {tempSelection.length ===
+                      studentsData.filter(
+                        (student) => !(student.check || student.comment)
+                      ).length
+                        ? "전체 해제"
+                        : "전체선택"}
+                    </button>
+                    <button
+                      onClick={toggleView}
+                      className="studentNum-button-show"
+                    >
+                      {viewByName ? "번호 보기" : "이름 보기"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginBottom: "10px",
+                }}
+              >
+                {isAbsentMode && (
+                  <div>
+                    <input
+                      className="time-input"
+                      type="time"
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
+                    />
                     <button
                       onClick={toggleAbsentMode}
                       className={
@@ -350,30 +392,44 @@ export default function Page({
                     >
                       {isAbsentMode ? "일반선택" : null}
                     </button>
-                  )}
-                  {tempSelection.length > 0 && (
-                    <>
-                      <button
-                        onClick={handleAttendanceButton}
-                        className="studentNum-button"
-                        style={{
-                          backgroundColor: "rgb(138, 156, 255)",
-                        }}
-                      >
-                        출석
-                      </button>
-                      <button
-                        style={{
-                          backgroundColor: "rgb(201, 99, 125)",
-                        }}
-                        onClick={handleAbsentButton}
-                        className="studentNum-button"
-                      >
-                        미출석
-                      </button>
-                    </>
-                  )}
-                </div>
+                  </div>
+                )}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "right",
+                  marginBottom: "10px",
+                }}
+              >
+                {tempSelection.length > 0 && (
+                  <>
+                    <input
+                      className="time-input"
+                      type="time"
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
+                    />
+                    <button
+                      onClick={handleAttendanceButton}
+                      className="studentNum-button"
+                      style={{
+                        backgroundColor: "rgb(138, 156, 255)",
+                      }}
+                    >
+                      출석
+                    </button>
+                    <button
+                      style={{
+                        backgroundColor: "rgb(201, 99, 125)",
+                      }}
+                      onClick={handleAbsentButton}
+                      className="studentNum-button"
+                    >
+                      미출석
+                    </button>
+                  </>
+                )}
               </div>
               {/* 출석 완료된 학생 표시 */}
               {studentsData.some((s) => s.check === "1" || s.check === "0") && (
@@ -387,18 +443,31 @@ export default function Page({
                   {studentsData
                     .filter((item) => item.check === "1" || item.check === "0")
                     .map((item) => (
-                      <button
-                        className="studentNum-button"
-                        style={{
-                          backgroundColor: item.comment
-                            ? "rgb(201, 99, 125)"
-                            : "rgb(138, 156, 255)",
-                        }}
-                        onClick={() => handleClickSuccess(item)}
-                        key={item.studentnumber}
-                      >
-                        {viewByName ? item.name : item.studentnumber}
-                      </button>
+                      <div key={item.id} style={{ display: "inline-flex" }}>
+                        <button
+                          className="studentNum-button"
+                          style={{
+                            backgroundColor: item.comment
+                              ? "rgb(201, 99, 125)"
+                              : "rgb(138, 156, 255)",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                          onClick={() => handleClickSuccess(item)}
+                          key={item.studentnumber}
+                        >
+                          <div
+                            style={{
+                              marginRight: `${item.outTimeT ? "3px" : ""}`,
+                            }}
+                          >
+                            {viewByName ? item.name : item.studentnumber}
+                          </div>
+                          <div>
+                            / {item.outTimeT2 ? item.outTimeT2 : item.outTimeT}
+                          </div>
+                        </button>
+                      </div>
                     ))}
                 </div>
               )}
@@ -420,13 +489,28 @@ export default function Page({
                     </h3>
                     {bulkAbsentSelection.length > 0 ? (
                       bulkAbsentSelection.map((student) => (
-                        <button
-                          className="studentNum-button-pink"
-                          key={student.studentnumber}
-                          onClick={() => handleAbsentClick(student)}
+                        <div
+                          key={student.id}
+                          style={{ display: "inline-flex" }}
                         >
-                          {viewByName ? student.name : student.studentnumber}
-                        </button>
+                          <button
+                            className="studentNum-button-pink"
+                            key={student.studentnumber}
+                            onClick={() => handleAbsentClick(student)}
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <div
+                              style={{
+                                marginRight: `${student.outTimeT ? "3px" : ""}`,
+                              }}
+                            >
+                              {viewByName
+                                ? student.name
+                                : student.studentnumber}
+                            </div>
+                            <div>/ {student.outTimeT}</div>
+                          </button>
+                        </div>
                       ))
                     ) : (
                       <div>선택된 학생이 없습니다.</div>
@@ -449,7 +533,7 @@ export default function Page({
                     </div>
                   </div>
                 )}
-                {/* 일반 모드: 임시 선택된 학생 표시 */}
+                {/* 임시 선택된 학생 표시 */}
                 {!isAbsentMode && tempSelection.length > 0 && (
                   <div className="notat-comment">
                     <h3
@@ -459,14 +543,27 @@ export default function Page({
                       임시 선택됨
                     </h3>
                     {tempSelection.map((item) => (
-                      <button
-                        className="studentNum-button"
-                        style={{ backgroundColor: "#59ad5c" }}
-                        onClick={() => handleStudentClick(item)}
-                        key={item.studentnumber}
-                      >
-                        {viewByName ? item.name : item.studentnumber}
-                      </button>
+                      <div key={item.id} style={{ display: "inline-flex" }}>
+                        <button
+                          className="studentNum-button"
+                          style={{
+                            backgroundColor: "#59ad5c",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                          onClick={() => handleStudentClick(item)}
+                          key={item.studentnumber}
+                        >
+                          <div
+                            style={{
+                              marginRight: `${item.outTimeT ? "3px" : ""}`,
+                            }}
+                          >
+                            {viewByName ? item.name : item.studentnumber}
+                          </div>
+                          <div>/ {item.outTimeT}</div>
+                        </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -480,18 +577,28 @@ export default function Page({
                     학생 리스트
                   </h3>
                   {studentsData.map((item) => (
-                    <button
-                      className={
-                        isAbsentMode
-                          ? "studentNum-button-pink"
-                          : "studentNum-button"
-                      }
-                      onClick={() => handleStudentClick(item)}
-                      key={item.studentnumber}
-                      disabled={isStudentDisabled(item)}
-                    >
-                      {viewByName ? item.name : item.studentnumber}
-                    </button>
+                    <div key={item.id} style={{ display: "inline-flex" }}>
+                      <button
+                        className={
+                          isAbsentMode
+                            ? "studentNum-button-pink"
+                            : "studentNum-button"
+                        }
+                        onClick={() => handleStudentClick(item)}
+                        key={item.studentnumber}
+                        disabled={isStudentDisabled(item)}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
+                        <div
+                          style={{
+                            marginRight: `${item.outTimeT ? "3px" : ""}`,
+                          }}
+                        >
+                          {viewByName ? item.name : item.studentnumber}
+                        </div>
+                        <div>/ {item.outTimeT}</div>
+                      </button>
+                    </div>
                   ))}
                   <div className="line" style={{ marginTop: "10px" }}></div>
                 </div>
@@ -517,7 +624,8 @@ export default function Page({
                               className="attendance-student-name"
                               style={{ marginRight: "10px" }}
                             >
-                              {student.name} ({student.studentnumber})
+                              {student.name} ({student.studentnumber}) / (
+                              {student.outTimeT2})
                             </div>
                             <div style={{ fontSize: "12px" }}>
                               이유 : ({student.comment})
@@ -535,6 +643,17 @@ export default function Page({
                       ))}
                   </div>
                 )}
+              </div>
+              <div
+                style={{
+                  fontSize: "2vw",
+                  margin: "10px",
+                  textAlign: "center",
+                }}
+                className="subtitle"
+              >
+                선택후 시간을 선택 안하시면 1차 or 등록되어있던 시간이
+                등록됩니다
               </div>
               <div className="ok-button-div">
                 <button
