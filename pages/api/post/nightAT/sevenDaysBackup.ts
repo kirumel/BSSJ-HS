@@ -38,6 +38,7 @@ export default async function handler(req: any, res: any) {
             grade: grade,
           },
         });
+        console.log(formattedDate);
         if (students) {
           const move = await prisma.nightCompareAT2.createMany({
             data: {
@@ -53,6 +54,7 @@ export default async function handler(req: any, res: any) {
               grade: grade,
             },
           });
+          console.log(formattedDate);
         }
       }
       res.status(200).json({ message: "성공" });

@@ -10,7 +10,7 @@ export default async function handler(req: any, res: any) {
           const PATCH = await prisma.nightAttendanceObject.updateMany({
             where: { id: { equals: id } },
             data: {
-              outTimeT: outTimeT,
+              outTimeAT: outTimeT,
             },
           });
 

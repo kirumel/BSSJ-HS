@@ -174,6 +174,26 @@ export default function Page() {
     return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
   }
 
+  // 저장 버튼 활성화 여부 판단 함수
+  const isSaveDisabled = () => {
+    return firstcommitstudent.some((student) => {
+      // 출석 여부가 선택되지 않았으면 (check가 "0" 또는 "1"이 아니면)
+      if (
+        student.check !== "0" &&
+        student.check !== "1" &&
+        student.check !== "2"
+      )
+        return true;
+      if (
+        student.check === "0" &&
+        (!student.comment || student.comment.trim() === "") &&
+        (!student.outTimeST || student.outTimeST.trim() === "")
+      )
+        return true;
+      return false;
+    });
+  };
+
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/nightAT/page")
@@ -206,6 +226,7 @@ export default function Page() {
             class: student.class,
             grade: student.grade,
             studentnumber: student.studentnumber,
+            // 미출석인 경우 미리 "2"로 셋팅, 이후 체크박스 변경 시 "0" 또는 "1"로 업데이트됨
             check: student.check === "0" ? "2" : "",
             outTimeT: student.outTimeT || "",
             outTimeST: student.outTimeT || "",
@@ -407,7 +428,12 @@ export default function Page() {
             );
           })}
         </div>
-        <button className="ok-button" onClick={handlePatch}>
+        {/* 저장 버튼은 isSaveDisabled()가 true이면 disabled 처리 */}
+        <button
+          className="ok-button"
+          onClick={handlePatch}
+          disabled={isSaveDisabled()}
+        >
           출석 정보 저장
         </button>
       </div>

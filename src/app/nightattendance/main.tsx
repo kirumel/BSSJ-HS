@@ -12,6 +12,7 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
+  outTimeAT: string;
   outTimeT: string;
   name: string;
   content: string;
@@ -86,7 +87,8 @@ export default function Page() {
             grade: student.grade,
             class: student.class,
             studentnumber: student.studentnumber,
-            outTimeT: student.outTimeT || "",
+            outTimeAT: student.outTimeAT || "",
+            outTimeT: student.outTimeAT || "",
             check: "",
             comment: "",
             author: session?.user?.name || "",

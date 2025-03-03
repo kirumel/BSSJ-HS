@@ -9,6 +9,7 @@ import axios from "axios";
 import SuccessModal from "../successModal";
 
 interface Attendance {
+  outTimeAT: string;
   outTimeT: string;
   name: string;
   content: string;
@@ -32,8 +33,9 @@ export default function Page() {
   const [successModal, setSuccessModal] = useState(false);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
     {
-      id: string;
+      outTimeAT: string;
       outTimeT: string;
+      id: string;
       check: string;
       comment: string;
       author: string;
@@ -60,7 +62,8 @@ export default function Page() {
           setFirstCommitStudent(
             filteredData.map((student) => ({
               id: student.id,
-              outTimeT: student.outTimeT || "",
+              outTimeAT: student.outTimeAT || "",
+              outTimeT: student.outTimeAT || "",
               check: "",
               comment: "",
               author: session?.user?.name || "",
