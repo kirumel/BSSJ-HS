@@ -89,7 +89,7 @@ export default function Page({
     setAttendance(
       studentsData.map((student) => ({
         ...student,
-        outTimeT: student.outTimeT2 ? student.outTimeT2 : student.outTimeT,
+        outTimeST: student.outTimeT2 ? student.outTimeT2 : student.outTimeT,
       }))
     );
     closeModal();
@@ -422,12 +422,22 @@ export default function Page({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <h3
-                    className="modalTitle"
-                    style={{ fontSize: "20px", display: "inline" }}
-                  >
-                    선택메뉴
+                  <h3 className="modalTitle" style={{ fontSize: "20px" }}>
+                    {selectedClass.grade}학년 {selectedClass.class}반
                   </h3>
+                  <button
+                    onClick={() => setSelectedClass(null)}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "gray",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    반 변경
+                  </button>
                   <div>
                     <div
                       style={{ display: "flex", justifyContent: "flex-end" }}
@@ -724,6 +734,7 @@ export default function Page({
                             </div>
                             <button
                               onClick={() => removeAbsentComment(student.id)}
+                              disabled={student.check === "2"}
                               className="studentNum-button-pink"
                             >
                               삭제

@@ -6,28 +6,50 @@ import { logo } from "../logo";
 import { prisma } from "../../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
+  const { grade, date } = req.body.payload;
+  // 날짜 보기 좋게 설정          // ISO 형식의 문자열
+  const dateObj = new Date(date); // 문자열을 Date 객체로 변환
+  const formattedDate = dateObj.toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  console.log(formattedDate);
+
+  const startOfDay = new Date(
+    dateObj.getFullYear(),
+    dateObj.getMonth(),
+    dateObj.getDate()
+  );
+  const endOfDay = new Date(
+    dateObj.getFullYear(),
+    dateObj.getMonth(),
+    dateObj.getDate() + 1
+  );
+
   if (req.method === "POST") {
-    const todayDate = new Date();
-    const today = new Date();
-
-    // 날짜 보기 좋게 설정
-    let formattedDate: string;
-
-    formattedDate = todayDate.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    const dbcompare = await prisma.attendanceObjectDB.findMany({
+    const dbcompare = await prisma.nightAttendanceObjectDB.findMany({
       where: {
         createdAt: {
-          gte: formattedDate,
+          equals: formattedDate,
         },
+        grade: grade.toString(),
         type: "pdf",
       },
     });
-    const students = req.body;
 
+    const students = await prisma.nightAtSupervisor.findMany({
+      where: {
+        createdAt: {
+          equals: formattedDate,
+        },
+        grade: grade,
+      },
+    });
+    console.log(students);
+    if (students.length === 0) {
+      return res.status(400).json({ message: "No data" });
+    }
     const pdf = new jsPDF();
 
     // 폰트 추가 및 설정
@@ -48,21 +70,26 @@ export default async function handler(req: any, res: any) {
     pdf.addImage(logo, "PNG", 13, 13, imgWidth, imgHeight);
 
     // 테이블 헤더와 데이터
-    const 가로 = ["일자", "이름", "출석 여부", "미출석 이유", "작성자"];
+    const 가로 = [
+      "일자",
+      "이름",
+      "출석 여부",
+      "미출석 이유",
+      "작성자",
+      "설정된 퇴장시간",
+      "실제 퇴장시간",
+    ];
     const 세로: any[] = [];
 
-    students.firstcommitstudent.forEach((student: any) => {
-      // 날짜 포맷을 ISO 형식으로 변환
-      const formattedDate = student.createdAt.replace(
-        /(\d{4})\. (\d{2})\. (\d{2})/,
-        "$1-$2-$3"
-      );
+    students.forEach((student: any) => {
       const studentsData = [
         formattedDate,
         student.name,
-        student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
+        student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
+        student.outTimeST ? student.outTimeST : "등록되지 않았습니다",
+        student.outTime ? student.outTime : "등록되지 않았습니다",
       ];
       세로.push(studentsData);
     });
@@ -86,15 +113,15 @@ export default async function handler(req: any, res: any) {
     const pdfData = pdf.output("datauristring");
     if (dbcompare.length == 0) {
       try {
-        const upload = await prisma.attendanceObjectDB.create({
+        const upload = await prisma.nightAttendanceObjectDB.create({
           data: {
-            author: students.firstcommitstudent[0].author,
+            author: students[0].author,
+            grade: grade.toString(),
             link: pdfData,
             type: "pdf",
             createdAt: formattedDate,
           },
         });
-
         res.status(200).json({ message: "업로드가 완료되었습니다" });
       } catch (error) {
         res.status(500).send({
@@ -103,7 +130,7 @@ export default async function handler(req: any, res: any) {
       }
     } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
       try {
-        const dbdelete = await prisma.attendanceObjectDB.deleteMany({
+        const dbdelete = await prisma.nightAttendanceObjectDB.deleteMany({
           where: {
             createdAt: {
               equals: formattedDate,
@@ -114,15 +141,15 @@ export default async function handler(req: any, res: any) {
           },
         });
 
-        const upload = await prisma.attendanceObjectDB.create({
+        const upload = await prisma.nightAttendanceObjectDB.create({
           data: {
-            author: students.firstcommitstudent[0].author,
+            author: students[0].author,
+            grade: grade.toString(),
             link: pdfData,
             type: "pdf",
             createdAt: formattedDate,
           },
         });
-
         res.status(200).json({ message: "업로드가 완료되었습니다" });
       } catch (error) {
         res.status(500).send({

@@ -22,20 +22,19 @@ interface Attendance {
   createdAt: string;
   id: string;
 }
+
 const todayDate = new Date();
 const today = new Date();
 const isToday = todayDate.toDateString() === today.toDateString();
 
-//날자 보기좋게
-let formattedDate: string;
-
-formattedDate = todayDate.toLocaleDateString("ko-KR", {
+// 날짜를 보기 좋게 포맷팅
+const formattedDate = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
 });
+
 export default function Page() {
-  const [modalOpen, setModalOpen] = useState(false);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
@@ -49,14 +48,18 @@ export default function Page() {
       studentnumber: string;
       createdAt: string;
       id: string;
+      class: number;
+      grade: number;
+      outTimeT: string;
     }[]
   >([]);
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
+  // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
-    if (selectedClass === null || selectedClass == undefined) {
+    if (!selectedClass) {
       return attendance;
     }
     return attendance.filter(
@@ -64,20 +67,113 @@ export default function Page() {
     );
   };
 
+  // 반 리스트 가져오기
   const getClassList = () => {
     const classSet = new Set(attendance.map((student) => student.class));
-    return Array.from(classSet).sort();
+    return Array.from(classSet).sort((a, b) => a - b);
   };
 
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
-  const handleTimeChange = (index: number, field: string, value: string) => {
-    const newData = [...firstcommitstudent];
-    newData[index] = { ...newData[index], [field]: value };
-    setFirstCommitStudent(newData);
-    console.log(firstcommitstudent);
+
+  // id를 기준으로 시간 입력값 업데이트
+  const handleTimeChange = (id: string, field: string, value: string) => {
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, [field]: value } : student
+      )
+    );
   };
-  console.log(firstcommitstudent);
+
+  const handleCommitChange = (id: string, field: string, value: string) => {
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, [field]: value } : student
+      )
+    );
+  };
+
+  const handleCheckboxChange = (
+    id: string,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const checkValue = event.target.name === "n" ? "0" : "1";
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, check: checkValue } : student
+      )
+    );
+  };
+
+  const handlePatch = async () => {
+    try {
+      const response = await axios.post(
+        "/api/post/nightAT/fetchTime2",
+        { firstcommitstudent },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200) {
+        setIsLoading(false);
+        setSuccessModalTimer();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const setSuccessModalTimer = () => {
+    setSuccessModal(true);
+    setTimeout(() => {
+      setSuccessModal(false);
+    }, 2500);
+  };
+
+  // 다른 컴포넌트에서 학생 정보를 업데이트할 때 사용하는 함수 (학생 id 기준)
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+              outTimeST: updatedStudent.outTimeST,
+            }
+          : student;
+      })
+    );
+  };
+
+  const countAbsentStudentsNO = () => {
+    const count1 = firstcommitstudent.filter(
+      (student) => student.check === "0"
+    ).length;
+    const count2 = firstcommitstudent.filter(
+      (student) => student.check === "2"
+    ).length;
+    return count1 + count2;
+  };
+
+  const countAbsentStudentsOK = () => {
+    return firstcommitstudent.filter((student) => student.check === "1").length;
+  };
+
+  // 24시간 형식을 12시간 형식으로 변환하는 함수
+  function convertTo12Hour(time24: string) {
+    if (!time24) return "설정된 시간 없음";
+    let [hours, minutes] = time24.split(":").map(Number);
+    let period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  }
+
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/nightAT/page")
@@ -85,10 +181,8 @@ export default function Page() {
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
           const sortedData = data.sort((a, b) => {
-            const classA = parseInt(a.class);
-            const classB = parseInt(b.class);
-            if (classA !== classB) {
-              return classA - classB;
+            if (a.class !== b.class) {
+              return a.class - b.class;
             }
             return parseInt(a.studentnumber) - parseInt(b.studentnumber);
           });
@@ -127,114 +221,20 @@ export default function Page() {
       });
   }, [session]);
 
-  const handleCommitChange = (id: string, field: string, value: string) => {
-    setFirstCommitStudent((prev) =>
-      prev.map((student) =>
-        student.id === id ? { ...student, [field]: value } : student
-      )
-    );
-  };
-
-  const handleCheckboxChange = (
-    id: string,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const checkValue = event.target.name === "n" ? "0" : "1";
-    setFirstCommitStudent((prev) =>
-      prev.map((student) =>
-        student.id === id ? { ...student, check: checkValue } : student
-      )
-    );
-  };
-
-  const handlePatch = async () => {
-    try {
-      const response = await axios.patch(
-        "/api/post/nightAT/fetchTime2",
-        { firstcommitstudent },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.status === 200) {
-        setIsLoading(false);
-        setSuccessModalTimer();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const setSuccessModalTimer = () => {
-    setSuccessModal(true);
-    setTimeout(() => {
-      setSuccessModal(false);
-    }, 2500);
-  };
-  const handleStateChange = (newState: any) => {
-    setFirstCommitStudent((prevState) =>
-      prevState.map((student) => {
-        // Find the corresponding student in the newState array
-        const updatedStudent = newState.find(
-          (newStudent: { id: string }) => newStudent.id === student.id
-        );
-
-        // If there's a match, update the student's check and comment, otherwise keep the student as is
-        return updatedStudent
-          ? {
-              ...student,
-              check: updatedStudent.check,
-              comment: updatedStudent.comment,
-              outTimeT: updatedStudent.outTimeT,
-            }
-          : student;
-      })
-    );
-  };
-  const countAbsentStudentsNO = () => {
-    const count1 = firstcommitstudent.filter(
-      (student) => student.check === "0"
-    ).length;
-    const count2 = firstcommitstudent.filter(
-      (student) => student.check === "2"
-    ).length;
-    return count1 + count2;
-  };
-  const countAbsentStudentsOK = () => {
-    return firstcommitstudent.filter((student) => student.check === "1").length;
-  };
-
-  function convertTo12Hour(time24: string) {
-    if (!time24) return "설정된 시간 없음"; // 값이 없을 경우 기본 메시지 반환
-    // "19:30" -> 시간과 분을 분리
-    let [hours, minutes] = time24.split(":").map(Number);
-
-    // AM/PM 설정
-    let period = hours >= 12 ? "PM" : "AM";
-
-    // 12시간 형식으로 변환 (0시는 12로 변경, 13~23시는 1~11로 변경)
-    hours = hours % 12 || 12;
-
-    // 변환된 문자열 반환
-    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
-  }
-
   if (isLoading) {
     return <div className="loading">잠시만 기다려주세요...</div>;
   }
 
   if (attendance.length === 0) {
     return (
-      <>
+      <div>
         <div>이런! 오류가 발생했거나 학생들의 정보가 등록이 필요해요</div>
-      </>
+      </div>
     );
   } else {
     return (
       <div className="right-left-margin">
-        <div>{successModal ? <SuccessModal props={successModal} /> : null}</div>
+        {successModal && <SuccessModal props={successModal} />}
         <div className="attendance-top-container-display">
           <div className="attendance-top-in1">
             <p>총 인원: {attendance.length}</p>
@@ -268,33 +268,34 @@ export default function Page() {
         </div>
 
         <div className="attendance-container">
-          {filteredStudents.map((data, i) => {
+          {filteredStudents.map((data) => {
             const studentCommit = firstcommitstudent.find(
               (student) => student.id === data.id
-            ) || { check: "", comment: "" };
+            ) || {
+              check: "",
+              comment: "",
+            };
             return (
               <div
+                key={data.id}
+                className="attendance-student"
                 style={{
-                  backgroundColor: `${
+                  backgroundColor:
                     studentCommit.check === "0"
                       ? "#FFE8E8"
                       : studentCommit.check === "1"
                       ? "#E8E8FF"
                       : data.check === "0"
                       ? "#E8E8E8"
-                      : "white"
-                  }`,
+                      : "white",
                 }}
-                className="attendance-student"
-                key={data.id}
               >
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: `${
-                      studentCommit.check == "0" ? "normal" : "center"
-                    }`,
+                    alignItems:
+                      studentCommit.check === "0" ? "normal" : "center",
                   }}
                 >
                   <div className="attendance-student-title-display">
@@ -355,29 +356,32 @@ export default function Page() {
                       </p>
                     ) : null}
                     {data.check === "0" ? (
-                      <>
+                      <div>
                         <h5>
                           미출석
                           <br />
                           이유 : {data?.comment}
                         </h5>
-                      </>
+                      </div>
                     ) : (
                       <div style={{ display: "flex", justifyContent: "right" }}>
                         <div style={{ marginRight: "20px" }}>
                           <input
                             style={{
                               backgroundColor:
-                                firstcommitstudent[i]?.outTimeST ===
-                                data.outTimeT
+                                studentCommit.outTimeST === data.outTimeT
                                   ? "#E8E8E8"
                                   : "#E8E8FF",
                             }}
                             className="time-input"
                             type="time"
-                            value={firstcommitstudent[i]?.outTimeST || ""}
+                            value={studentCommit.outTimeST || ""}
                             onChange={(e) =>
-                              handleTimeChange(i, "outTimeST", e.target.value)
+                              handleTimeChange(
+                                data.id,
+                                "outTimeST",
+                                e.target.value
+                              )
                             }
                           />
                         </div>

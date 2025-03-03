@@ -1,8 +1,11 @@
 import { prisma } from "../../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
+  const todayDate = new Date();
+  const startOfDay = new Date(todayDate.setHours(0, 0, 0, 0));
+  const endOfDay = new Date(todayDate.setHours(23, 59, 59, 999));
   if (req.method === "GET") {
     try {
-      const findDB = await prisma.nightAtSupervisor.findMany({});
+      const findDB = await prisma.nightAttendanceObject.findMany({});
       res.status(200).json(findDB);
     } catch (error) {
       res.status(400).json({ message: `오류발생${error} ` });
@@ -16,8 +19,7 @@ export default async function handler(req: any, res: any) {
       month: "2-digit",
       day: "2-digit",
     });
-    const startOfDay = new Date(todayDate.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(todayDate.setHours(23, 59, 59, 999));
+
     const compareATdata = await prisma.nightCompareAT.findMany({
       where: {
         createdAt: {
@@ -28,63 +30,69 @@ export default async function handler(req: any, res: any) {
         },
       },
     });
-    try {
-      if (compareATdata.length === 0 || !compareATdata[0]?.data) {
-        const findDB = await prisma.nightAtSupervisor.findMany({
-          where: {
-            createdAt: {
-              gte: startOfDay, // 오늘 날짜 00:00:00 이상
-              lt: endOfDay, // 오늘 날짜 23:59:59 미만
+
+    if (compareATdata.length === 0 || !compareATdata[0]?.data) {
+      await Promise.all(
+        req.body.firstcommitstudent.map(async (a: any) => {
+          const { id, comment, check, author, outTimeT } = a;
+          const updateAttendance = await prisma.nightAttendanceObject.update({
+            where: {
+              id: id,
             },
-            grade: {
-              equals: req.body.grade,
+            data: {
+              outTimeT: outTimeT,
+              check,
+              author,
+              updatedAt: formattedDate,
             },
-          },
-        });
-        if (findDB.length === 0) {
-          await prisma.nightAtSupervisor.createMany({
-            data: req.body.firstcommitstudent.map((a: any) => ({
-              name: a.name,
-              studentnumber: a.studentnumber,
-              outTimeT: a.outTimeT,
-              author: a.author,
-              class: a.class,
-              grade: a.grade,
-            })),
           });
-        } else {
-          await Promise.all(
-            req.body.firstcommitstudent.map(async (student: any) => {
-              const matchedRecord = await prisma.nightAtSupervisor.findFirst({
-                where: { name: student.name }, // Prisma에서 직접 찾기
-                select: { id: true }, // id만 가져오기
-              });
 
-              if (matchedRecord) {
-                await prisma.nightAtSupervisor.update({
-                  where: { id: matchedRecord.id }, // 단일 ID 기준 업데이트
-                  data: {
-                    outTimeT: student.outTimeT,
-                    check: student.check,
-                    comment: student.comment,
-                  },
-                });
-              }
-            })
-          );
-        }
+          return updateAttendance;
+        })
+      );
+
+      res.status(200).json({ message: "Attendance updated" });
+    } else {
+      const parsedata = JSON.parse(compareATdata[0].data as string);
+
+      if (parsedata.length > 0 && parsedata[0].updatedAt === formattedDate) {
+        res.status(202).json("2차 출석이 완료된 상태입니다");
+      } else {
+        await Promise.all(
+          req.body.firstcommitstudent.map(async (a: any) => {
+            const { id, comment, check, author, outTimeT } = a;
+            const updateAttendance = await prisma.nightAttendanceObject.update({
+              where: {
+                id: id,
+              },
+              data: {
+                outTimeT: outTimeT,
+                comment,
+                check,
+                author,
+                updatedAt: formattedDate,
+              },
+            });
+
+            return updateAttendance;
+          })
+        );
+
+        res.status(200).json({ message: "Attendance updated" });
       }
-    } catch (error) {
-      res.status(400).json({ message: `오류발생${error} ` });
     }
-
     res.status(200).json({ message: "성공" });
   } else if (req.method === "PATCH") {
     const studentNumber = parseInt(req.body.studentnumber, 10);
-
+    const dateObj = new Date(); // 문자열을 Date 객체로 변환
+    const formattedDate = dateObj.toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
     try {
       // 학번을 학년, 반, 번호로 변환하는 함수
-      const parseStudentNumber = function (studentNumber) {
+      const parseStudentNumber = function (studentNumber: any) {
         const strNum = studentNumber.toString().padStart(4, "0"); // 4자리 유지
         return {
           grade: parseInt(strNum[0], 10), // 첫 번째 숫자 = 학년
@@ -99,8 +107,21 @@ export default async function handler(req: any, res: any) {
         number,
       } = parseStudentNumber(studentNumber);
 
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999);
+
       const findDB = await prisma.nightAtSupervisor.findMany({
-        where: { studentnumber: number, class: classNum, grade: grade },
+        where: {
+          studentnumber: number,
+          class: classNum,
+          grade: grade,
+          createdAt: {
+            equals: formattedDate,
+          },
+        },
       });
 
       if (findDB.length !== 0) {
@@ -110,7 +131,14 @@ export default async function handler(req: any, res: any) {
           console.log(req.body);
 
           const updateDB = await prisma.nightAtSupervisor.updateMany({
-            where: { studentnumber: number, class: classNum, grade: grade },
+            where: {
+              createdAt: {
+                equals: formattedDate,
+              },
+              studentnumber: number,
+              class: classNum,
+              grade: grade,
+            },
             data: {
               outTime: req.body.outTime,
             },

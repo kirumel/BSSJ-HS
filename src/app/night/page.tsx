@@ -21,6 +21,7 @@ export default function Page() {
   const [uncreatedFiles, setUncreatedFiles] = useState<StudentGroup[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedGrade, setSelectedGrade] = useState<string>("");
+  console.log(students);
 
   // 컴포넌트 마운트 시, nightAtSupervisor 테이블의 학생 데이터를 조회합니다.
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function Page() {
     const groups: { [key: string]: StudentGroup } = {};
     data.forEach((student) => {
       // createdAt 값을 YYYY-MM-DD 형식으로 변환
-      const date = new Date(student.createdAt).toISOString().slice(0, 10);
+      const date = student.createdAt;
       const key = `${date}-${student.grade}`;
       if (!groups[key]) {
         groups[key] = {
@@ -65,15 +66,31 @@ export default function Page() {
       date: selectedDate,
       grade: Number(selectedGrade),
     };
+
     axios
-      .post("/api/createFile", payload)
+      .post("/api/post/nightAT/PDF", { payload })
       .then((response) => {
         console.log("파일 생성 성공:", response.data);
-        // 파일 생성 후 추가 로직(예: UI 업데이트 등) 구현 가능
       })
       .catch((error) => {
-        console.error("파일 생성 실패:", error);
+        console.error("파일 생성 실패:", error.message);
       });
+
+    axios
+      .post("/api/post/nightAT/xlsx", { payload })
+      .then((response) => {
+        console.log("파일 생성 성공:", response.data);
+      })
+      .catch((error) => {
+        console.error("파일 생성 실패:", error.message);
+      });
+
+    axios
+      .post("/api/post/nightAT/seveDaysBackup", { payload })
+      .then((response) => {
+        console.log("파일 생성 성공:", response.data);
+      })
+      .catch((error) => {});
   };
 
   return (

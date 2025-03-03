@@ -181,6 +181,14 @@ model attendanceObjectDB3 {
   createdAt String?
   type      String?
 }
+model nightAttendanceObjectDB {
+   id        String  @id @default(cuid())
+  author    String?
+  grade     String?
+  link      String?
+  createdAt String?
+  type      String?
+}
 
 model compareAT {
   id        String @id @default(cuid())
@@ -204,7 +212,7 @@ model eventQR {
 model nightAtSupervisor {
   id            String   @id @default(cuid())
   name          String?
-  createdAt     DateTime @default(now())
+  createdAt     String?  
   check         String?
   comment       String?
   author        String?
@@ -229,10 +237,16 @@ model nightAttendanceObject {
   studentnumber Int?
   updatedAt     String?
   outTimeT       String?
-  
+  outTimeST       String?
 }
 
 model nightCompareAT {
+  id        String  @id @default(cuid())
+  createdAt String
+  data      String?
+  grade     String
+}
+model nightCompareAT2{
   id        String  @id @default(cuid())
   createdAt String
   data      String?

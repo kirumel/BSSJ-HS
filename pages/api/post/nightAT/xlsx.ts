@@ -6,26 +6,42 @@ import { ca } from "date-fns/locale";
 export default async function handler(req: any, res: any) {
   try {
     if (req.method === "POST") {
-      const students = req.body;
-      const todayDate = new Date();
-      const today = new Date();
-
-      // 날짜 보기 좋게 설정
-      let formattedDate: string;
-
-      formattedDate = todayDate.toLocaleDateString("ko-KR", {
+      const { grade, date } = req.body.payload;
+      // 날짜 보기 좋게 설정          // ISO 형식의 문자열
+      const dateObj = new Date(date); // 문자열을 Date 객체로 변환
+      const formattedDate = dateObj.toLocaleDateString("ko-KR", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
-      const dbcompare = await prisma.attendanceObjectDB.findMany({
+
+      const startOfDay = new Date(
+        dateObj.getFullYear(),
+        dateObj.getMonth(),
+        dateObj.getDate()
+      );
+      const endOfDay = new Date(
+        dateObj.getFullYear(),
+        dateObj.getMonth(),
+        dateObj.getDate() + 1
+      );
+
+      const dbcompare = await prisma.nightAttendanceObjectDB.findMany({
         where: {
           createdAt: {
-            gte: formattedDate,
+            equals: formattedDate,
           },
-          type: {
-            equals: "excel",
+          grade: grade.toString(),
+          type: "pdf",
+        },
+      });
+
+      const students = await prisma.nightAtSupervisor.findMany({
+        where: {
+          createdAt: {
+            equals: formattedDate,
           },
+          grade: grade,
         },
       });
       const workbook = new ExcelJS.Workbook();
@@ -45,7 +61,15 @@ export default async function handler(req: any, res: any) {
       };
 
       // 열 제목 추가 및 스타일 설정
-      worksheet.addRow(["일자", "이름", "출석 여부", "미출석 이유", "작성자"]);
+      worksheet.addRow([
+        "일자",
+        "이름",
+        "출석 여부",
+        "미출석 이유",
+        "작성자",
+        "설정된 퇴장시간",
+        "실제 퇴장시간",
+      ]);
       const headerRow = worksheet.getRow(2);
       headerRow.eachCell({ includeEmpty: true }, (cell) => {
         cell.fill = {
@@ -65,7 +89,7 @@ export default async function handler(req: any, res: any) {
       worksheet.getRow(1).height = 30;
 
       // 데이터를 엑셀 시트에 추가
-      students.firstcommitstudent.forEach((student: any) => {
+      students.forEach((student: any) => {
         const formattedDate = student.createdAt.replace(
           /(\d{4})\. (\d{2})\. (\d{2})/,
           "$1-$2-$3"
@@ -73,9 +97,11 @@ export default async function handler(req: any, res: any) {
         const row = [
           formattedDate,
           student.name,
-          student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
+          student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
           student.comment,
           student.author,
+          student.outTimeST ? student.outTimeST : "등록되지 않았습니다",
+          student.outTime ? student.outTime : "등록되지 않았습니다",
         ];
         worksheet.addRow(row);
       });
@@ -87,9 +113,10 @@ export default async function handler(req: any, res: any) {
       const base64 = buffer.toString("base64");
       if (dbcompare.length == 0) {
         try {
-          const upload = await prisma.attendanceObjectDB.create({
+          const upload = await prisma.nightAttendanceObjectDB.create({
             data: {
-              author: students.firstcommitstudent[0].author,
+              author: students[0].author,
+              grade: grade.toString(),
               link: base64,
               type: "excel",
               createdAt: formattedDate,
@@ -104,7 +131,7 @@ export default async function handler(req: any, res: any) {
         }
       } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
         try {
-          const dbdelete = await prisma.attendanceObjectDB.deleteMany({
+          const dbdelete = await prisma.nightAttendanceObjectDB.deleteMany({
             where: {
               createdAt: {
                 equals: formattedDate,
@@ -115,9 +142,10 @@ export default async function handler(req: any, res: any) {
             },
           });
 
-          const upload = await prisma.attendanceObjectDB.create({
+          const upload = await prisma.nightAttendanceObjectDB.create({
             data: {
-              author: students.firstcommitstudent[0].author,
+              author: students[0].author,
+              grade: grade.toString(),
               link: base64,
               type: "excel",
               createdAt: formattedDate,

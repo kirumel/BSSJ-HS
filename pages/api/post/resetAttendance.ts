@@ -1,8 +1,8 @@
 import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
-  try {
-    if (req.method === "PATCH") {
+  if (req.method === "PATCH") {
+    try {
       await prisma.attendanceObject.updateMany({
         data: {
           comment: null,
@@ -12,10 +12,10 @@ export default async function handler(req: any, res: any) {
       });
 
       res.status(200).json({ message: "성공!" });
-    } else {
-      res.status(405).json({ message: "오류" });
+    } catch (error) {
+      res.status(500).json({ error });
     }
-  } catch (error) {
-    res.status(500).json({ error });
+  } else {
+    res.status(405).json({ message: "오류" });
   }
 }

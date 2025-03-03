@@ -638,6 +638,7 @@ export default function Page({
                             </div>
                             <button
                               onClick={() => removeAbsentComment(student.id)}
+                              disabled={student.check === "2"}
                               className="studentNum-button-pink"
                             >
                               삭제
