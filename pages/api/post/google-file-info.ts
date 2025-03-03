@@ -33,7 +33,5 @@ export default async function handler(req: any, res: any) {
   } catch (error) {
     console.error("Error fetching folder data:", error);
     res.status(500).json({ error: "Error fetching folder data" });
-  } finally {
-    await prisma.$disconnect();
   }
 }

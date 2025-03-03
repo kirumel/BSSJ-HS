@@ -1,7 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-// Prisma 클라이언트는 서버의 시작 시 한 번만 생성하고 재사용하는 것이 좋습니다.
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   const { studentIds } = req.body; // 요청 본문에서 studentIds를 받습니다.
@@ -26,7 +23,5 @@ export default async function handler(req: any, res: any) {
   } catch (error) {
     console.error(error);
     res.status(500).send("삭제 실패");
-  } finally {
-    await prisma.$disconnect(); // Prisma 연결 종료
   }
 }

@@ -16,8 +16,8 @@ interface Attendance {
   comment: string;
   check: string;
   author: string;
-  grade: string;
-  class: string;
+  grade: number;
+  class: number;
   studentnumber: string;
   createdAt: string;
   id: string;
@@ -56,10 +56,12 @@ export default function Page() {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
   const getFilteredStudents = () => {
-    if (selectedClass === null || selectedClass == "") {
+    if (selectedClass === null || selectedClass == undefined) {
       return attendance;
     }
-    return attendance.filter((student) => student.class == selectedClass);
+    return attendance.filter(
+      (student) => student.class === parseInt(selectedClass)
+    );
   };
 
   const getClassList = () => {
@@ -75,18 +77,23 @@ export default function Page() {
     setFirstCommitStudent(newData);
     console.log(firstcommitstudent);
   };
-
+  console.log(firstcommitstudent);
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/nightAT/page")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          const sortedData = data.sort(
-            (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
-          );
+          const sortedData = data.sort((a, b) => {
+            const classA = parseInt(a.class);
+            const classB = parseInt(b.class);
+            if (classA !== classB) {
+              return classA - classB;
+            }
+            return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+          });
           const sortedData1 = sortedData.filter(
-            (student) => student.grade == "3"
+            (student) => student.grade === 3
           );
 
           const presentStudents = sortedData1.filter(
@@ -98,7 +105,7 @@ export default function Page() {
           const finalSortedData = [...presentStudents, ...absentStudents];
           setAttendance(finalSortedData);
 
-          const initialFirstCommitStudent = sortedData.map((student) => ({
+          const initialFirstCommitStudent = finalSortedData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
             name: student.name,
@@ -234,22 +241,30 @@ export default function Page() {
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
           </div>
-          <select
-            className="class-select"
-            onChange={(e) => setSelectedClass(e.target.value)}
-            value={selectedClass || ""}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <option value="">모두 보기</option>
-            {classList.map((cls, index) => (
-              <option key={index} value={cls}>
-                {cls}반
-              </option>
-            ))}
-          </select>
-          <SelectStudentModal
-            props={firstcommitstudent}
-            setAttendance={handleStateChange}
-          />
+            <select
+              className="class-select"
+              onChange={(e) => setSelectedClass(e.target.value)}
+              value={selectedClass || ""}
+            >
+              <option value="">모두 보기</option>
+              {classList.map((cls, index) => (
+                <option key={index} value={cls}>
+                  {cls}반
+                </option>
+              ))}
+            </select>
+            <SelectStudentModal
+              props={firstcommitstudent}
+              setAttendance={handleStateChange}
+            />
+          </div>
         </div>
 
         <div className="attendance-container">

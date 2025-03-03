@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../prisma/lib/prisma";
 
-const prisma = new PrismaClient();
 export default async function handler(req: any, res: any) {
-  if (req.method === "POST") {
-    try {
+  try {
+    if (req.method === "POST") {
       const atData = await prisma.attendanceObject.findMany({
         where: {
           grade: req.body.grade,
@@ -21,13 +20,16 @@ export default async function handler(req: any, res: any) {
           name: a.name,
         })),
       });
+
       if (atData.length === 0) {
         res.status(400).json({ message: "해당 날자에 파일이 없습니다" });
       } else {
         res.status(200).json("성공!");
       }
-    } catch (error) {
-      res.status(400).json({ message: `오류발생${error} ` });
+    } else {
+      res.status(405).json({ message: "Method not allowed" });
     }
+  } catch (error) {
+    res.status(400).json({ message: `오류발생 ${error.message}` });
   }
 }

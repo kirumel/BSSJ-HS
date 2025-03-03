@@ -1,10 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 import crypto from "crypto";
 
-const prisma = new PrismaClient();
-
+import { prisma } from "../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     const { email, password, name, nickname, grade, clss } = req.body;
@@ -61,8 +59,6 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.error("회원 가입 중 오류 발생:", error);
       res.status(500).json({ message: "회원 가입 중 오류가 발생했습니다." });
-    } finally {
-      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: "허용되지 않는 메서드입니다." });

@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
 
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   try {
@@ -103,7 +102,5 @@ export default async function handler(req: any, res: any) {
     }
   } catch (error) {
     res.status(500).json({ error });
-  } finally {
-    await prisma.$disconnect(); // Ensure the Prisma Client disconnects after handling the request
   }
 }

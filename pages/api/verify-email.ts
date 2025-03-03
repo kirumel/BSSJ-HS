@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./prisma/lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
-
-const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -79,8 +77,6 @@ export default async function handler(
     } catch (error) {
       console.error("이메일 인증 중 오류 발생:", error);
       res.status(500).json({ message: "이메일 인증 중 오류가 발생했습니다." });
-    } finally {
-      await prisma.$disconnect();
     }
   } else {
     res.status(405).json({ message: "허용되지 않는 메서드입니다." });

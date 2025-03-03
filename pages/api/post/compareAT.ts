@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   const todayDate = new Date();
@@ -89,8 +87,6 @@ export default async function handler(req: any, res: any) {
           console.error(error);
           res.status(500).json({ error: "Internal Server Error" });
         }
-      } finally {
-        await prisma.$disconnect();
       }
     } else if (dblength.length !== 1 && dblength.length !== 0) {
       try {
@@ -114,8 +110,6 @@ export default async function handler(req: any, res: any) {
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
-      } finally {
-        await prisma.$disconnect();
       }
     }
   }

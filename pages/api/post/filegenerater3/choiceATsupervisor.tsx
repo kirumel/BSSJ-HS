@@ -3,10 +3,9 @@ import autoTable from "jspdf-autotable";
 import { fontdata } from "../font";
 import { logo } from "../logo";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
-  const prisma = new PrismaClient();
   if (req.method === "POST") {
     const todayDate = new Date();
     const today = new Date();

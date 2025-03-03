@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 export const deleteSessionTemporarily = async (sessionToken) => {
   try {
     await prisma.session.deleteMany({

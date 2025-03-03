@@ -238,6 +238,15 @@ export default function Page() {
                 시간
               </button>
             </Link>
+            <Link href="/night">
+              <button
+                style={{ backgroundColor: "#F495B9" }}
+                className="event-box-button"
+              >
+                출석부 <br />
+                만들기
+              </button>
+            </Link>
           </div>
           <div className="line"></div>
           <div className="event-box-container">
