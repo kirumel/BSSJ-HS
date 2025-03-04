@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../prisma/lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -13,7 +11,7 @@ export default async function handler(
     const comments = await prisma.comment.findMany({
       where: { postId: postId },
       include: {
-        user: true,
+        User: true,
       },
     });
     return res.status(200).json(comments);

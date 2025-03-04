@@ -6,37 +6,40 @@ import "../attendance/style.css";
 import SuccessModal from "./successModal";
 import "./style.css";
 import axios from "axios";
+import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
+  outTimeST: string;
+  outTimeT: string;
   name: string;
   updatedAt: string;
   comment: string;
   check: string;
   author: string;
-  grade: string;
-  class: string;
+  grade: number;
+  class: number;
   studentnumber: string;
   createdAt: string;
   id: string;
 }
+
 const todayDate = new Date();
 const today = new Date();
 const isToday = todayDate.toDateString() === today.toDateString();
 
-//날자 보기좋게
-let formattedDate: string;
-
-formattedDate = todayDate.toLocaleDateString("ko-KR", {
+// 날짜를 보기 좋게 포맷팅
+const formattedDate = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
 });
+
 export default function Page() {
-  const [modalOpen, setModalOpen] = useState(false);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
     {
+      outTimeST: string;
       name: string;
       updatedAt: string;
       comment: string;
@@ -45,68 +48,42 @@ export default function Page() {
       studentnumber: string;
       createdAt: string;
       id: string;
+      class: number;
+      grade: number;
+      outTimeT: string;
     }[]
   >([]);
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
+  // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
-    if (selectedClass === null || selectedClass == "") {
+    if (!selectedClass) {
       return attendance;
     }
-    return attendance.filter((student) => student.class == selectedClass);
+    return attendance.filter(
+      (student) => student.class === parseInt(selectedClass)
+    );
   };
 
+  // 반 리스트 가져오기
   const getClassList = () => {
     const classSet = new Set(attendance.map((student) => student.class));
-    return Array.from(classSet).sort();
+    return Array.from(classSet).sort((a, b) => a - b);
   };
 
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetch("/api/post/attendance")
-      .then((response) => response.json())
-      .then((data: Attendance[]) => {
-        if (Array.isArray(data)) {
-          const sortedData = data.sort(
-            (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
-          );
-          const sortedData1 = sortedData.filter(
-            (student) => student.grade == "1"
-          );
-
-          const presentStudents = sortedData1.filter(
-            (student) => student.check !== "0"
-          );
-          const absentStudents = sortedData1.filter(
-            (student) => student.check === "0"
-          );
-          const finalSortedData = [...presentStudents, ...absentStudents];
-          setAttendance(finalSortedData);
-
-          const initialFirstCommitStudent = sortedData.map((student) => ({
-            id: student.id,
-            updatedAt: formattedDate,
-            name: student.name,
-            class: student.class,
-            grade: student.grade,
-            studentnumber: student.studentnumber,
-            check: student.check === "0" ? "2" : "",
-            comment: student.comment || "",
-            author: session?.user?.name || "",
-            createdAt: student.createdAt,
-          }));
-          setFirstCommitStudent(initialFirstCommitStudent);
-        } else {
-          console.error(data);
-        }
-        setIsLoading(false);
-      });
-  }, [session]);
+  // id를 기준으로 시간 입력값 업데이트
+  const handleTimeChange = (id: string, field: string, value: string) => {
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, [field]: value } : student
+      )
+    );
+  };
 
   const handleCommitChange = (id: string, field: string, value: string) => {
     setFirstCommitStudent((prev) =>
@@ -130,37 +107,18 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
-      setIsLoading(true);
       const response = await axios.post(
-        "/api/post/filegenerater1/choiceATsupervisor2",
+        "/api/post/nightAT/fetchTime2",
+        { firstcommitstudent },
         {
-          firstcommitstudent,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      const response2 = await axios.post(
-        "/api/post/filegenerater1/choiceATsupervisor",
-        {
-          firstcommitstudent,
-        }
-      );
-
-      const response3 = await axios.post("/api/post/compareAT", {
-        firstcommitstudent,
-        grade: "1",
-        formattedDate,
-      });
-
-      if (
-        response.status === 200 &&
-        response2.status === 200 &&
-        response3.status === 200
-      ) {
+      if (response.status === 200) {
+        setIsLoading(false);
         setSuccessModalTimer();
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-        console.log(response.data.message);
-        alert("저장 실패");
       }
     } catch (error) {
       console.log(error);
@@ -174,6 +132,25 @@ export default function Page() {
     }, 2500);
   };
 
+  // 다른 컴포넌트에서 학생 정보를 업데이트할 때 사용하는 함수 (학생 id 기준)
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+              outTimeST: updatedStudent.outTimeST,
+            }
+          : student;
+      })
+    );
+  };
+
   const countAbsentStudentsNO = () => {
     const count1 = firstcommitstudent.filter(
       (student) => student.check === "0"
@@ -183,9 +160,87 @@ export default function Page() {
     ).length;
     return count1 + count2;
   };
+
   const countAbsentStudentsOK = () => {
     return firstcommitstudent.filter((student) => student.check === "1").length;
   };
+
+  // 24시간 형식을 12시간 형식으로 변환하는 함수
+  function convertTo12Hour(time24: string) {
+    if (!time24) return "설정된 시간 없음";
+    let [hours, minutes] = time24.split(":").map(Number);
+    let period = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  }
+
+  // 저장 버튼 활성화 여부 판단 함수
+  const isSaveDisabled = () => {
+    return firstcommitstudent.some((student) => {
+      // 출석 여부가 선택되지 않았으면 (check가 "0" 또는 "1"이 아니면)
+      if (
+        student.check !== "0" &&
+        student.check !== "1" &&
+        student.check !== "2"
+      )
+        return true;
+      if (
+        student.check === "0" &&
+        (!student.comment || student.comment.trim() === "") &&
+        (!student.outTimeST || student.outTimeST.trim() === "")
+      )
+        return true;
+      return false;
+    });
+  };
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch("/api/post/nightAT/page")
+      .then((response) => response.json())
+      .then((data: Attendance[]) => {
+        if (Array.isArray(data)) {
+          const sortedData = data.sort((a, b) => {
+            if (a.class !== b.class) {
+              return a.class - b.class;
+            }
+            return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+          });
+          const sortedData1 = sortedData.filter(
+            (student) => student.grade === 3
+          );
+
+          const presentStudents = sortedData1.filter(
+            (student) => student.check !== "0"
+          );
+          const absentStudents = sortedData1.filter(
+            (student) => student.check === "0"
+          );
+          const finalSortedData = [...presentStudents, ...absentStudents];
+          setAttendance(finalSortedData);
+
+          const initialFirstCommitStudent = finalSortedData.map((student) => ({
+            id: student.id,
+            updatedAt: formattedDate,
+            name: student.name,
+            class: student.class,
+            grade: student.grade,
+            studentnumber: student.studentnumber,
+            // 미출석인 경우 미리 "2"로 셋팅, 이후 체크박스 변경 시 "0" 또는 "1"로 업데이트됨
+            check: student.check === "0" ? "2" : "",
+            outTimeT: student.outTimeT || "",
+            outTimeST: student.outTimeT || "",
+            comment: student.comment || "",
+            author: session?.user?.name || "",
+            createdAt: student.createdAt,
+          }));
+          setFirstCommitStudent(initialFirstCommitStudent);
+        } else {
+          console.error(data);
+        }
+        setIsLoading(false);
+      });
+  }, [session]);
 
   if (isLoading) {
     return <div className="loading">잠시만 기다려주세요...</div>;
@@ -193,62 +248,75 @@ export default function Page() {
 
   if (attendance.length === 0) {
     return (
-      <>
+      <div>
         <div>이런! 오류가 발생했거나 학생들의 정보가 등록이 필요해요</div>
-      </>
+      </div>
     );
   } else {
     return (
       <div className="right-left-margin">
-        <div>{successModal ? <SuccessModal props={successModal} /> : null}</div>
+        {successModal && <SuccessModal props={successModal} />}
         <div className="attendance-top-container-display">
           <div className="attendance-top-in1">
             <p>총 인원: {attendance.length}</p>
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
           </div>
-          <select
-            className="class-select"
-            onChange={(e) => setSelectedClass(e.target.value)}
-            value={selectedClass || ""}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <option value="">모두 보기</option>
-            {classList.map((cls, index) => (
-              <option key={index} value={cls}>
-                {cls}반
-              </option>
-            ))}
-          </select>
+            <select
+              className="class-select"
+              onChange={(e) => setSelectedClass(e.target.value)}
+              value={selectedClass || ""}
+            >
+              <option value="">모두 보기</option>
+              {classList.map((cls, index) => (
+                <option key={index} value={cls}>
+                  {cls}반
+                </option>
+              ))}
+            </select>
+            <SelectStudentModal
+              props={firstcommitstudent}
+              setAttendance={handleStateChange}
+            />
+          </div>
         </div>
 
         <div className="attendance-container">
-          {filteredStudents.map((data, i) => {
+          {filteredStudents.map((data) => {
             const studentCommit = firstcommitstudent.find(
               (student) => student.id === data.id
-            ) || { check: "", comment: "" };
+            ) || {
+              check: "",
+              comment: "",
+            };
             return (
               <div
+                key={data.id}
+                className="attendance-student"
                 style={{
-                  backgroundColor: `${
+                  backgroundColor:
                     studentCommit.check === "0"
                       ? "#FFE8E8"
                       : studentCommit.check === "1"
                       ? "#E8E8FF"
                       : data.check === "0"
                       ? "#E8E8E8"
-                      : "white"
-                  }`,
+                      : "white",
                 }}
-                className="attendance-student"
-                key={data.id}
               >
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: `${
-                      studentCommit.check == "0" ? "normal" : "center"
-                    }`,
+                    alignItems:
+                      studentCommit.check === "0" ? "normal" : "center",
                   }}
                 >
                   <div className="attendance-student-title-display">
@@ -260,6 +328,9 @@ export default function Page() {
                     </div>
                     <p className="attendance-student-number">
                       {data.studentnumber}번
+                    </p>
+                    <p className="attendance-student-number">
+                      설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
                     </p>
                   </div>
                   <div>
@@ -306,15 +377,35 @@ export default function Page() {
                       </p>
                     ) : null}
                     {data.check === "0" ? (
-                      <>
+                      <div>
                         <h5>
                           미출석
                           <br />
                           이유 : {data?.comment}
                         </h5>
-                      </>
+                      </div>
                     ) : (
                       <div style={{ display: "flex", justifyContent: "right" }}>
+                        <div style={{ marginRight: "20px" }}>
+                          <input
+                            style={{
+                              backgroundColor:
+                                studentCommit.outTimeST === data.outTimeT
+                                  ? "#E8E8E8"
+                                  : "#E8E8FF",
+                            }}
+                            className="time-input"
+                            type="time"
+                            value={studentCommit.outTimeST || ""}
+                            onChange={(e) =>
+                              handleTimeChange(
+                                data.id,
+                                "outTimeST",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
                         <input
                           type="checkbox"
                           className="no-check"
@@ -337,7 +428,12 @@ export default function Page() {
             );
           })}
         </div>
-        <button className="ok-button" onClick={handlePatch}>
+        {/* 저장 버튼은 isSaveDisabled()가 true이면 disabled 처리 */}
+        <button
+          className="ok-button"
+          onClick={handlePatch}
+          disabled={isSaveDisabled()}
+        >
           출석 정보 저장
         </button>
       </div>

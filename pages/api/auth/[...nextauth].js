@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { randomUUID, sign } from "crypto";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+
 import NaverProvider from "next-auth/providers/naver";
 import KakaoProvider from "next-auth/providers/kakao";
 import GoogleProvider from "next-auth/providers/google";
@@ -9,7 +9,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { signOut } from "next-auth/react";
 
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export const authOptions = {
   providers: [
@@ -112,13 +112,5 @@ export const authOptions = {
     },
   },
 };
-
-// Prisma disconnect를 프로세스 종료 시 처리
-async function disconnectPrisma() {
-  await prisma.$disconnect();
-}
-
-process.on("SIGINT", disconnectPrisma);
-process.on("SIGTERM", disconnectPrisma);
 
 export default NextAuth(authOptions);

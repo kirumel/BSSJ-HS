@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   console.log(req.body);
@@ -20,8 +18,6 @@ export default async function handler(req: any, res: any) {
       }
     } catch (error) {
       res.status(400).json({ message: `오류발생${error} ` });
-    } finally {
-      await prisma.$disconnect();
     }
   }
 }

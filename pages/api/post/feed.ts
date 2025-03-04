@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
@@ -34,8 +32,6 @@ export default async function handler(req: any, res: any) {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: `${error.message}` });
-    } finally {
-      await prisma.$disconnect();
     }
   } else {
     res.setHeader("Allow", ["GET", "POST"]);

@@ -19,10 +19,7 @@ export default function NavOut() {
     "/choiceRegister",
     "/guest",
   ];
-  if (
-    (pathname && notshow.includes(pathname)) ||
-    pathname.startsWith("/posts")
-  ) {
+  if (pathname && notshow.includes(pathname)) {
     return null;
   }
   return (

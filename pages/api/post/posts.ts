@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
@@ -69,8 +67,6 @@ export default async function handler(req: any, res: any) {
       res
         .status(500)
         .json({ message: "오류가 발생했습니다 콘솔을 확인해주세요" });
-    } finally {
-      await prisma.$disconnect();
     }
   } else {
     res.setHeader("Allow", ["GET", "POST"]);

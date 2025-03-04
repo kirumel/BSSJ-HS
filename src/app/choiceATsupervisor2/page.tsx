@@ -113,7 +113,7 @@ export default function Page() {
           const finalSortedData = [...presentStudents, ...absentStudents];
           setAttendance(finalSortedData);
 
-          const initialFirstCommitStudent = sortedData.map((student) => ({
+          const initialFirstCommitStudent = finalSortedData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
             name: student.name,

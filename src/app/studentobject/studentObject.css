@@ -1,0 +1,81 @@
+.student-buttons button {
+  background-color: rgb(230, 230, 230);
+  color: black;
+  border: none;
+  border-radius: 1rem;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 3px;
+  margin-left: 3px;
+  white-space: nowrap; /* 줄바꿈 방지 */
+  margin-bottom: 10px;
+}
+.student-buttons button:hover {
+  cursor: pointer;
+  background-color: rgb(192, 183, 240);
+}
+.student-buttons {
+  overflow-x: scroll;
+  white-space: nowrap; /* 줄바꿈 방지 */
+}
+.studentObject-title {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.class-select {
+  padding: 3px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: none;
+  border-radius: 0.3rem;
+  background-color: #8177fe;
+  color: white;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: none;
+  appearance: none; /* 기본 화살표 제거 */
+  -webkit-appearance: none; /* Safari에서 기본 화살표 제거 */
+  -moz-appearance: none; /* Firefox에서 기본 화살표 제거 */
+  outline: none;
+  text-align: center;
+}
+.class-select option {
+  padding: 5px;
+  background-color: #8177fe;
+  color: white;
+  box-shadow: none;
+  outline: none;
+  text-align: center;
+}
+.delete-button {
+  background-color: rgb(255, 181, 181);
+  color: rgb(119, 58, 58);
+  border: none;
+  font-weight: 500;
+  border-radius: 0.3rem;
+  margin-right: 10px;
+  padding: 3px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.copy-button {
+  background-color: rgb(224, 224, 224);
+  color: rgb(5, 5, 5);
+  border: none;
+  font-weight: 500;
+  border-radius: 0.3rem;
+  padding: 3px;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.select-button {
+  accent-color: #319246;
+  cursor: pointer;
+}

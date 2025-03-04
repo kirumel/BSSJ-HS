@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import "./cafe.css";
+import Loading from "../loading/page";
 
 interface Post {
   id: string;
@@ -42,21 +43,24 @@ export default function Cafe({ session }: CafeProps) {
 
   useEffect(() => {
     setIsLoading(true);
-    try {
-      axios.get("/api/post/posts").then((response) => {
-        setPosts(response.data);
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    axios
+      .get("/api/post/posts")
+      .then((response) => {
+        const sortedPosts = response.data.sort((a: any, b: any) => {
+          const dateA = new Date(a.createdAt as string);
+          const dateB = new Date(b.createdAt as string);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setPosts(sortedPosts);
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
     return (
       <div className="video-container">
-        <video className="로딩" src="/로딩.mp4" autoPlay muted loop></video>
+        <Loading />
       </div>
     );
   }
@@ -66,6 +70,7 @@ export default function Cafe({ session }: CafeProps) {
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === id) {
+          console.log(post);
           const hasLiked = post.likes.some(
             (like: Like) => like.userId === userId
           );
@@ -122,9 +127,7 @@ export default function Cafe({ session }: CafeProps) {
   return (
     <div style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
       <a href="/write">
-        <button className="back-button">
-          <span>&larr;</span>
-        </button>
+        <button className="write-button">작성하기</button>
       </a>
 
       {posts.length > 0 && (
@@ -171,10 +174,12 @@ export default function Cafe({ session }: CafeProps) {
                               width: "7%",
                               height: "auto",
                               borderRadius: "0.3rem",
+                              minWidth: "20px",
+                              maxWidth: "30px",
                             }}
                           ></img>
                           <div>
-                            <p className="cafe-nickname">익명</p>
+                            <p className="cafe-nickname">{post.nickname}</p>
                             <p className="cafe-nickname-sub">
                               성지고등학교 자유게시판
                             </p>

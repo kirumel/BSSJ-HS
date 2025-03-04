@@ -19,18 +19,32 @@ export default function Meals({
   const [meals2, setMeals2] = useState<Time[]>([]);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  useEffect(() => {
-    async function fetchMeals() {
-      const mealsData = await getonemeal();
-      setMeals(mealsData);
-    }
-    fetchMeals();
+  async function fetchMeals() {
+    const mealsData = await getonemeal();
+    localStorage.setItem("mealData", JSON.stringify(mealsData));
+  }
 
-    async function fetchMeals2() {
-      const mealsData = await getonemeal2();
-      setMeals2(mealsData);
+  async function fetchMeals2() {
+    const mealsData = await getonemeal2();
+    localStorage.setItem("mealData2", JSON.stringify(mealsData));
+  }
+
+  // 초기 데이터 로드
+  useEffect(() => {
+    const mealData = localStorage.getItem("mealData");
+    const mealData2 = localStorage.getItem("mealData2");
+
+    if (mealData) {
+      setMeals(JSON.parse(mealData));
+    } else {
+      fetchMeals();
     }
-    fetchMeals2();
+
+    if (mealData2) {
+      setMeals2(JSON.parse(mealData2));
+    } else {
+      fetchMeals2();
+    }
   }, []);
 
   const handleClick = () => {
@@ -51,8 +65,6 @@ export default function Meals({
                       <p>
                         <div className="dish-list-box">
                           <span className="dish-number">{i + 1}.</span>
-                          {"  "}
-                          {"  "}
                           {dish}
                         </div>
                       </p>

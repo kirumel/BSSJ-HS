@@ -6,7 +6,7 @@ import SwiperCore from "swiper";
 import { Autoplay } from "swiper/modules";
 import { useSession } from "next-auth/react";
 
-SwiperCore.use([Autoplay]); // Use the Autoplay module
+SwiperCore.use([Autoplay]);
 
 export default function Events() {
   const { data: session } = useSession();
@@ -34,19 +34,13 @@ export default function Events() {
           loop={true}
         >
           <SwiperSlide className="event-slide">
-            <a href="/qrScan">
-              <div style={{ width: "100%", height: "33vh" }}>
-                <img
-                  className="home-event-img"
-                  src="makers.png"
-                  alt="Slide 2"
-                />
-                <div className="event-overlay">
-                  <h2 className="event-title">동아리 한마당 메이커부스</h2>
-                  <p> qr 보물 찾고 상품 받아가자!</p>
-                </div>
+            <div style={{ width: "100%", height: "33vh" }}>
+              <img className="home-event-img" src="altisto.png" alt="Slide 2" />
+              <div className="event-overlay">
+                <h2 className="event-title">성지고등학교 app</h2>
+                <p>version 1.0.1</p>
               </div>
-            </a>
+            </div>
           </SwiperSlide>
         </Swiper>
       </div>
@@ -58,7 +52,7 @@ export default function Events() {
           <div className="scroll-container">
             <a href="/qrScan">
               <div className="main-event-imgbox">
-                <img className="main-event-img" src="makers.png"></img>
+                <img className="main-event-img" src="logofull.jpg"></img>
                 <div
                   className="main-event-overlay2"
                   style={{ backgroundColor: "rgb(0, 0, 0)" }}
@@ -72,9 +66,9 @@ export default function Events() {
                   }}
                 ></div>
                 <p className="main-event-title" style={{ color: "white" }}>
-                  동아리 한마당 메이커부스
+                  event
                   <br />
-                  qr 보물 찾고 상품 받아가자!
+                  event
                 </p>
               </div>
             </a>

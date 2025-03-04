@@ -24,6 +24,8 @@ export async function getonemeal2() {
       { params }
     );
 
+    console.log(response);
+
     if (response.data?.RESULT?.CODE === "INFO-200") {
       meals.push({
         status: "error",
@@ -33,7 +35,7 @@ export async function getonemeal2() {
       continue;
     }
 
-    let dishes = response.data.mealServiceDietInfo[1].row[1].DDISH_NM.split(
+    let dishes = response.data.mealServiceDietInfo[1].row[0].DDISH_NM.split(
       "<br/>"
     ).map((dish) => dish.split(" ")[0].replace("H", ""));
 

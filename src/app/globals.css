@@ -5,9 +5,25 @@
 *::-webkit-scrollbar {
   display: none;
 }
+@font-face {
+  font-family: "JalnanGothic";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/JalnanGothic.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+.lottie {
+  width: 100px;
+  height: 100px;
+  box-sizing: border-box;
+}
+.textlogo {
+  font-family: "JalnanGothic", sans-serif;
+  height: 13px;
+}
+
 .event-text {
   margin: 0;
-  color: white;
 }
 @media screen and (min-width: 750px) {
   .phone-display-none {
@@ -26,11 +42,13 @@
   }
 }
 .event-text-container {
-  padding: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-top: 20px;
 }
 .event-text-title {
   margin: 0;
-  color: white;
+  color: black;
   font-size: 20px;
   font-weight: 700;
 }
@@ -52,10 +70,10 @@
   padding: 10px;
   height: 15vw;
   width: 15vw;
-  max-width: 200px;
-  max-height: 200px;
-  min-height: 80px;
-  min-width: 80px;
+  max-width: 100px;
+  max-height: 100px;
+  min-height: 65px;
+  min-width: 65px;
   font-size: 1.8vh;
   font-weight: 500;
   color: white;
@@ -63,9 +81,9 @@
   border: none;
 }
 .event-feed {
-  margin-top: 20px;
-  color: black;
-  background-color: white;
+  margin-top: 10px;
+  color: white;
+  background-color: black;
   border-radius: 100px;
   border: none;
   padding: 5px;
@@ -86,7 +104,9 @@
 .event-button-container {
   display: flex;
   justify-content: left;
-  padding: 8px;
+  padding: 10px;
+  padding-bottom: 5px;
+  padding-top: 0px;
 }
 .right-left-margin {
   margin-left: 1.5rem;
@@ -151,15 +171,6 @@ html {
   border-bottom: 1px solid rgba(15, 15, 15, 0.102);
 }
 
-.nav a {
-  color: black;
-  text-decoration: none;
-  font-weight: 700;
-  font-family: "Noto Sans KR", sans-serif;
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-}
 .nav-home {
   padding-left: 15px;
   padding-right: 15px;
@@ -822,43 +833,8 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
 }
 
-.loader .dots {
-  width: 10px;
-  height: 10px;
-  position: absolute;
-  border-radius: 50%;
-  background: #ffffff;
-  animation: myani 1s ease-in-out 0s infinite;
-}
-.loader .dots:nth-child(1) {
-  animation-delay: 0s;
-}
-.loader .dots:nth-child(2) {
-  animation-delay: 0.15s;
-}
-.loader .dots:nth-child(3) {
-  animation-delay: 0.3s;
-}
-.loader .dots:nth-child(4) {
-  animation-delay: 0.45s;
-}
-
-@keyframes myani {
-  0% {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100px);
-    opacity: 0;
-  }
-}
 @media screen and (max-width: 800px) {
   .margin {
     height: 80px;
@@ -995,4 +971,7 @@ a {
 
 .school-etc:hover {
   box-shadow: rgb(123, 123, 123, 0.2) 0px 1px 3px;
+}
+.margin0 {
+  margin: 0;
 }

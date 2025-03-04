@@ -6,6 +6,7 @@ import Nav from "./nav";
 import Navout from "./navout";
 import Nosign from "./nosign/page";
 import { toast } from "react-toastify";
+import Loading from "./loading/page";
 
 const ProtectedPage = ({ children }: { children: any }) => {
   const { data: session, status } = useSession();
@@ -16,11 +17,7 @@ const ProtectedPage = ({ children }: { children: any }) => {
   }
 
   if (status === "loading") {
-    return (
-      <div className="loading-screen">
-        <p>Loading...</p>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (

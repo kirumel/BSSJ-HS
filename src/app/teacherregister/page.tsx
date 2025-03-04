@@ -1,9 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import "../accountregister/page.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
+import SuccessModal from "../successModal/page";
 
 export default function Write() {
   const router = useRouter();
@@ -18,27 +19,34 @@ export default function Write() {
     teacherCode: "",
   });
 
+  const [showModal, setShowModal] = useState(false);
+
   const handleBackClick = () => {
     router.back(); // 브라우저 히스토리의 이전 페이지로 이동
   };
 
-  const isValidData = (teacherCode: string) => {
-    if (teacherCode === "sj0010") {
-      setIsChecked(true);
-    } else {
-      setIsChecked(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
 
+    // 교사 인증코드 검증
     if (name === "teacherCode") {
-      isValidData(value);
+      try {
+        const response = await axios.post("/api/post/validateTeacherCode", {
+          teacherCode: value,
+        });
+
+        if (response.status === 200) {
+          setIsChecked(true); // 인증 성공 → 버튼 활성화
+        } else {
+          setIsChecked(false);
+        }
+      } catch (error) {
+        setIsChecked(false);
+      }
     }
   };
 
@@ -48,23 +56,34 @@ export default function Write() {
     try {
       const response = await axios.post("/api/post/teacherRegist", formData);
       setIsChecked(false);
-      if (response.status === 200) {
-        toast.success("가입이 완료되었습니다!");
 
-        router.push("/");
+      if (response.status === 200) {
+        setShowModal(true); // 모달 표시
+        setTimeout(() => {
+          setShowModal(false);
+        }, 5000);
+        setTimeout(() => {
+          router.push("/");
+        }, 5500);
       } else {
-        console.log(response.data.message);
-        toast.error("가입 중 오류가 발생했습니다.");
-        setIsChecked(true);
+        toast.error(response.data.message);
       }
-    } catch (error) {
-      toast.error("가입 중 오류가 발생했습니다.");
-      setIsChecked(true);
+    } catch (error: any) {
+      toast.error(error.response?.data.message);
     }
   };
 
   return (
     <div className="dish-display">
+      {showModal && (
+        <SuccessModal
+          props={{
+            name: "성공!",
+            content: "5초 후 메인화면으로 이동합니다",
+          }}
+        />
+      )}
+
       <ToastContainer
         position="top-center"
         autoClose={5000}

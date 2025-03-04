@@ -1,16 +1,17 @@
 .tags {
-  background-color: #333;
-  color: white;
+  background-color: #33333328;
+  color: rgba(0, 0, 0, 0.8);
   border-radius: 1rem;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-left: 13px;
+  padding-right: 13px;
+  padding-top: 3px;
+  padding-bottom: 3px;
   font-size: 10px;
   font-weight: 500;
   margin-right: 3px;
   margin-left: 3px;
   margin-bottom: 10px;
+  font-weight: 600;
 }
 .tagtitle {
   font-size: 12px;
@@ -101,9 +102,31 @@
   cursor: pointer;
 }
 .option {
-  width: 25px;
+  width: 23px;
   height: 3px;
   background-color: #333;
   margin-top: 3px;
   margin-bottom: 3px;
+}
+.more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.more button {
+  font-size: 10px;
+  background: none;
+  border: none;
+  color: rgb(158, 158, 158);
+}
+.feed-button {
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: left;
+  background-color: rgb(236, 236, 236);
 }

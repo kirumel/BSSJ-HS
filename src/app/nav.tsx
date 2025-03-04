@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import logo from "../../public/logo.png";
+import Logo from "./logo/page";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -17,9 +17,9 @@ export default function Nav() {
     "/accountdelete",
     "/",
     "/study",
-    "/admin",
     "/feed",
     "/nightAT",
+    "/nightattendance",
   ];
   if (pathname && notshow.includes(pathname)) {
     null;
@@ -27,9 +27,9 @@ export default function Nav() {
     return (
       <>
         <div className="nav">
-          <a href="/">
-            <Image src={logo} alt="logo" width={71} height={25} />
-          </a>
+          <Link href="/">
+            <Logo />
+          </Link>
         </div>
       </>
     );

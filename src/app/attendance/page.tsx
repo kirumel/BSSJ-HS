@@ -4,11 +4,13 @@ import { useSession } from "next-auth/react";
 import "./style.css";
 
 import PlusStudentModal from "./plusStudentModal";
-import SuccessModal from "./successModal";
+import SuccessModal from "../successModal/page";
 
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../choiceATteacher/style.css";
 import axios from "axios";
+import { useSpring, animated } from "react-spring"; // react-spring import
+import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
   name: string;
@@ -135,7 +137,7 @@ export default function Page() {
           toast(response.data);
         } else {
           setIsLoading(false);
-          setSuccessModalTimer();
+          setSuccessModal(true);
         }
       })
       .catch((error) => {
@@ -147,18 +149,30 @@ export default function Page() {
     localStorage.setItem("compareAT", JSON.stringify(firstcommitstudent));
   };
 
-  const setSuccessModalTimer = () => {
-    setSuccessModal(true);
-    setTimeout(() => {
-      setSuccessModal(false);
-    }, 2500);
-  };
-
   const countAbsentStudentsNO = () => {
     return firstcommitstudent.filter((student) => student.check === "0").length;
   };
   const countAbsentStudentsOK = () => {
     return firstcommitstudent.filter((student) => student.check === "1").length;
+  };
+  const handleStateChange = (newState: any) => {
+    setFirstCommitStudent((prevState) =>
+      prevState.map((student) => {
+        // Find the corresponding student in the newState array
+        const updatedStudent = newState.find(
+          (newStudent: { id: string }) => newStudent.id === student.id
+        );
+
+        // If there's a match, update the student's check and comment, otherwise keep the student as is
+        return updatedStudent
+          ? {
+              ...student,
+              check: updatedStudent.check,
+              comment: updatedStudent.comment,
+            }
+          : student;
+      })
+    );
   };
 
   if (isLoading) {
@@ -197,7 +211,14 @@ export default function Page() {
 
         <div className="right-left-margin">
           <div>
-            {successModal ? <SuccessModal props={successModal} /> : null}
+            {successModal ? (
+              <SuccessModal
+                props={{
+                  name: "성공!",
+                  content: "1차 출석이 저장되었어요",
+                }}
+              />
+            ) : null}
           </div>
           <div className="attendance-top-container-display">
             <div className="attendance-top-in1">
@@ -205,12 +226,24 @@ export default function Page() {
               <p>미출석: {countAbsentStudentsNO()}</p>
               <p>출석: {countAbsentStudentsOK()}</p>
             </div>
-            <button
-              className="plus-attendance-button"
-              onClick={() => setModalOpen(true)}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              학생 추가
-            </button>
+              <button
+                className="plus-attendance-button"
+                onClick={() => setModalOpen(true)}
+              >
+                학생 추가
+              </button>
+              <SelectStudentModal
+                props={firstcommitstudent}
+                setAttendance={handleStateChange}
+              />
+            </div>
           </div>
           <div className="attendance-container">
             {attendance.map((data, i) => (

@@ -1,9 +1,8 @@
 import ExcelJS from "exceljs";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
-  const prisma = new PrismaClient();
   if (req.method === "POST") {
     const students = req.body;
     const todayDate = new Date();

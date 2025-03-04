@@ -3,16 +3,14 @@ import autoTable from "jspdf-autotable";
 import { fontdata } from "../font";
 import { logo } from "../logo";
 
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
-  const prisma = new PrismaClient();
   const todayDate = new Date();
   const today = new Date();
 
   // 날짜 보기 좋게 설정
   let formattedDate: string;
-
   formattedDate = todayDate.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",
@@ -91,14 +89,11 @@ export default async function handler(req: any, res: any) {
             createdAt: formattedDate,
           },
         });
-
         res.status(200).json({ message: "업로드가 완료되었습니다" });
       } catch (error) {
         res.status(500).send({
           message: `에러가 발생하였습니다 오류 코드를 확인해주세요 ${error}`,
         });
-      } finally {
-        await prisma.$disconnect();
       }
     } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
       try {
@@ -121,14 +116,11 @@ export default async function handler(req: any, res: any) {
             createdAt: formattedDate,
           },
         });
-
         res.status(200).json({ message: "업로드가 완료되었습니다" });
       } catch (error) {
         res.status(500).send({
           message: `에러가 발생하였습니다 오류 코드를 확인해주세요 ${error}`,
         });
-      } finally {
-        await prisma.$disconnect();
       }
     } else {
       res.status(400).send({ message: "오류가 발생하였습니다" });

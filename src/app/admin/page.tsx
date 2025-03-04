@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Slide, ToastContainer, toast } from "react-toastify";
+import dayjs from "dayjs";
+import "./admin.css";
 interface DataItem {
   updatedAt: string;
   id: string;
@@ -24,6 +26,7 @@ export default function Page() {
   const { data: session } = useSession();
   const [firstdata, setFirstdata] = useState<DataItem[]>([]);
   const [afterdata, setAfterdata] = useState<DataItem[]>([]);
+  const [currenttime, setCurrentTime] = useState<string>("");
   const router = useRouter();
   if (!session) {
     alert("권환 오류! 다시 로그인 해주세요");
@@ -83,6 +86,12 @@ export default function Page() {
       toast.error("알 수 없는 오류입니다");
     }
   }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(dayjs().format("A h:mm:ss"));
+    }, 1000);
+    return () => clearInterval(timer);
+  });
 
   useEffect(() => {
     const storedData = localStorage.getItem("compareAT");
@@ -132,14 +141,7 @@ export default function Page() {
 
   return (
     <div style={{ overflow: "hidden" }}>
-      <div
-        style={{
-          width: "100%",
-          backgroundColor: "#1A1A1A",
-          height: "100vh",
-        }}
-      >
-        {" "}
+      <div>
         <ToastContainer
           position="top-center"
           autoClose={5000}
@@ -153,22 +155,31 @@ export default function Page() {
           transition={Slide}
           closeButton={false}
         />
-        <div className="nav">
-          <Link href="/">
-            <Image src={logo} alt="logo" width={71} height={25} />
+        <div className="admin-mainTop">
+          <div className="event-text-container">
+            <p className="event-text-title">
+              안녕하세요 {session?.user?.name}님!
+            </p>
+            <p className="event-text">여기는 관리자 탭입니다</p>
+            <a href="/adminfeed">
+              <button className="event-feed">feed 등록하기</button>
+            </a>
+          </div>
+          <div className="pad-display-none admin-time">{currenttime}</div>
+        </div>
+
+        <div className="admin-mainMiddle">
+          <Link href="/studentobject">
+            <button style={{ width: "100%" }}>출석 학생관리</button>
           </Link>
+
+          <button>커뮤니티 관리</button>
+          <button>이벤트 관리</button>
         </div>
-        <div className="line" style={{ backgroundColor: "#222123" }}></div>
-        <div className="event-text-container">
-          <p className="event-text-title">
-            안녕하세요 {session?.user?.name}님!
-          </p>
-          <p className="event-text">여기는 관리자 탭입니다</p>
-          <a href="/adminfeed">
-            <button className="event-feed">feed 등록하기</button>
-          </a>
-        </div>
-        <div>
+
+        <div className="line" style={{ marginTop: "10px" }}></div>
+        <p className="admin-title">8교시 출석</p>
+        <div className="admin-mainBottom">
           <div className="event-box-container">
             <Link href="/attendance">
               <button
@@ -185,60 +196,64 @@ export default function Page() {
                 className="event-box-button"
               >
                 8교시 <br />
-                감독관
+                감독
               </button>
             </Link>
-
             <button
               style={{ backgroundColor: "#9A9AF6" }}
               className="event-box-button"
               onClick={handleATcompare}
             >
               8교시 <br />
-              출석대조
+              대조
             </button>
           </div>
-
-          {/* <div className="event-box-container">
-            <button
-              style={{ backgroundColor: "#F06196" }}
-              className="event-box-button"
-            >
-              야자 <br />
-              출석
-            </button>
-            <button
-              style={{ backgroundColor: "#F495B9" }}
-              className="event-box-button"
-            >
-              야자 <br />
-              감독관
-            </button>
-            <button
-              style={{ backgroundColor: "#F495B9" }}
-              className="event-box-button"
-            >
-              야자 <br />
-              출석대조
-            </button>
-          </div> */}
-
+          <div className="line"></div>
+          <p className="admin-title">야자 출석 / 개발중입니다 </p>
+          <div className="event-box-container">
+            <Link href="/nightattendance">
+              <button
+                style={{ backgroundColor: "#F06196" }}
+                className="event-box-button"
+              >
+                야자 <br />
+                출석
+              </button>
+            </Link>
+            <Link href="choiceNightATgrade">
+              <button
+                style={{ backgroundColor: "#F495B9" }}
+                className="event-box-button"
+              >
+                야자 <br />
+                감독
+              </button>
+            </Link>
+            <Link href="/nightAT">
+              <button
+                style={{ backgroundColor: "#F495B9" }}
+                className="event-box-button"
+              >
+                퇴장 <br />
+                시간
+              </button>
+            </Link>
+            <Link href="/night">
+              <button
+                style={{ backgroundColor: "#F495B9" }}
+                className="event-box-button"
+              >
+                출석부 <br />
+                만들기
+              </button>
+            </Link>
+          </div>
+          <div className="line"></div>
           <div className="event-box-container">
             <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석부 <br />
                 다운
-              </button>
-            </Link>
-            <Link href="qrScanSj0010">
-              <button style={{ color: "black" }} className="event-box-button">
-                qr <br />
-                scaner
-              </button>
-            </Link>
-            <Link href="sessiondelete">
-              <button style={{ color: "black" }} className="event-box-button">
-                학생 <br />밴
               </button>
             </Link>
           </div>
