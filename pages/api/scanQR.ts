@@ -5,6 +5,8 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       const { nameid } = req.query.nameid;
+      console.log(nameid);
+
       const findDB = await prisma.eventQR.findMany({
         where: {
           nameid: nameid,

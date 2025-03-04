@@ -17,6 +17,7 @@ export default function Page() {
   const [modal3, setmodal3] = useState(false);
   const [ispresent, setispresent] = useState(false);
   const qrArray = ["Sj1", "Sj2", "Sj3", "Sj4"];
+  const qrArray1 = ["Sj1", "Sj2", "Sj3", "Sj4", "Sj5", "Sj6", "Sj7"];
   const qrArray2 = ["Sj5", "Sj6", "Sj7"];
 
   const session = useSession();
@@ -24,7 +25,7 @@ export default function Page() {
     return <p>Loading...</p>;
   }
   if (!session) {
-    return <p>로그인 상태가 아닌드</p>;
+    return <p>로그인 상태가 아닙니다다</p>;
   }
 
   useEffect(() => {
@@ -47,7 +48,7 @@ export default function Page() {
           });
 
         axios
-          .get("/api/scanQR", { params: { nameid: session.data.user.id } })
+          .get("/api/scanQR", { params: { nameid: session.data?.user?.id } })
           .then((res) => {
             if (res.status === 200) {
               setstemp(res.data);
