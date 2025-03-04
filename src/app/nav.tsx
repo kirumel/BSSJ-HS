@@ -3,10 +3,11 @@
 import Link from "next/link";
 import Logo from "./logo/page";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Nav() {
   const pathname = usePathname();
+  const router = useRouter();
   const notshow = [
     "/funnel-register",
     "/success",
@@ -21,17 +22,19 @@ export default function Nav() {
     "/nightAT",
     "/nightattendance",
   ];
+
   if (pathname && notshow.includes(pathname)) {
-    null;
+    return null;
   } else {
     return (
-      <>
-        <div className="nav">
-          <Link href="/">
-            <Logo />
-          </Link>
-        </div>
-      </>
+      <div className="nav">
+        <Link href="/">
+          <Logo />
+        </Link>
+        <button className="back-button" onClick={() => router.back()}>
+          ← 뒤로가기
+        </button>
+      </div>
     );
   }
 }

@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./style.css"; // 일반 CSS 파일을 불러옵니다.
+import "./style.css";
 
 interface Student {
   id: string;
-  createdAt: string; // ISO 문자열로 받아온다고 가정
+  createdAt: string; // ISO 문자열
   grade: number;
-  // 추가 필드가 있다면 여기에 추가
+  // 필요한 추가 필드들...
 }
 
 interface StudentGroup {
@@ -21,9 +21,7 @@ export default function Page() {
   const [uncreatedFiles, setUncreatedFiles] = useState<StudentGroup[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedGrade, setSelectedGrade] = useState<string>("");
-  console.log(students);
 
-  // 컴포넌트 마운트 시, nightAtSupervisor 테이블의 학생 데이터를 조회합니다.
   useEffect(() => {
     axios
       .get<Student[]>("/api/post/nightAT/getATnight")
@@ -37,11 +35,11 @@ export default function Page() {
       });
   }, []);
 
-  // 학생 데이터를 createdAt(날짜)와 grade(학년)별로 그룹화합니다.
+  // 학생 데이터를 날짜와 학년별로 그룹화
   const groupByDateAndGrade = (data: Student[]) => {
     const groups: { [key: string]: StudentGroup } = {};
     data.forEach((student) => {
-      // createdAt 값을 YYYY-MM-DD 형식으로 변환
+      // createdAt 값을 그대로 사용하거나 원하는 포맷으로 변경
       const date = student.createdAt;
       const key = `${date}-${student.grade}`;
       if (!groups[key]) {
@@ -56,41 +54,55 @@ export default function Page() {
     setUncreatedFiles(Object.values(groups));
   };
 
-  // 선택한 날짜와 학년으로 파일 생성 (POST 요청)
-  const handleCreate = () => {
+  // 선택한 날짜와 학년에 대해 파일 생성 요청
+  const handleCreate = async () => {
     if (!selectedDate || !selectedGrade) {
       alert("학년과 일자를 모두 선택해주세요.");
       return;
     }
+
     const payload = {
       date: selectedDate,
       grade: Number(selectedGrade),
     };
 
-    axios
-      .post("/api/post/nightAT/PDF", { payload })
-      .then((response) => {
-        console.log("파일 생성 성공:", response.data);
-      })
-      .catch((error) => {
-        console.error("파일 생성 실패:", error.message);
-      });
+    try {
+      const find = await axios.post("/api/post/nightAT/find", payload);
+      if (find.data.length === 0) {
+        alert("유저 데이터 x");
+        return;
+      }
 
-    axios
-      .post("/api/post/nightAT/xlsx", { payload })
-      .then((response) => {
-        console.log("파일 생성 성공:", response.data);
-      })
-      .catch((error) => {
-        console.error("파일 생성 실패:", error.message);
+      const pdfResponse = await axios.post("/api/post/nightAT/PDF", {
+        payload,
       });
+      if (pdfResponse.status !== 200) {
+        alert("PDF 파일 생성 실패");
+        return;
+      }
 
-    axios
-      .post("/api/post/nightAT/seveDaysBackup", { payload })
-      .then((response) => {
-        console.log("파일 생성 성공:", response.data);
-      })
-      .catch((error) => {});
+      const xlsxResponse = await axios.post("/api/post/nightAT/xlsx", {
+        payload,
+      });
+      if (xlsxResponse.status !== 200) {
+        alert("엑셀 파일 생성 실패");
+        return;
+      }
+
+      const backupResponse = await axios.post(
+        "/api/post/nightAT/sevenDaysBackup",
+        { payload }
+      );
+      if (backupResponse.status !== 200) {
+        alert("백업 파일 생성 실패");
+        return;
+      }
+
+      alert("파일 생성 완료");
+    } catch (error) {
+      console.error("API 요청 중 오류 발생:", error);
+      alert("파일 생성 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -135,7 +147,11 @@ export default function Page() {
         />
       </div>
 
-      <button onClick={handleCreate} className="ok-button">
+      <button
+        onClick={handleCreate}
+        disabled={uncreatedFiles.length == 0}
+        className="ok-button"
+      >
         만들기
       </button>
 

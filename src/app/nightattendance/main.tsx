@@ -185,6 +185,21 @@ export default function Page() {
       })
     );
   };
+  const isSaveDisabled = () => {
+    return firstcommitstudent.some((student) => {
+      const outTimeTStr = student.outTimeT?.toString(); // Convert outTimeT to a string
+      if (
+        !["0", "1", "2"].includes(student.check) ||
+        !outTimeTStr?.trim() ||
+        ((student.check === "0" || student.check === "2") &&
+          !student.comment?.trim())
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  };
   const countAbsentStudentsNO = () => {
     return firstcommitstudent.filter((student) => student.check === "0").length;
   };
@@ -369,7 +384,11 @@ export default function Page() {
               closeModal={() => setModalOpen(false)}
             />
           ) : null}
-          <button className="ok-button" onClick={handlePatch}>
+          <button
+            className="ok-button"
+            disabled={isSaveDisabled}
+            onClick={handlePatch}
+          >
             출석 정보 저장
           </button>
         </div>

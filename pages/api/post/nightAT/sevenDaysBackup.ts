@@ -2,7 +2,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
-    const [date, grade] = req.body;
+    const { date, grade } = req.body.payload;
+
     const dateob = new Date(date);
     const formattedDate = dateob.toLocaleDateString("ko-KR", {
       year: "numeric",
@@ -26,7 +27,7 @@ export default async function handler(req: any, res: any) {
             equals: formattedDate,
           },
           grade: grade.toString(),
-          type: "xlsx",
+          type: "excel",
         },
       });
       if (dbcompare.length !== 0 && dbcompare2.length !== 0) {
@@ -38,7 +39,7 @@ export default async function handler(req: any, res: any) {
             grade: grade,
           },
         });
-        console.log(formattedDate);
+        console.log("dfsd");
         if (students) {
           const move = await prisma.nightCompareAT2.createMany({
             data: {
@@ -56,10 +57,12 @@ export default async function handler(req: any, res: any) {
           });
           console.log(formattedDate);
         }
+      } else {
+        res.status(202).json({ message: "파일누락" });
       }
       res.status(200).json({ message: "성공" });
     } catch (error) {
-      res.status(500).json({ error });
+      res.status(500).json({ message: "오류" });
     }
   } else {
     res.status(405).json({ message: "Method not allowed" });

@@ -177,20 +177,18 @@ export default function Page() {
   // 저장 버튼 활성화 여부 판단 함수
   const isSaveDisabled = () => {
     return firstcommitstudent.some((student) => {
-      // 출석 여부가 선택되지 않았으면 (check가 "0" 또는 "1"이 아니면)
+      console.log(!["0", "1", "2"].includes(student.check));
+      console.log(!student.outTimeST?.trim());
       if (
-        student.check !== "0" &&
-        student.check !== "1" &&
-        student.check !== "2"
-      )
+        !["0", "1", "2"].includes(student.check) ||
+        !student.outTimeST?.trim() ||
+        ((student.check === "0" || student.check === "2") &&
+          !student.comment?.trim())
+      ) {
         return true;
-      if (
-        student.check === "0" &&
-        (!student.comment || student.comment.trim() === "") &&
-        (!student.outTimeST || student.outTimeST.trim() === "")
-      )
-        return true;
-      return false;
+      } else {
+        return false;
+      }
     });
   };
 
