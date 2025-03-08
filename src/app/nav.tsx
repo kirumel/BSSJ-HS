@@ -31,8 +31,8 @@ export default function Nav() {
         <Link href="/">
           <Logo />
         </Link>
-        <button className="back-button" onClick={() => router.back()}>
-          ← 뒤로가기
+        <button className="back-A" onClick={() => router.back()}>
+          back
         </button>
       </div>
     );

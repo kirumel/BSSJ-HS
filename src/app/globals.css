@@ -975,3 +975,7 @@ a {
 .margin0 {
   margin: 0;
 }
+.back-A {
+  border: none;
+  background-color: none;
+}

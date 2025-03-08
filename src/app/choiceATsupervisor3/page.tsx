@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 
-import SuccessModal from "./successModal";
+import SuccessModal from "../successModal/page";
 import "./style.css";
 import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";

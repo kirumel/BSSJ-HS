@@ -209,7 +209,7 @@ export default function Page() {
             </button>
           </div>
           <div className="line"></div>
-          <p className="admin-title">야자 출석 / 개발중입니다 </p>
+          <p className="admin-title">야자 출석 </p>
           <div className="event-box-container">
             <Link href="/nightattendance">
               <button
