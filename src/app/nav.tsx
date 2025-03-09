@@ -32,7 +32,7 @@ export default function Nav() {
           <Logo />
         </Link>
         <button className="back-A" onClick={() => router.back()}>
-          back
+          ←
         </button>
       </div>
     );

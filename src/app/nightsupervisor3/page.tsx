@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 
@@ -9,6 +9,7 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
+  outTimeAT: string;
   outTimeST: string;
   outTimeT: string;
   name: string;
@@ -27,7 +28,6 @@ const todayDate = new Date();
 const today = new Date();
 const isToday = todayDate.toDateString() === today.toDateString();
 
-// 날짜를 보기 좋게 포맷팅
 const formattedDate = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
@@ -76,7 +76,6 @@ export default function Page() {
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
 
-  // id를 기준으로 시간 입력값 업데이트
   const handleTimeChange = (id: string, field: string, value: string) => {
     setFirstCommitStudent((prev) =>
       prev.map((student) =>
@@ -132,7 +131,6 @@ export default function Page() {
     }, 2500);
   };
 
-  // 다른 컴포넌트에서 학생 정보를 업데이트할 때 사용하는 함수 (학생 id 기준)
   const handleStateChange = (newState: any) => {
     setFirstCommitStudent((prevState) =>
       prevState.map((student) => {
@@ -165,7 +163,6 @@ export default function Page() {
     return firstcommitstudent.filter((student) => student.check === "1").length;
   };
 
-  // 24시간 형식을 12시간 형식으로 변환하는 함수
   function convertTo12Hour(time24: string) {
     if (!time24) return "설정된 시간 없음";
     let [hours, minutes] = time24.split(":").map(Number);
@@ -174,23 +171,52 @@ export default function Page() {
     return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
   }
 
-  // 저장 버튼 활성화 여부 판단 함수
-  const isSaveDisabled = () => {
-    return firstcommitstudent.some((student) => {
-      console.log(!["0", "1", "2"].includes(student.check));
-      console.log(!student.outTimeST?.trim());
-      if (
-        !["0", "1", "2"].includes(student.check) ||
-        !student.outTimeST?.trim() ||
-        ((student.check === "0" || student.check === "2") &&
-          !student.comment?.trim())
-      ) {
-        return true;
-      } else {
-        return false;
+  const validation = useMemo(() => {
+    const errorCounts: { [msg: string]: number } = {};
+
+    // 각 학생마다 한 가지 오류만 기록합니다.
+    for (const student of firstcommitstudent) {
+      let errorMessageForStudent: string | null = null;
+      if (!["0", "1", "2"].includes(student.check)) {
+        errorMessageForStudent = "출석 여부가 선택되지 않았습니다.";
+      } else if (student.check === "1") {
+        if (!student.outTimeST) {
+          errorMessageForStudent = "출석 퇴장 시간이 입력되지 않았습니다.";
+        }
+      } else if (student.check === "0" || student.check === "2") {
+        if (!student.outTimeT && !student.comment) {
+          errorMessageForStudent =
+            "퇴장 시간이 입력되지 않았으며, 미출석 사유도 입력되지 않았습니다.";
+        } else if (!student.outTimeST) {
+          errorMessageForStudent = "퇴장 시간이 입력되지 않았습니다.";
+        } else if (!student.comment) {
+          errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
+        }
       }
-    });
-  };
+
+      if (errorMessageForStudent) {
+        errorCounts[errorMessageForStudent] =
+          (errorCounts[errorMessageForStudent] || 0) + 1;
+      }
+    }
+
+    // 전체 학생 중 가장 많이 발생한 오류 메시지를 선택
+    let mostCommonError = "";
+    let maxCount = 0;
+    for (const [msg, count] of Object.entries(errorCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonError = msg;
+      }
+    }
+
+    if (mostCommonError) {
+      const errorMessage =
+        maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
+      return { error: errorMessage, disabled: true };
+    }
+    return { error: "", disabled: false };
+  }, [firstcommitstudent]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -224,10 +250,10 @@ export default function Page() {
             class: student.class,
             grade: student.grade,
             studentnumber: student.studentnumber,
-            // 미출석인 경우 미리 "2"로 셋팅, 이후 체크박스 변경 시 "0" 또는 "1"로 업데이트됨
+            // 미출석인 경우 미리 "2"로 셋팅
             check: student.check === "0" ? "2" : "",
-            outTimeT: student.outTimeT || "",
-            outTimeST: student.outTimeT || "",
+            outTimeT: student.outTimeT || student.outTimeAT || "",
+            outTimeST: student.outTimeT || student.outTimeAT || "",
             comment: student.comment || "",
             author: session?.user?.name || "",
             createdAt: student.createdAt,
@@ -260,6 +286,7 @@ export default function Page() {
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
           </div>
+
           <div
             style={{
               display: "flex",
@@ -285,152 +312,186 @@ export default function Page() {
             />
           </div>
         </div>
-
+        {validation.error && (
+          <p
+            style={{
+              color: "red",
+              fontSize: "11px",
+              margin: "0px",
+              lineHeight: "1",
+            }}
+          >
+            {validation.error}
+          </p>
+        )}
         <div className="attendance-container">
-          {filteredStudents.map((data) => {
+          {filteredStudents.map((data, i) => {
             const studentCommit = firstcommitstudent.find(
               (student) => student.id === data.id
             ) || {
               check: "",
               comment: "",
+              outTimeST: "",
+              outTimeT: "",
             };
             return (
-              <div
-                key={data.id}
-                className="attendance-student"
-                style={{
-                  backgroundColor:
-                    studentCommit.check === "0"
-                      ? "#FFE8E8"
-                      : studentCommit.check === "1"
-                      ? "#E8E8FF"
-                      : data.check === "0"
-                      ? "#E8E8E8"
-                      : "white",
-                }}
-              >
+              <div key={data.id}>
                 <div
+                  className="attendance-student"
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems:
-                      studentCommit.check === "0" ? "normal" : "center",
+                    backgroundColor:
+                      studentCommit.check === "0"
+                        ? "#FFE8E8"
+                        : studentCommit.check === "1"
+                        ? "#E8E8FF"
+                        : data.check === "0"
+                        ? "#E8E8E8"
+                        : "white",
                   }}
                 >
-                  <div className="attendance-student-title-display">
-                    <div className="attendance-student-title">
-                      <p className="attendance-student-name">{data.name}</p>
-                      <p className="attendance-student-gradeandclass">
-                        {data.grade}학년 {data.class}반
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems:
+                        studentCommit.check === "0" ? "normal" : "center",
+                    }}
+                  >
+                    <div className="attendance-student-title-display">
+                      <div className="attendance-student-title">
+                        <p className="attendance-student-name">{data.name}</p>
+                        <p className="attendance-student-gradeandclass">
+                          {data.grade}학년 {data.class}반
+                        </p>
+                      </div>
+                      <p className="attendance-student-number">
+                        {data.studentnumber}번
+                      </p>
+                      <p className="attendance-student-number">
+                        설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
                       </p>
                     </div>
-                    <p className="attendance-student-number">
-                      {data.studentnumber}번
-                    </p>
-                    <p className="attendance-student-number">
-                      설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
-                    </p>
-                  </div>
-                  <div>
-                    {studentCommit.check === "0" ? (
-                      <div
-                        style={{ marginBottom: "20px" }}
-                        className="attendance-student-nocheck-comment"
-                      >
-                        <p style={{ marginBottom: "5px" }} className="subtitle">
-                          미출석 사유
-                        </p>
-                        <input
-                          type="text"
-                          className="text-input"
-                          style={{
-                            padding: "5px",
-                            paddingRight: "10px",
-                            paddingLeft: "10px",
-                            boxSizing: "border-box",
-                            fontSize: "11px",
-                          }}
-                          value={studentCommit.comment || ""}
-                          onChange={(e) =>
-                            handleCommitChange(
-                              data.id,
-                              "comment",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    ) : null}
-                    {studentCommit.check === "1" ? (
-                      <p
-                        style={{
-                          marginBottom: "5px",
-                          textAlign: "right",
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          color: "#8176FE",
-                        }}
-                      >
-                        출석
-                      </p>
-                    ) : null}
-                    {data.check === "0" ? (
-                      <div>
-                        <h5>
-                          미출석
-                          <br />
-                          이유 : {data?.comment}
-                        </h5>
-                      </div>
-                    ) : (
-                      <div style={{ display: "flex", justifyContent: "right" }}>
-                        <div style={{ marginRight: "20px" }}>
+                    <div>
+                      {studentCommit.check === "0" ? (
+                        <div
+                          style={{ marginBottom: "20px" }}
+                          className="attendance-student-nocheck-comment"
+                        >
+                          <p
+                            style={{ marginBottom: "5px" }}
+                            className="subtitle"
+                          >
+                            미출석 사유
+                          </p>
                           <input
+                            type="text"
+                            className="text-input"
                             style={{
-                              backgroundColor:
-                                studentCommit.outTimeST === data.outTimeT
-                                  ? "#E8E8E8"
-                                  : "#E8E8FF",
+                              padding: "5px",
+                              paddingRight: "10px",
+                              paddingLeft: "10px",
+                              boxSizing: "border-box",
+                              fontSize: "11px",
                             }}
-                            className="time-input"
-                            type="time"
-                            value={studentCommit.outTimeST || ""}
+                            value={studentCommit.comment || ""}
                             onChange={(e) =>
-                              handleTimeChange(
+                              handleCommitChange(
                                 data.id,
-                                "outTimeST",
+                                "comment",
                                 e.target.value
                               )
                             }
                           />
                         </div>
-                        <input
-                          type="checkbox"
-                          className="no-check"
-                          name="n"
-                          checked={studentCommit.check === "0"}
-                          onChange={(e) => handleCheckboxChange(data.id, e)}
-                        />
-                        <input
-                          type="checkbox"
-                          className="yes-check"
-                          name="y"
-                          checked={studentCommit.check === "1"}
-                          onChange={(e) => handleCheckboxChange(data.id, e)}
-                        />
-                      </div>
-                    )}
+                      ) : null}
+                      {studentCommit.check === "1" ? (
+                        <p
+                          style={{
+                            marginBottom: "5px",
+                            textAlign: "right",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            color: "#8176FE",
+                          }}
+                        >
+                          출석
+                        </p>
+                      ) : null}
+                      {data.check === "0" ? (
+                        <div>
+                          <h5>
+                            미출석
+                            <br />
+                            이유 : {data?.comment}
+                          </h5>
+                        </div>
+                      ) : (
+                        <div
+                          style={{ display: "flex", justifyContent: "right" }}
+                        >
+                          <div style={{ marginRight: "20px" }}>
+                            <input
+                              style={{
+                                backgroundColor:
+                                  studentCommit.outTimeST ===
+                                  (studentCommit.outTimeT || "")
+                                    ? "#E8E8E8"
+                                    : "#E8E8FF",
+                              }}
+                              className="time-input"
+                              type="time"
+                              value={studentCommit.outTimeST || ""}
+                              onChange={(e) =>
+                                handleTimeChange(
+                                  data.id,
+                                  "outTimeST",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                          <input
+                            type="checkbox"
+                            className="no-check"
+                            name="n"
+                            checked={studentCommit.check === "0"}
+                            onChange={(e) => handleCheckboxChange(data.id, e)}
+                          />
+                          <input
+                            type="checkbox"
+                            className="yes-check"
+                            name="y"
+                            checked={studentCommit.check === "1"}
+                            onChange={(e) => handleCheckboxChange(data.id, e)}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+                {(i === filteredStudents.length - 1 ||
+                  filteredStudents[i + 1].class !== data.class) && (
+                  <div className="class-line">
+                    <div
+                      className="line"
+                      style={{
+                        width: "90%",
+                        backgroundColor: "rgb(138, 156, 255)",
+                        height: "1px",
+                      }}
+                    ></div>
+                    <div>{data.class}반</div>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
-        {/* 저장 버튼은 isSaveDisabled()가 true이면 disabled 처리 */}
+        {/* 저장 버튼은 validation.disabled가 true이면 disabled 처리 */}
         <button
           className="ok-button"
           onClick={handlePatch}
-          disabled={isSaveDisabled()}
+          disabled={validation.disabled}
         >
           출석 정보 저장
         </button>

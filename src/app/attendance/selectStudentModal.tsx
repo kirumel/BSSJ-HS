@@ -251,7 +251,7 @@ export default function Page({
 
   return (
     <div>
-      <div className="cafe-top">
+      <div>
         <button
           className="plus-attendance-button"
           style={{ marginLeft: "10px", backgroundColor: "rgb(138, 156, 255)" }}

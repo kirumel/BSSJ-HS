@@ -81,7 +81,7 @@ export default function SignIn({
                 로그인
               </button>
             </div>
-            {/* 
+
             <p
               className="subtitle"
               style={{
@@ -94,7 +94,7 @@ export default function SignIn({
               소셜로그인
             </p>
 
-            <button
+            {/* <button
               className="google"
               onClick={() => handleSocialLogin("google")}
             >
@@ -105,13 +105,13 @@ export default function SignIn({
               onClick={() => handleSocialLogin("naver")}
             >
               NAVER
-            </button>
+            </button> */}
             <button
               className="kakao"
               onClick={() => handleSocialLogin("kakao")}
             >
               kakao
-            </button> */}
+            </button>
           </>
         </div>
       </div>

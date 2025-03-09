@@ -295,7 +295,7 @@ export default function Page({
 
   return (
     <div>
-      <div className="cafe-top" style={{ padding: "10px" }}>
+      <div>
         <button
           className="plus-attendance-button"
           style={{

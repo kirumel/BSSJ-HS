@@ -5,23 +5,34 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/logo.png";
+import { useRouter } from "next/navigation";
 export default function Page() {
   const [page, setpage] = useState<string>("main");
+
+  const router = useRouter();
   return (
     <>
       <div>
         <div className="nav">
-          <Link href="/">
-            <Image src={logo} alt="logo" width={71} height={25} />
-          </Link>
           <div style={{ display: "flex", alignItems: "center" }}>
             <div>
-              <button onClick={() => setpage("main")}>main</button>
-              <button onClick={() => setpage("changeOutTimeT")}>
-                changeOutTimeT
+              <button
+                className="nightAT-top-button "
+                onClick={() => setpage("main")}
+              >
+                야자 1차 출석
+              </button>
+              <button
+                className="nightAT-top-button"
+                onClick={() => setpage("changeOutTimeT")}
+              >
+                기본 시간 등록하기
               </button>
             </div>
           </div>
+          <button className="back-A" onClick={() => router.back()}>
+            ←
+          </button>
         </div>
       </div>
       <div>

@@ -21,7 +21,7 @@ export default async function handler(req: any, res: any) {
     const dbcompare = await prisma.attendanceObjectDB.findMany({
       where: {
         createdAt: {
-          gte: formattedDate,
+          equals: formattedDate,
         },
         type: "pdf",
       },

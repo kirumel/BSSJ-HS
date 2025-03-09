@@ -28,6 +28,8 @@ export default function Page() {
   const [afterdata, setAfterdata] = useState<DataItem[]>([]);
   const [currenttime, setCurrentTime] = useState<string>("");
   const router = useRouter();
+  const [take8ATstatus, setTake8ATstatus] = useState<DataItem[]>([]);
+  const [takeNATstatus, setTakeNATstatus] = useState<DataItem[]>([]);
   if (!session) {
     alert("권환 오류! 다시 로그인 해주세요");
   }
@@ -103,7 +105,29 @@ export default function Page() {
       }
     }
   }, []);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const status1 = await axios
+          .get("/api/admin/take8ATstatus")
+          .then((response) => {
+            if (response.status === 200) {
+              setTake8ATstatus(response.data);
+            }
+          });
+        const status2 = await axios
+          .get("/api/admin/takeNATstatus")
+          .then((response) => {
+            if (response.status === 200) {
+              setTakeNATstatus(response.data);
+            }
+          });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
   useEffect(() => {
     const fetchAfterData = async (): Promise<void> => {
       try {
@@ -158,28 +182,61 @@ export default function Page() {
         <div className="admin-mainTop">
           <div className="event-text-container">
             <p className="event-text-title">
-              안녕하세요 {session?.user?.name}님!
+              {session?.user?.name} / {session?.user?.grade}학년{" "}
+              {session?.user?.class}반
             </p>
-            <p className="event-text">여기는 관리자 탭입니다</p>
+            <p className="event-text">version : 1.0.2 beta</p>
             <a href="/adminfeed">
               <button className="event-feed">feed 등록하기</button>
             </a>
           </div>
           <div className="pad-display-none admin-time">{currenttime}</div>
         </div>
-
+        <div className="line" style={{ marginTop: "10px" }}></div>
         <div className="admin-mainMiddle">
           <Link href="/studentobject">
             <button style={{ width: "100%" }}>출석 학생관리</button>
           </Link>
 
-          <button>커뮤니티 관리</button>
+          <button>게시판 관리</button>
           <button>이벤트 관리</button>
         </div>
-
         <div className="line" style={{ marginTop: "10px" }}></div>
-        <p className="admin-title">8교시 출석</p>
+
         <div className="admin-mainBottom">
+          <div className="display-flex" style={{ alignItems: "flex-start" }}>
+            <p className="admin-title">8교시 출석 / 개발중입니다</p>
+            <div className="admin-AT">
+              {["1", "2", "3"].map((data, i) => (
+                <div className="admin-AT-container" key={i}>
+                  <div
+                    className="admin-AT-circle"
+                    style={{
+                      backgroundColor:
+                        take8ATstatus.find((item) => item.grade === data) !==
+                        undefined
+                          ? "green"
+                          : "red",
+                    }}
+                  ></div>
+                  <div
+                    className="admin-title"
+                    style={{
+                      paddingLeft: "5px",
+                      margin: "0px",
+                      fontSize: "11px",
+                    }}
+                  >
+                    {parseInt(data)}학년 / {""}
+                    {take8ATstatus.find((item) => item.grade === data) !==
+                    undefined
+                      ? "출석완료"
+                      : "출석안됨"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="event-box-container">
             <Link href="/attendance">
               <button
@@ -206,10 +263,42 @@ export default function Page() {
             >
               8교시 <br />
               대조
-            </button>
+            </button>{" "}
           </div>
           <div className="line"></div>
-          <p className="admin-title">야자 출석 </p>
+          <div className="display-flex" style={{ alignItems: "flex-start" }}>
+            <p className="admin-title">야자 출석 / 개발중입니다</p>{" "}
+            <div className="admin-AT">
+              {["1", "2", "3"].map((data, i) => (
+                <div className="admin-AT-container" key={i}>
+                  <div
+                    className="admin-AT-circle"
+                    style={{
+                      backgroundColor:
+                        takeNATstatus.find((item) => item.grade === data) !==
+                        undefined
+                          ? "green"
+                          : "red",
+                    }}
+                  ></div>
+                  <div
+                    className="admin-title"
+                    style={{
+                      paddingLeft: "5px",
+                      margin: "0px",
+                      fontSize: "11px",
+                    }}
+                  >
+                    {parseInt(data)}학년 / {""}
+                    {takeNATstatus.find((item) => item.grade === data) !==
+                    undefined
+                      ? "출석완료"
+                      : "출석안됨"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className="event-box-container">
             <Link href="/nightattendance">
               <button
@@ -248,7 +337,9 @@ export default function Page() {
               </button>
             </Link>
           </div>
+
           <div className="line"></div>
+          <p className="admin-title">기타항목 / 개편중입니다</p>
           <div className="event-box-container">
             <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
@@ -256,9 +347,16 @@ export default function Page() {
                 다운
               </button>
             </Link>
+            <Link href="attendanceDB">
+              <button className="event-box-button" style={{ color: "black" }}>
+                설명서 <br />
+                pdf
+              </button>
+            </Link>
           </div>
         </div>
       </div>
+      <div className="margin"></div>
     </div>
   );
 }

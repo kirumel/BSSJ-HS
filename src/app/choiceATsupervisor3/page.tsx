@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 
@@ -7,6 +7,7 @@ import SuccessModal from "../successModal/page";
 import "./style.css";
 import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
+import Loading from "../loading/page";
 
 const todayDate = new Date();
 const today = new Date();
@@ -34,7 +35,6 @@ interface Attendance {
 }
 
 export default function Page() {
-  const [modalOpen, setModalOpen] = useState(false);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
@@ -51,15 +51,16 @@ export default function Page() {
   >([]);
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
-  const [selectedClass, setSelectedClass] = useState<number | null>(null);
+  const [selectedClass, setSelectedClass] = useState<string | null>(null);
 
   const getFilteredStudents = () => {
-    if (selectedClass === null || selectedClass == undefined) {
+    if (!selectedClass) {
       return attendance;
     }
-    return attendance.filter((student) => student.class == selectedClass);
+    return attendance.filter(
+      (student) => student.class === parseInt(selectedClass)
+    );
   };
-
   const getClassList = () => {
     const classSet = new Set(attendance.map((student) => student.class));
     return Array.from(classSet).sort();
@@ -154,7 +155,43 @@ export default function Page() {
       )
     );
   };
+  const validation = useMemo(() => {
+    const errorCounts: { [msg: string]: number } = {};
 
+    // 각 학생마다 한 가지 오류만 기록합니다.
+    for (const student of firstcommitstudent) {
+      let errorMessageForStudent: string | null = null;
+      if (!["0", "1", "2"].includes(student.check)) {
+        errorMessageForStudent = "출석 여부가 선택되지 않았습니다.";
+      } else if (student.check === "0" || student.check === "2") {
+        if (!student.comment) {
+          errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
+        }
+      }
+
+      if (errorMessageForStudent) {
+        errorCounts[errorMessageForStudent] =
+          (errorCounts[errorMessageForStudent] || 0) + 1;
+      }
+    }
+
+    // 전체 학생 중 가장 많이 발생한 오류 메시지를 선택
+    let mostCommonError = "";
+    let maxCount = 0;
+    for (const [msg, count] of Object.entries(errorCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonError = msg;
+      }
+    }
+
+    if (mostCommonError) {
+      const errorMessage =
+        maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
+      return { error: errorMessage, disabled: true };
+    }
+    return { error: "", disabled: false };
+  }, [firstcommitstudent]);
   const handlePatch = async () => {
     try {
       setIsLoading(true);
@@ -199,9 +236,6 @@ export default function Page() {
 
   const setSuccessModalTimer = () => {
     setSuccessModal(true);
-    setTimeout(() => {
-      setSuccessModal(false);
-    }, 2500);
   };
 
   const countAbsentStudentsNO = () => {
@@ -218,7 +252,7 @@ export default function Page() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (attendance.length === 0) {
@@ -236,7 +270,7 @@ export default function Page() {
             <p>총 인원: {attendance.length}</p>
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
-          </div>{" "}
+          </div>
           <div
             style={{
               display: "flex",
@@ -262,7 +296,18 @@ export default function Page() {
             />
           </div>
         </div>
-
+        {validation.error && (
+          <p
+            style={{
+              color: "red",
+              fontSize: "11px",
+              margin: "0px",
+              lineHeight: "1",
+            }}
+          >
+            {validation.error}
+          </p>
+        )}
         <div className="attendance-container">
           {filteredStudents.map((data, i) => {
             const studentCommit = firstcommitstudent.find(
@@ -398,7 +443,11 @@ export default function Page() {
             );
           })}
         </div>
-        <button className="ok-button" onClick={handlePatch}>
+        <button
+          className="ok-button"
+          onClick={handlePatch}
+          disabled={validation.disabled}
+        >
           출석 정보 저장
         </button>
       </div>

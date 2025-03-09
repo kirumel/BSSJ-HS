@@ -50,6 +50,17 @@ model Like {
   User       User?    @relation(fields: [userId], references: [id])
 }
 
+model Board {
+  id          String  @id @default(cuid())  // 게시판 ID
+  name        String  // 게시판 이름
+  description String? // 게시판 설명 (선택 사항)
+  createdAt   DateTime @default(now())
+  posts   Post[]
+
+  @@unique([id, name])
+}
+
+
 model Post {
   id             String   @id @default(cuid())
   nickname       String?
@@ -59,13 +70,15 @@ model Post {
   image          String?
   video          String?
   authorId       String
-  type           String?   @default("post")
+  boardName      String 
   gradeTags      String[]  @default([])
   subSubjectTags String?
   subjectTags    String[]  @default([])
   type2          String[]  @default([])
   comments        Comment[]
-  likes           Like[]
+  likes           Like[]  
+  boardId         String  
+  board  Board    @relation(fields: [boardId , boardName], references: [id , name])
   author               User      @relation(fields: [authorId], references: [id])
 }
 

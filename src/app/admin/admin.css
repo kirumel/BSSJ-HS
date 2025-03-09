@@ -43,3 +43,20 @@
   padding-left: 16px;
   margin-bottom: 0.5rem;
 }
+.admin-AT {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+.admin-AT-circle {
+  background-color: rgb(61, 61, 61);
+  border-radius: 100px;
+  height: 5px;
+  width: 5px;
+}
+.admin-AT-container {
+  margin: 10px;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+}

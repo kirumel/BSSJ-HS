@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import "./style.css";
 
@@ -156,7 +156,7 @@ export default function Page() {
         toast("예상치 못한 오류가 발생하였습니다");
       });
 
-    // localStorage.setItem("compareAT", JSON.stringify(firstcommitstudent));
+    localStorage.setItem("compareAT2", JSON.stringify(firstcommitstudent));
   };
 
   const setSuccessModalTimer = () => {
@@ -168,38 +168,78 @@ export default function Page() {
   const handleStateChange = (newState: any) => {
     setFirstCommitStudent((prevState) =>
       prevState.map((student) => {
-        // Find the corresponding student in the newState array
         const updatedStudent = newState.find(
           (newStudent: { id: string }) => newStudent.id === student.id
         );
-
-        // If there's a match, update the student's check and comment, otherwise keep the student as is
-        return updatedStudent
-          ? {
-              ...student,
-              check: updatedStudent.check,
-              comment: updatedStudent.comment,
-              outTimeT: updatedStudent.outTimeT,
-            }
-          : student;
+        if (updatedStudent.check === "1") {
+          return updatedStudent
+            ? {
+                ...student,
+                check: updatedStudent.check,
+                comment: "",
+                outTimeT: updatedStudent.outTimeT,
+              }
+            : student;
+        } else {
+          return updatedStudent
+            ? {
+                ...student,
+                check: updatedStudent.check,
+                comment: updatedStudent.comment,
+                outTimeT: updatedStudent.outTimeT,
+              }
+            : student;
+        }
       })
     );
   };
-  const isSaveDisabled = () => {
-    return firstcommitstudent.some((student) => {
-      const outTimeTStr = student.outTimeT?.toString(); // Convert outTimeT to a string
-      if (
-        !["0", "1", "2"].includes(student.check) ||
-        !outTimeTStr?.trim() ||
-        ((student.check === "0" || student.check === "2") &&
-          !student.comment?.trim())
-      ) {
-        return true;
-      } else {
-        return false;
+  const validation = useMemo(() => {
+    const errorCounts: { [msg: string]: number } = {};
+
+    // 각 학생마다 한 가지 오류만 기록합니다.
+    for (const student of firstcommitstudent) {
+      let errorMessageForStudent: string | null = null;
+      if (!["0", "1", "2"].includes(student.check)) {
+        errorMessageForStudent = "출석 여부가 선택되지 않았습니다.";
+      } else if (student.check === "1") {
+        if (!student.outTimeT) {
+          errorMessageForStudent = "출석 퇴장 시간이 입력되지 않았습니다.";
+        }
+      } else if (student.check === "0" || student.check === "2") {
+        if (!student.outTimeT && !student.comment) {
+          errorMessageForStudent =
+            "퇴장 시간이 입력되지 않았으며, 미출석 사유도 입력되지 않았습니다.";
+        } else if (!student.outTimeT) {
+          errorMessageForStudent = "퇴장 시간이 입력되지 않았습니다.";
+        } else if (!student.comment) {
+          errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
+        }
       }
-    });
-  };
+
+      if (errorMessageForStudent) {
+        errorCounts[errorMessageForStudent] =
+          (errorCounts[errorMessageForStudent] || 0) + 1;
+      }
+    }
+
+    // 전체 학생 중 가장 많이 발생한 오류 메시지를 선택
+    let mostCommonError = "";
+    let maxCount = 0;
+    for (const [msg, count] of Object.entries(errorCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonError = msg;
+      }
+    }
+
+    if (mostCommonError) {
+      const errorMessage =
+        maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
+      return { error: errorMessage, disabled: true };
+    }
+    return { error: "", disabled: false };
+  }, [firstcommitstudent]);
+
   const countAbsentStudentsNO = () => {
     return firstcommitstudent.filter((student) => student.check === "0").length;
   };
@@ -270,6 +310,18 @@ export default function Page() {
               />
             </div>
           </div>
+          {validation.error && (
+            <p
+              style={{
+                color: "red",
+                fontSize: "11px",
+                margin: "0px",
+                lineHeight: "1",
+              }}
+            >
+              {validation.error}
+            </p>
+          )}
           <div className="attendance-container">
             {attendance.map((data, i) => (
               <div
@@ -386,7 +438,7 @@ export default function Page() {
           ) : null}
           <button
             className="ok-button"
-            disabled={isSaveDisabled}
+            disabled={validation.disabled}
             onClick={handlePatch}
           >
             출석 정보 저장
