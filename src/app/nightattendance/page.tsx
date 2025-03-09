@@ -26,7 +26,7 @@ export default function Page() {
                 className="nightAT-top-button"
                 onClick={() => setpage("changeOutTimeT")}
               >
-                기본 시간 등록하기
+                기본 시간 등록
               </button>
             </div>
           </div>
