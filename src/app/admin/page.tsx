@@ -230,8 +230,8 @@ export default function Page() {
                     {parseInt(data)}학년 / {""}
                     {take8ATstatus.find((item) => item.grade === data) !==
                     undefined
-                      ? "출석완료"
-                      : "출석안됨"}
+                      ? "출석 완료"
+                      : "출석 안 됨"}
                   </div>
                 </div>
               ))}
@@ -292,8 +292,8 @@ export default function Page() {
                     {parseInt(data)}학년 / {""}
                     {takeNATstatus.find((item) => item.grade === data) !==
                     undefined
-                      ? "출석완료"
-                      : "출석안됨"}
+                      ? "출석 완료"
+                      : "출석 안 됨"}
                   </div>
                 </div>
               ))}
