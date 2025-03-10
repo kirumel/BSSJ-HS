@@ -3,9 +3,18 @@ import { prisma } from "../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
+      // Get boardName from query parameters
+      let boardName = req.query.boardName;
+
+      // If boardName is not provided in the query, default to "자유게시판"
+      if (!boardName) {
+        boardName = "자유게시판";
+      }
+
+      // Fetch posts where the boardName matches the provided or default value
       const posts = await prisma.post.findMany({
         where: {
-          type: "post",
+          boardName: boardName,
         },
         include: {
           comments: true,
@@ -13,6 +22,7 @@ export default async function handler(req: any, res: any) {
           author: true,
         },
       });
+
       res.status(200).json(posts);
     } catch (error) {
       console.error(error);

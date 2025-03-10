@@ -10,6 +10,7 @@ export default async function Write() {
       strategy: "jwt",
     },
   });
+  const board = await fetch("/api/boards").then((res) => res.json());
   return (
     <div className="right-left-margin">
       <p>{session?.user?.nickname}</p>

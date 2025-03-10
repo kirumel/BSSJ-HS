@@ -434,3 +434,29 @@
   cursor: pointer;
   outline: none;
 }
+.cafe-boards-flex {
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.board-button {
+  background: white;
+  border: none; /* 테두리 제거 */
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+.board-button:hover {
+  cursor: pointer;
+}
+.board-bar {
+  height: 2px;
+  background-color: #000; /* Adjust color as needed */
+  margin-top: 3px;
+}
