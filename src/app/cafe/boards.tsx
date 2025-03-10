@@ -78,7 +78,6 @@ export default function Page() {
                 paddingBottom: "0",
                 justifyContent: "right",
               }}
-              key={board.id}
             >
               <h3 className="title">{board.name}</h3>
             </div>
