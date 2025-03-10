@@ -394,48 +394,59 @@ export default function Page({
               // 반 선택 후 출석/미출석 처리 UI
               <>
                 <div
-                  className="display-flex"
                   style={{
-                    justifyContent: "space-between",
-                    flexDirection: "row",
                     marginBottom: "20px",
                   }}
                 >
-                  <h3 className="modalTitle" style={{ fontSize: "20px" }}>
-                    {selectedClass.grade}학년 {selectedClass.class}반
-                  </h3>
-                  <button
-                    onClick={() => setSelectedClass(null)}
+                  <div
+                    className="display-flex"
                     style={{
-                      padding: "5px 10px",
-                      backgroundColor: "gray",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
+                      alignItems: "center",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
                     }}
                   >
-                    반 변경
-                  </button>
-                  <div>
-                    <button
-                      className="studentNum-button"
-                      onClick={handleSetStateAll}
-                      disabled={isAbsentMode}
+                    <h3
+                      className="modalTitle"
+                      style={{ fontSize: "20px", margin: "0" }}
                     >
-                      {tempSelection.length ===
-                      filteredStudents.filter(
-                        (student) => !(student.check || student.comment)
-                      ).length
-                        ? "전체 해제"
-                        : "전체선택"}
-                    </button>
+                      {selectedClass.grade}학년 {selectedClass.class}반
+                    </h3>
                     <button
-                      onClick={toggleView}
-                      className="studentNum-button-show"
+                      onClick={() => setSelectedClass(null)}
+                      style={{
+                        padding: "5px 10px",
+                        backgroundColor: "gray",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                      }}
                     >
-                      {viewByName ? "번호 보기" : "이름 보기"}
+                      반 변경
                     </button>
+                    <div>
+                      <button
+                        className="studentNum-button"
+                        onClick={handleSetStateAll}
+                        disabled={isAbsentMode}
+                      >
+                        {tempSelection.length ===
+                        filteredStudents.filter(
+                          (student) => !(student.check || student.comment)
+                        ).length
+                          ? "전체 해제"
+                          : "전체선택"}
+                      </button>
+                      <button
+                        onClick={toggleView}
+                        className="studentNum-button-show"
+                      >
+                        {viewByName ? "번호 보기" : "이름 보기"}
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "right" }}>
                     {isAbsentMode && (
                       <button
                         onClick={toggleAbsentMode}
@@ -472,6 +483,7 @@ export default function Page({
                     )}
                   </div>
                 </div>
+
                 {/* 출석완료 섹션 */}
                 {completeStudents.length > 0 && (
                   <div>

@@ -5,8 +5,12 @@ import Link from "next/link";
 import logo from "../../../public/logo.png";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../pages/api/auth/[...nextauth]";
+import axios from "axios";
 export default async function Page() {
   const session = await getServerSession(authOptions);
+  const boardData = await axios
+    .get("/api/board/getBoard")
+    .then((response) => response.data);
 
   return (
     <div className="cafe-body">

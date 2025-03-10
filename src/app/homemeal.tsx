@@ -22,29 +22,28 @@ export default function Meals({
   async function fetchMeals() {
     const mealsData = await getonemeal();
     localStorage.setItem("mealData", JSON.stringify(mealsData));
+    return mealsData;
   }
 
   async function fetchMeals2() {
     const mealsData = await getonemeal2();
     localStorage.setItem("mealData2", JSON.stringify(mealsData));
+    return mealsData;
   }
+  console.log(meals);
 
   // 초기 데이터 로드
   useEffect(() => {
-    const mealData = localStorage.getItem("mealData");
-    const mealData2 = localStorage.getItem("mealData2");
+    const fetch = async () => {
+      const mealData = await fetchMeals();
+      const mealData2 = await fetchMeals2();
 
-    if (mealData) {
-      setMeals(JSON.parse(mealData));
-    } else {
-      fetchMeals();
-    }
-
-    if (mealData2) {
-      setMeals2(JSON.parse(mealData2));
-    } else {
-      fetchMeals2();
-    }
+      Promise.all([mealData, mealData2]).then(([mealsData, mealsData2]) => {
+        setMeals(mealsData);
+        setMeals2(mealsData2);
+      });
+    };
+    fetch();
   }, []);
 
   const handleClick = () => {
