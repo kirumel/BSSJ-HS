@@ -9,6 +9,7 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
+  secondNumber: string;
   outTimeAT: string;
   outTimeST: string;
   outTimeT: string;
@@ -26,8 +27,6 @@ interface Attendance {
 
 const todayDate = new Date();
 const today = new Date();
-const isToday = todayDate.toDateString() === today.toDateString();
-
 const formattedDate = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
@@ -36,26 +35,18 @@ const formattedDate = todayDate.toLocaleDateString("ko-KR", {
 
 export default function Page() {
   const [attendance, setAttendance] = useState<Attendance[]>([]);
+  const [originalAttendance, setOriginalAttendance] = useState<Attendance[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [firstcommitstudent, setFirstCommitStudent] = useState<
-    {
-      outTimeST: string;
-      name: string;
-      updatedAt: string;
-      comment: string;
-      check: string;
-      author: string;
-      studentnumber: string;
-      createdAt: string;
-      id: string;
-      class: number;
-      grade: number;
-      outTimeT: string;
-    }[]
-  >([]);
+  const [firstcommitstudent, setFirstCommitStudent] = useState<Attendance[]>(
+    []
+  );
   const { data: session } = useSession();
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [sortState, setSortstate] = useState(true);
+  const [filteredStudents, setFilteredStudents] = useState<Attendance[]>([]);
 
   // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
@@ -73,7 +64,6 @@ export default function Page() {
     return Array.from(classSet).sort((a, b) => a - b);
   };
 
-  const filteredStudents = getFilteredStudents();
   const classList = getClassList();
 
   const handleTimeChange = (id: string, field: string, value: string) => {
@@ -173,8 +163,6 @@ export default function Page() {
 
   const validation = useMemo(() => {
     const errorCounts: { [msg: string]: number } = {};
-
-    // 각 학생마다 한 가지 오류만 기록합니다.
     for (const student of firstcommitstudent) {
       let errorMessageForStudent: string | null = null;
       if (!["0", "1", "2"].includes(student.check)) {
@@ -193,14 +181,11 @@ export default function Page() {
           errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
         }
       }
-
       if (errorMessageForStudent) {
         errorCounts[errorMessageForStudent] =
           (errorCounts[errorMessageForStudent] || 0) + 1;
       }
     }
-
-    // 전체 학생 중 가장 많이 발생한 오류 메시지를 선택
     let mostCommonError = "";
     let maxCount = 0;
     for (const [msg, count] of Object.entries(errorCounts)) {
@@ -209,7 +194,6 @@ export default function Page() {
         mostCommonError = msg;
       }
     }
-
     if (mostCommonError) {
       const errorMessage =
         maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
@@ -224,6 +208,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
+          // 기본 정렬: 반과 번호 기준
           const sortedData = data.sort((a, b) => {
             if (a.class !== b.class) {
               return a.class - b.class;
@@ -233,7 +218,6 @@ export default function Page() {
           const sortedData1 = sortedData.filter(
             (student) => student.grade === 3
           );
-
           const presentStudents = sortedData1.filter(
             (student) => student.check !== "0"
           );
@@ -241,7 +225,7 @@ export default function Page() {
             (student) => student.check === "0"
           );
           const finalSortedData = [...presentStudents, ...absentStudents];
-          setAttendance(finalSortedData);
+          // 원래 순서를 저장
 
           const initialFirstCommitStudent = finalSortedData.map((student) => ({
             id: student.id,
@@ -250,14 +234,17 @@ export default function Page() {
             class: student.class,
             grade: student.grade,
             studentnumber: student.studentnumber,
-            // 미출석인 경우 미리 "2"로 셋팅
             check: student.check === "0" ? "2" : "",
             outTimeT: student.outTimeT || student.outTimeAT || "",
             outTimeST: student.outTimeT || student.outTimeAT || "",
+            outTimeAT: student.outTimeAT || "", // Add this line
             comment: student.comment || "",
             author: session?.user?.name || "",
             createdAt: student.createdAt,
+            secondNumber: student.secondNumber || "",
           }));
+          setAttendance(initialFirstCommitStudent);
+          setOriginalAttendance(initialFirstCommitStudent);
           setFirstCommitStudent(initialFirstCommitStudent);
         } else {
           console.error(data);
@@ -265,6 +252,29 @@ export default function Page() {
         setIsLoading(false);
       });
   }, [session]);
+
+  useEffect(() => {
+    setFilteredStudents(getFilteredStudents());
+  }, [attendance, selectedClass]);
+
+  const handleSortChange = () => {
+    if (sortState === true) {
+      // 첫 클릭: secondNumber 기준 정렬 (undefined인 경우 Infinity 처리)
+      setSortstate(false);
+      const sortedData = [...attendance].sort((a, b) => {
+        const aNum = a.secondNumber ? parseInt(a.secondNumber) : Infinity;
+        const bNum = b.secondNumber ? parseInt(b.secondNumber) : Infinity;
+        return aNum - bNum;
+      });
+      setAttendance(sortedData);
+      setFilteredStudents(getFilteredStudents());
+    } else {
+      // 두 번째 클릭: 원래 순서(반, 번호 기준)로 복원
+      setSortstate(true);
+      setAttendance([...originalAttendance]);
+      setFilteredStudents(getFilteredStudents());
+    }
+  };
 
   if (isLoading) {
     return <div className="loading">잠시만 기다려주세요...</div>;
@@ -286,7 +296,6 @@ export default function Page() {
             <p>미출석: {countAbsentStudentsNO()}</p>
             <p>출석: {countAbsentStudentsOK()}</p>
           </div>
-
           <div
             style={{
               display: "flex",
@@ -294,18 +303,21 @@ export default function Page() {
               justifyContent: "center",
             }}
           >
-            <select
-              className="class-select"
-              onChange={(e) => setSelectedClass(e.target.value)}
-              value={selectedClass || ""}
-            >
-              <option value="">모두 보기</option>
-              {classList.map((cls, index) => (
-                <option key={index} value={cls}>
-                  {cls}반
-                </option>
-              ))}
-            </select>
+            {sortState && (
+              <select
+                className="class-select"
+                onChange={(e) => setSelectedClass(e.target.value)}
+                value={selectedClass || ""}
+              >
+                <option value="">모두 보기</option>
+                {classList.map((cls, index) => (
+                  <option key={index} value={cls}>
+                    {cls}반
+                  </option>
+                ))}
+              </select>
+            )}
+
             <SelectStudentModal
               props={firstcommitstudent}
               setAttendance={handleStateChange}
@@ -319,11 +331,21 @@ export default function Page() {
               fontSize: "11px",
               margin: "0px",
               lineHeight: "1",
+              marginTop: "3px",
             }}
           >
             {validation.error}
           </p>
         )}
+        <button
+          style={{
+            marginTop: "10px",
+          }}
+          className="class-select"
+          onClick={handleSortChange}
+        >
+          배열변경
+        </button>
         <div className="attendance-container">
           {filteredStudents.map((data, i) => {
             const studentCommit = firstcommitstudent.find(
@@ -365,7 +387,10 @@ export default function Page() {
                         </p>
                       </div>
                       <p className="attendance-student-number">
-                        {data.studentnumber}번
+                        {data.studentnumber}번/ 출석번호 :
+                        {data.secondNumber
+                          ? `${data.secondNumber}번`
+                          : "설정 안 됨"}
                       </p>
                       <p className="attendance-student-number">
                         설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
@@ -487,7 +512,6 @@ export default function Page() {
             );
           })}
         </div>
-        {/* 저장 버튼은 validation.disabled가 true이면 disabled 처리 */}
         <button
           className="ok-button"
           onClick={handlePatch}

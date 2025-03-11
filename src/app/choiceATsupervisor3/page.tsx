@@ -22,6 +22,7 @@ formattedDate = todayDate.toLocaleDateString("ko-KR", {
 });
 
 interface Attendance {
+  secondNumber: any;
   name: string;
   updatedAt: string;
   comment: string;
@@ -39,6 +40,7 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [firstcommitstudent, setFirstCommitStudent] = useState<
     {
+      secondNumber: string;
       name: string;
       updatedAt: string;
       comment: string;
@@ -109,6 +111,7 @@ export default function Page() {
             comment: student.comment || "",
             author: session?.user?.name || "",
             createdAt: student.createdAt,
+            secondNumber: student.secondNumber,
           }));
           setFirstCommitStudent(initialFirstCommitStudent);
         } else {
