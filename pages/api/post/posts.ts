@@ -4,17 +4,13 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       // Get boardName from query parameters
-      let boardName = req.query.boardName;
-
-      // If boardName is not provided in the query, default to "자유게시판"
-      if (!boardName) {
-        boardName = "자유게시판";
-      }
+      let boardId = req.query.boardId;
+      console.log("boardId", boardId);
 
       // Fetch posts where the boardName matches the provided or default value
       const posts = await prisma.post.findMany({
         where: {
-          boardName: boardName,
+          boardId: boardId,
         },
         include: {
           comments: true,

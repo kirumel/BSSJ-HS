@@ -252,6 +252,7 @@ model nightAttendanceObject {
   outTimeT       String?
   outTimeST       String?
   outTimeAT       String?
+  secondNumber  String?
 }
 
 model nightCompareAT {

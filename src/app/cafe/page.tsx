@@ -1,19 +1,22 @@
+"use client";
 import "./cafe.css";
 import Cafe from "./cafe";
 import Image from "next/image";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../pages/api/auth/[...nextauth]";
+import { useSession } from "next-auth/react";
 import Board from "./boards";
-export default async function Page() {
-  const session = await getServerSession(authOptions);
-
+import { useState } from "react";
+export default function Page() {
+  const { data: session } = useSession();
+  const [boardState, setBoardState] = useState("");
+  const handleBoardSelect = (boardId: string) => {
+    setBoardState(boardId);
+  };
   return (
     <div className="cafe-body">
-      <Board />
-
+      <Board onSelectBoard={handleBoardSelect} />
       <div className="cafe-middle-container">
-        <Cafe session={session} />
+        <Cafe session={session} boardState={boardState} />
       </div>
       <div className="margin"></div>
     </div>

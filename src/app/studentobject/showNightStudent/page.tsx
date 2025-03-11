@@ -49,6 +49,8 @@ export default function Page() {
   const [selectedClass, setSelectedClass] = useState("");
   console.log(selectedClass);
 
+  console.log(students.filter((student) => student.studentnumber == 2));
+
   useEffect(() => {
     const fetchStudents = async () => {
       setLoading(true);
@@ -128,6 +130,14 @@ export default function Page() {
     } catch (error) {
       console.error("Failed to delete selected students:", error);
     }
+  };
+  const handleSecondNumberChange = (event: any, id) => {
+    const secondNumber = event.target.value;
+    setStudents((prevstate) =>
+      prevstate.map((student) =>
+        student.id === id ? { ...student, secondNumber } : student
+      )
+    );
   };
 
   const deleteStudent = async (studentId: string) => {
@@ -319,6 +329,18 @@ export default function Page() {
                     onChange={() => handleSelectStudent(data.id)}
                     style={{ marginRight: "10px" }}
                   />
+                  <input
+                    type="number"
+                    className="text-input"
+                    style={{
+                      fontSize: "10px",
+                      padding: "5px",
+                      width: "20vw",
+                      marginRight: "10px",
+                    }}
+                    value={data.secondNumber}
+                    onChange={(e) => handleSecondNumberChange(e, data.id)}
+                  ></input>
                   <button
                     className="delete-button"
                     onClick={() => {

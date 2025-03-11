@@ -197,8 +197,9 @@ export default function Page() {
           <Link href="/studentobject">
             <button style={{ width: "100%" }}>출석 학생관리</button>
           </Link>
-
-          <button>게시판 관리</button>
+          <Link href="/cafe/boardSetting">
+            <button style={{ width: "100%" }}>게시판 관리</button>
+          </Link>
           <button>이벤트 관리</button>
         </div>
         <div className="line" style={{ marginTop: "10px" }}></div>

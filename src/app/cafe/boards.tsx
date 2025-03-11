@@ -13,7 +13,11 @@ type Board = {
   description?: string;
 };
 
-export default function Page() {
+interface PageProps {
+  onSelectBoard: (boardId: string) => void;
+}
+
+export default function Page({ onSelectBoard }: PageProps) {
   const [boards, setBoards] = useState<Board[]>([]);
   const { data: session } = useSession();
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null); // Add state to track selected board
@@ -44,8 +48,8 @@ export default function Page() {
   // Handle board button click
   const handleBoardClick = (boardId: string) => {
     setSelectedBoardId(boardId === selectedBoardId ? null : boardId); // Toggle selection
+    onSelectBoard(boardId); // Call the callback function
   };
-
   return (
     <>
       <div className="cafe-boards-flex">
@@ -76,7 +80,6 @@ export default function Page() {
                 marginTop: "10px",
                 marginBottom: "0",
                 paddingBottom: "0",
-                justifyContent: "right",
               }}
             >
               <h3 className="title">{board.name}</h3>

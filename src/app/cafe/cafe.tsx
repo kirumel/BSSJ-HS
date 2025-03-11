@@ -33,18 +33,22 @@ interface Comment {
 
 interface CafeProps {
   session: any; // Adjust the type as needed
+  boardState: any;
 }
 
-export default function Cafe({ session }: CafeProps) {
+export default function Cafe(
+  { session }: CafeProps,
+  { boardState }: CafeProps
+) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  console.log(posts);
+  console.log(boardState);
 
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("/api/post/posts")
+      .get("/api/post/posts", { params: { boardId: boardState } })
       .then((response) => {
         const sortedPosts = response.data.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt as string);
