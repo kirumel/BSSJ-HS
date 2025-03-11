@@ -2,6 +2,7 @@
 import axios from "axios";
 import "../addStudentObject/style.css";
 import { useEffect, useState } from "react";
+import SuccessModal from "../../successModal/page";
 import Loading from "@/app/loading/page";
 
 // 모달 컴포넌트 개선
@@ -47,6 +48,8 @@ export default function Page() {
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
+  const [successModal, setsuccessModal] = useState(false);
+
   console.log(selectedClass);
 
   console.log(students.filter((student) => student.studentnumber == 2));
@@ -55,9 +58,23 @@ export default function Page() {
     const fetchStudents = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/post/nightAT/nightAT");
+        const response = await axios
+          .get("/api/post/nightAT/nightAT")
+          .then((response) => response.data) // Access the response data directly
+          .then((data: any) => {
+            console.log(data);
+            const sortedData = data.sort((a, b) => {
+              if (a.grade !== b.grade) {
+                return a.grade - b.grade;
+              } else if (a.class !== b.class) {
+                return a.class - b.class;
+              } else {
+                return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+              }
+            });
 
-        setStudents(response.data);
+            setStudents(sortedData);
+          });
       } catch (error) {
         console.error("Failed to fetch students:", error);
       } finally {
@@ -201,6 +218,21 @@ export default function Page() {
       console.error("Failed to copy student:", error);
     }
   };
+  const handleSort = async () => {
+    setsuccessModal(false);
+    setLoading(true);
+    const update = await axios
+      .patch("/api/post/sortNight", students)
+      .then((response) => {
+        if (response.status === 200) {
+          setLoading(false);
+          setsuccessModal(true);
+        } else {
+          setLoading(false);
+          alert("오류발생");
+        }
+      });
+  };
 
   if (loading) {
     return <Loading />;
@@ -208,6 +240,14 @@ export default function Page() {
 
   return (
     <div>
+      {successModal && (
+        <SuccessModal
+          props={{
+            name: "성공!",
+            content: "야자 학생 순서 정렬완료",
+          }}
+        />
+      )}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -365,6 +405,9 @@ export default function Page() {
           ))
         )}
       </div>
+      <button className="ok-button" type="button" onClick={handleSort}>
+        순서 변경
+      </button>
     </div>
   );
 }
