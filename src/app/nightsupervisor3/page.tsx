@@ -3,10 +3,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import "../attendance/style.css";
 
-import SuccessModal from "./successModal";
+import SuccessModal from "../successModal/page";
 import "./style.css";
 import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
+import GenerateModal from "./generaterModal/page";
 
 interface Attendance {
   secondNumber: string;
@@ -47,6 +48,8 @@ export default function Page() {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [sortState, setSortstate] = useState(true);
   const [filteredStudents, setFilteredStudents] = useState<Attendance[]>([]);
+  const [modal1, setmodal1] = useState(true);
+  const [modal2, setmodal2] = useState(false);
 
   // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
@@ -96,6 +99,19 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
+      setmodal1(true);
+      const generateY = await axios
+        .post("/api/post/nightAT/generateY")
+        .then((response) => response.data.json());
+      if (generateY.status === 203) {
+        setmodal1(false);
+        alert("어제 만들어지지 않은 출석부가 없습니다");
+      } else if (generateY.status === 200) {
+        alert("어제 만들어지지 않은 출석부가 존재합니다");
+        setmodal1(false);
+        setmodal2(true);
+      }
+
       const response = await axios.post(
         "/api/post/nightAT/fetchTime2",
         { firstcommitstudent },
@@ -289,6 +305,12 @@ export default function Page() {
   } else {
     return (
       <div className="right-left-margin">
+        {modal1 && (
+          <GenerateModal
+            name={"미생성 파일을 찾는중"}
+            content={"잠시만 기다려주세요"}
+          />
+        )}
         {successModal && <SuccessModal props={successModal} />}
         <div className="attendance-top-container-display">
           <div className="attendance-top-in1">

@@ -10,12 +10,9 @@ import SelectStudentModal from "./selectStudentModal";
 import Loading from "../loading/page";
 
 const todayDate = new Date();
-const today = new Date();
 
-//날자 보기좋게
-let formattedDate: string;
-
-formattedDate = todayDate.toLocaleDateString("ko-KR", {
+// 날짜를 보기 좋게 포맷팅
+const formattedDate: string = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
@@ -79,8 +76,8 @@ export default function Page() {
         if (Array.isArray(data)) {
           // 반과 학생번호 순으로 정렬: 먼저 반 기준, 같은 반이면 학생번호 기준
           const sortedData = data.sort((a, b) => {
-            const classA = parseInt(a.class);
-            const classB = parseInt(b.class);
+            const classA = parseInt(a.class as unknown as string);
+            const classB = parseInt(b.class as unknown as string);
             if (classA !== classB) {
               return classA - classB;
             }
@@ -88,7 +85,7 @@ export default function Page() {
           });
 
           const sortedData3 = sortedData.filter(
-            (student) => student.grade == 3
+            (student) => student.grade === 3
           );
 
           const presentStudents = sortedData3.filter(
@@ -128,15 +125,14 @@ export default function Page() {
       )
     );
   };
+
   const handleStateChange = (newState: any) => {
     setFirstCommitStudent((prevState) =>
       prevState.map((student) => {
-        // Find the corresponding student in the newState array
+        // 새로운 상태(newState)에서 해당 학생 정보를 찾습니다.
         const updatedStudent = newState.find(
           (newStudent: { id: string }) => newStudent.id === student.id
         );
-
-        // If there's a match, update the student's check and comment, otherwise keep the student as is
         return updatedStudent
           ? {
               ...student,
@@ -147,6 +143,7 @@ export default function Page() {
       })
     );
   };
+
   const handleCheckboxChange = (
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
@@ -158,6 +155,7 @@ export default function Page() {
       )
     );
   };
+
   const validation = useMemo(() => {
     const errorCounts: { [msg: string]: number } = {};
 
@@ -195,6 +193,7 @@ export default function Page() {
     }
     return { error: "", disabled: false };
   }, [firstcommitstudent]);
+
   const handlePatch = async () => {
     try {
       setIsLoading(true);
@@ -259,76 +258,121 @@ export default function Page() {
   }
 
   if (attendance.length === 0) {
-    return (
-      <>
-        <div>이런! 오류가 발생했거나 학생들의 정보가 등록이 필요해요</div>
-      </>
-    );
-  } else {
-    return (
-      <div className="right-left-margin">
-        <div>{successModal ? <SuccessModal props={successModal} /> : null}</div>
-        <div className="attendance-top-container-display">
-          <div className="attendance-top-in1">
-            <p>총 인원: {attendance.length}</p>
-            <p>미출석: {countAbsentStudentsNO()}</p>
-            <p>출석: {countAbsentStudentsOK()}</p>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <select
-              className="class-select"
-              onChange={(e) => setSelectedClass(e.target.value)}
-              value={selectedClass || ""}
-            >
-              <option value="">모두 보기</option>
-              {classList.map((cls, index) => (
-                <option key={index} value={cls}>
-                  {cls}반
-                </option>
-              ))}
-            </select>
-            <SelectStudentModal
-              props={firstcommitstudent}
-              setAttendance={handleStateChange}
-            />
-          </div>
+    return <div>이런! 오류가 발생했거나 학생들의 정보가 등록이 필요해요</div>;
+  }
+
+  return (
+    <div className="right-left-margin">
+      <div>{successModal ? <SuccessModal props={successModal} /> : null}</div>
+      <div className="attendance-top-container-display">
+        <div className="attendance-top-in1">
+          <p>총 인원: {attendance.length}</p>
+          <p>미출석: {countAbsentStudentsNO()}</p>
+          <p>출석: {countAbsentStudentsOK()}</p>
         </div>
-        {validation.error && (
-          <p
-            style={{
-              color: "red",
-              fontSize: "11px",
-              margin: "0px",
-              lineHeight: "1",
-            }}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <select
+            className="class-select"
+            onChange={(e) => setSelectedClass(e.target.value)}
+            value={selectedClass || ""}
           >
-            {validation.error}
-          </p>
-        )}
-        <div className="attendance-container">
-          {filteredStudents.map((data, i) => {
-            const studentCommit = firstcommitstudent.find(
-              (student) => student.id === data.id
-            ) || { check: "", comment: "" };
+            <option value="">모두 보기</option>
+            {classList.map((cls, index) => (
+              <option key={index} value={cls}>
+                {cls}반
+              </option>
+            ))}
+          </select>
+          <SelectStudentModal
+            props={firstcommitstudent}
+            setAttendance={handleStateChange}
+          />
+        </div>
+      </div>
+      {validation.error && (
+        <p
+          style={{
+            color: "red",
+            fontSize: "11px",
+            margin: "0px",
+            lineHeight: "1",
+          }}
+        >
+          {validation.error}
+        </p>
+      )}
+      <div className="attendance-container">
+        {filteredStudents.map((data, i) => {
+          const studentCommit = firstcommitstudent.find(
+            (student) => student.id === data.id
+          ) || { check: "", comment: "" };
+
+          // check가 "2"인 경우: 배경 회색, 선택 버튼(체크박스) 삭제
+          if (studentCommit.check === "2") {
+            return (
+              <div key={i}>
+                <div
+                  style={{ backgroundColor: "#d8d8d8" }}
+                  className="attendance-student"
+                  key={data.id}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div className="attendance-student-title-display">
+                      <div className="attendance-student-title">
+                        <p className="attendance-student-name">{data.name}</p>
+                        <p className="attendance-student-gradeandclass">
+                          {data.grade}학년 {data.class}반
+                        </p>
+                      </div>
+                      <p className="attendance-student-number">
+                        {data.studentnumber}번
+                      </p>
+                    </div>
+                    <div className="attendance-student-button">
+                      미출석 / {data.comment || ""}
+                    </div>
+                  </div>
+                </div>
+                {(i === filteredStudents.length - 1 ||
+                  filteredStudents[i + 1].class !== data.class) && (
+                  <div
+                    className="line"
+                    style={{
+                      backgroundColor: "blue",
+                      height: "1px",
+                      marginTop: "20px",
+                      marginBottom: "20px",
+                    }}
+                  ></div>
+                )}
+              </div>
+            );
+          } else {
+            // check가 "0" 또는 "1"인 경우: 기존 로직 그대로 체크박스 및 입력창 표시
             return (
               <div key={i}>
                 <div
                   style={{
-                    backgroundColor: `${
+                    backgroundColor:
                       studentCommit.check === "0"
                         ? "#FFE8E8"
                         : studentCommit.check === "1"
                         ? "#E8E8FF"
                         : data.check === "0"
                         ? "#E8E8E8"
-                        : "white"
-                    }`,
+                        : "white",
                   }}
                   className="attendance-student"
                   key={data.id}
@@ -337,9 +381,8 @@ export default function Page() {
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems: `${
-                        studentCommit.check == "0" ? "normal" : "center"
-                      }`,
+                      alignItems:
+                        studentCommit.check === "0" ? "normal" : "center",
                     }}
                   >
                     <div className="attendance-student-title-display">
@@ -400,13 +443,11 @@ export default function Page() {
                         </p>
                       ) : null}
                       {data.check === "0" ? (
-                        <>
-                          <h5>
-                            미출석
-                            <br />
-                            이유 : {data?.comment}
-                          </h5>
-                        </>
+                        <h5>
+                          미출석
+                          <br />
+                          이유 : {data?.comment}
+                        </h5>
                       ) : (
                         <div
                           style={{ display: "flex", justifyContent: "right" }}
@@ -444,16 +485,16 @@ export default function Page() {
                 )}
               </div>
             );
-          })}
-        </div>
-        <button
-          className="ok-button"
-          onClick={handlePatch}
-          disabled={validation.disabled}
-        >
-          출석 정보 저장
-        </button>
+          }
+        })}
       </div>
-    );
-  }
+      <button
+        className="ok-button"
+        onClick={handlePatch}
+        disabled={validation.disabled}
+      >
+        출석 정보 저장
+      </button>
+    </div>
+  );
 }

@@ -34,8 +34,9 @@ export async function getonemeal2() {
       });
       continue;
     }
+    console.log(response.data.mealServiceDietInfo[1]);
 
-    let dishes = response.data.mealServiceDietInfo[1].row[0].DDISH_NM.split(
+    let dishes = response.data.mealServiceDietInfo[1].row[1].DDISH_NM.split(
       "<br/>"
     ).map((dish) => dish.split(" ")[0].replace("H", ""));
 
