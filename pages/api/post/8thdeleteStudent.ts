@@ -16,9 +16,10 @@ export default async function handler(req: any, res: any) {
     // studentIds가 배열이면, deleteMany에 in 조건을 사용하여 여러 ID를 삭제
     await prisma.attendanceObject.deleteMany({
       where: {
-        id: {
-          in: studentIds, // studentIds 배열에 포함된 ID들 삭제
-        },
+        id:
+          studentIds.length === 1
+            ? { equals: studentIds[0] }
+            : { in: studentIds },
       },
     });
 

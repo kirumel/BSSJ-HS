@@ -133,7 +133,7 @@ export default function Page() {
   const deleteStudent = async (studentId: string) => {
     try {
       await axios
-        .post("/api/post/deleteStudent", {
+        .post("/api/post/8thdeleteStudent", {
           studentIds: [studentId], // 하나의 학생만 삭제
         })
         .then((response) => {
