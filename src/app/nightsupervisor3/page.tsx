@@ -393,7 +393,7 @@ export default function Page() {
                           : "설정 안 됨"}
                       </p>
                       <p className="attendance-student-number">
-                        설정된 퇴장시간 : {convertTo12Hour(data.outTimeT)}
+                        기본:{convertTo12Hour(data.outTimeT)}
                       </p>
                     </div>
                     <div>
@@ -494,20 +494,21 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-                {(i === filteredStudents.length - 1 ||
-                  filteredStudents[i + 1].class !== data.class) && (
-                  <div className="class-line">
-                    <div
-                      className="line"
-                      style={{
-                        width: "90%",
-                        backgroundColor: "rgb(138, 156, 255)",
-                        height: "1px",
-                      }}
-                    ></div>
-                    <div>{data.class}반</div>
-                  </div>
-                )}
+                {sortState == true &&
+                  (i === filteredStudents.length - 1 ||
+                    filteredStudents[i + 1].class !== data.class) && (
+                    <div className="class-line">
+                      <div
+                        className="line"
+                        style={{
+                          width: "90%",
+                          backgroundColor: "rgb(138, 156, 255)",
+                          height: "1px",
+                        }}
+                      ></div>
+                      <div>{data.class}반</div>
+                    </div>
+                  )}
               </div>
             );
           })}
