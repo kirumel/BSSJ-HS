@@ -13,55 +13,58 @@ import Event from "./events";
 import Logo from "./logo/page";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-
-// NATnewCode 컴포넌트
-const NATnewCode = () => {
-  return (
-    <div style={{ padding: "20px", backgroundColor: "lightcoral" }}>
-      <h2>폰이 흔들렸습니다!</h2>
-      <p>여기 새로운 코드가 보입니다!</p>
-    </div>
-  );
-};
+import NATnewCode from "./NATnewCode/page";
 
 export default function Home() {
   const { data: session } = useSession();
 
   const [isShaken, setIsShaken] = useState(false);
-  const [acceleration, setAcceleration] = useState({ x: 0, y: 0, z: 0 });
 
   useEffect(() => {
-    const handleMotion = (event: DeviceMotionEvent) => {
-      const acc = event.acceleration;
+    if (isShaken) {
+      const handleMotion = (event: DeviceMotionEvent) => {
+        const { acceleration } = event;
 
-      // acceleration이 null이 아닌지 확인
-      if (acc) {
-        setAcceleration({
-          x: acc.x || 0,
-          y: acc.y || 0,
-          z: acc.z || 0,
-        });
+        // 가속도 값이 일정 기준 이상이면 폰이 흔들린 것으로 판단
+        if (acceleration.x > 10 || acceleration.y > 10 || acceleration.z > 10) {
+          setIsShaken(false);
+        }
+      };
 
-        // 일정 기준 이상이면 흔들린 것으로 판단
-        if (acc.x > 10 || acc.y > 10 || acc.z > 10) {
+      if (window.DeviceMotionEvent) {
+        window.addEventListener("devicemotion", handleMotion);
+      }
+
+      return () => {
+        if (window.DeviceMotionEvent) {
+          window.removeEventListener("devicemotion", handleMotion);
+        }
+      };
+    } else {
+      const handleMotion = (event: DeviceMotionEvent) => {
+        const { acceleration } = event;
+
+        // 가속도 값이 일정 기준 이상이면 폰이 흔들린 것으로 판단
+        if (acceleration.x > 10 || acceleration.y > 10 || acceleration.z > 10) {
           setIsShaken(true);
         }
-      }
-    };
+      };
 
-    if (window.DeviceMotionEvent) {
-      window.addEventListener("devicemotion", handleMotion);
-    }
-
-    return () => {
       if (window.DeviceMotionEvent) {
-        window.removeEventListener("devicemotion", handleMotion);
+        window.addEventListener("devicemotion", handleMotion);
       }
-    };
+
+      return () => {
+        if (window.DeviceMotionEvent) {
+          window.removeEventListener("devicemotion", handleMotion);
+        }
+      };
+    }
   }, []);
 
   return (
     <>
+      {isShaken && <NATnewCode />}
       <div className="nav-home">
         <Link href="/">
           <Logo />
@@ -159,19 +162,6 @@ export default function Home() {
         </div> */}
       </div>
       <div className="margin"></div>
-      {isShaken && <NATnewCode />}{" "}
-      <div
-        style={{
-          padding: "10px",
-          backgroundColor: "#f1f1f1",
-          marginTop: "20px",
-        }}
-      >
-        <h3>폰의 흔들림 값:</h3>
-        <p>X: {acceleration.x.toFixed(2)}</p>
-        <p>Y: {acceleration.y.toFixed(2)}</p>
-        <p>Z: {acceleration.z.toFixed(2)}</p>
-      </div>
     </>
   );
 }

@@ -1,0 +1,43 @@
+.card {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: 700;
+  height: 80vh;
+  max-height: 31rem;
+  max-width: 23rem;
+  min-width: 21rem;
+  width: 80vw;
+  border-radius: 0.7rem;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.card-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  height: 100%;
+}
+
+.card-display {
+  background-color: rgba(0, 0, 0, 0.158);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  z-index: 100;
+  perspective: 1000px;
+  margin: auto;
+}
+.qr {
+  padding: 20px;
+  border-radius: 10px;
+  border: 0.1px solid rgb(195, 195, 195, 0.5);
+}
