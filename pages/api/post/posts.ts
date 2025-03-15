@@ -36,7 +36,8 @@ export default async function handler(req: any, res: any) {
       subjectTags,
       subSubjectTags,
       gradeTags,
-      type,
+      boardId,
+      boardName,
     } = req.body;
 
     // Validation
@@ -59,8 +60,12 @@ export default async function handler(req: any, res: any) {
           title,
           content,
           nickname,
-          authorId,
-          type: type || "post",
+          author: {
+            connect: { id: authorId },
+          },
+          board: {
+            connect: { id: boardId, name: boardName }, // boardId + boardName
+          },
           type2,
           subjectTags,
           subSubjectTags,

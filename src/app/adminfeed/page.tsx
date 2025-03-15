@@ -6,15 +6,16 @@ import { useRouter } from "next/navigation";
 import "./style.css";
 
 interface PostData {
+  boardId: string;
   title: string;
   content: string;
   type2: string[];
-  type: string;
   subjectTags: string[];
   subSubjectTags: string | null;
   gradeTags: string[];
   authorId: string;
   nickname: string;
+  boardName: string;
 }
 
 export default function CreatePost() {
@@ -110,11 +111,12 @@ export default function CreatePost() {
 
   const handleSubmit = () => {
     const postData: PostData = {
+      boardId: "cm854o26i0000j8dlk8ht8hcj",
+      boardName: "feed",
       title,
       nickname: session?.user?.nickname || "",
       authorId: session?.user?.id || "",
       content,
-      type: "feed",
       type2,
       subjectTags,
       subSubjectTags: Object.values(subSubjectTags).find((sub) => sub) || null,

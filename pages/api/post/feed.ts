@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     try {
       const posts = await prisma.post.findMany({
         where: {
-          type: "feed",
+          boardId: { equals: "cm854o26i0000j8dlk8ht8hcj" },
           ...(type2 ? { type2: { has: type2 } } : {}),
           ...(subject ? { subjectTags: { has: subject } } : {}),
           ...(subSubject ? { subSubjectTags: subSubject } : {}),

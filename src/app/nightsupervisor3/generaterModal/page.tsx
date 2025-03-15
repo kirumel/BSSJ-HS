@@ -127,8 +127,6 @@ export default function PlusStudentModal(props: any) {
             <Lottie
               options={options}
               style={{
-                position: "fixed",
-                bottom: 92,
                 margin: 0,
                 width: "23vh",
                 height: "23vh",

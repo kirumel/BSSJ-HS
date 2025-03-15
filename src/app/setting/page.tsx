@@ -12,10 +12,15 @@ export default function Setting() {
   const [deletionMessage, setDeletionMessage] = useState("");
 
   let session = originalSession;
+  console.log(session);
 
   if (session && !session.user?.name) {
     session = { ...session, user: { ...session.user, name: "unknown" } };
   }
+  const handleSocialLogin = (provider: string) => {
+    signIn(provider, { redirect: true }); // 소셜 로그인에 제공자 이름 사용
+  };
+
   useEffect(() => {
     if (!loading) {
       setIsLoading(false);
@@ -25,7 +30,7 @@ export default function Setting() {
   const handleDeleteAccount = async () => {
     try {
       const response = await axios.post("/api/delete-account", {
-        email: session.user.email,
+        email: session?.user?.email,
         password,
       });
       if (response.status === 200) {
@@ -57,7 +62,7 @@ export default function Setting() {
                   ></img>
                   <div>
                     <h2>{session.user?.name}</h2>
-                    <p>성지고등학교</p>
+                    <p>{session.user?.grade}</p>
                   </div>
                 </div>
               </div>
@@ -67,6 +72,12 @@ export default function Setting() {
             <div className="line"></div>
           </div>
           <div className="insert main-container">
+            <button
+              className="kakao"
+              onClick={() => handleSocialLogin("kakao")}
+            >
+              kakao
+            </button>
             <button className="ok-button" onClick={() => signOut()}>
               로그아웃
             </button>
