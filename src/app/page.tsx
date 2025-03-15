@@ -21,7 +21,7 @@ export default function Home() {
   const [isShaken, setIsShaken] = useState(false);
 
   useEffect(() => {
-    if (isShaken) {
+    if (isShaken === true) {
       const handleMotion = (event: DeviceMotionEvent) => {
         const { acceleration } = event;
 
