@@ -40,7 +40,7 @@ export default function Home() {
           window.removeEventListener("devicemotion", handleMotion);
         }
       };
-    } else {
+    } else if (isShaken === false) {
       const handleMotion = (event: DeviceMotionEvent) => {
         const { acceleration } = event;
 
