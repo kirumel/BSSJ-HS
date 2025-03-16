@@ -18,6 +18,7 @@ export default function NavOut() {
     "/support",
     "/choiceRegister",
     "/guest",
+    "/nightAT2",
   ];
   if (pathname && notshow.includes(pathname)) {
     return null;

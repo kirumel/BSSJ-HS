@@ -381,19 +381,19 @@ export default function Page() {
       <div className="right-left-margin">
         {modal1 && (
           <GenerateModal
-            name={"미생성 파일을 찾는중"}
+            name={"미생성 파일을 찾는 중"}
             content={"잠시만 기다려주세요"}
           />
         )}
         {modal2 && (
           <GenerateModal2
             name={"미생성 파일을 찾았습니다!"}
-            content={"어제의 출석부를 생성중입니다"}
+            content={"어제의 출석부를 생성 중입니다"}
           />
         )}
         {modal3 && (
           <GenerateModal2
-            name={"출석을 저장중입니다"}
+            name={"출석을 저장 중입니다"}
             content={"잠시만 기다려주세요"}
           />
         )}

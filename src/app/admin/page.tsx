@@ -319,7 +319,7 @@ export default function Page() {
                 감독
               </button>
             </Link>
-            <Link href="/nightAT">
+            <Link href="/choiceNightAT">
               <button
                 style={{ backgroundColor: "#F495B9" }}
                 className="event-box-button"

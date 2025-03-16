@@ -95,9 +95,31 @@ export default function Page() {
             (student) => student.check === "0"
           );
           const finalSortedData = [...presentStudents, ...absentStudents];
-          setAttendance(finalSortedData);
 
-          const initialFirstCommitStudent = finalSortedData.map((student) => ({
+          // 오늘 날짜로 formattedDate 설정
+          const todayDate = new Date();
+          const formattedDate = todayDate.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          });
+
+          // updatedAt과 비교 후 check, comment 수정된 데이터
+          const updatedFinalData = finalSortedData.map((student) => {
+            const isUpdatedToday = student.updatedAt === formattedDate;
+
+            return {
+              ...student,
+              check: isUpdatedToday ? student.check : "", // 오늘 날짜가 아니면 초기화
+              comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
+            };
+          });
+
+          // setAttendance로 수정된 데이터 반영
+          setAttendance(updatedFinalData);
+
+          // firstCommitStudent 데이터 초기화
+          const initialFirstCommitStudent = updatedFinalData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
             name: student.name,
@@ -114,6 +136,10 @@ export default function Page() {
         } else {
           console.error(data);
         }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("API 호출 중 오류 발생:", error);
         setIsLoading(false);
       });
   }, [session]);

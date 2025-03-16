@@ -9,8 +9,18 @@ export default function FourDigitCodeInput() {
   const [code, setCode] = useState<string[]>(["", "", "", ""]);
   const [currenttime, setCurrentTime] = useState<string>("");
   const [formattedTime, setFormattedTime] = useState<string>("");
-  const [qrCodeData, setQrCodeData] = useState<string>("");
+  const [attempts, setAttempts] = useState<number>(0);
+  const [scanAttempts, setScanAttempts] = useState<number>(0);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(dayjs().format("A h:mm:ss"));
+      setFormattedTime(dayjs().format("HH:mm"));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -22,14 +32,6 @@ export default function FourDigitCodeInput() {
     setCode(newCode);
     inputRefs.current[index + 1]?.focus();
   };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(dayjs().format("A h:mm:ss"));
-      setFormattedTime(dayjs().format("HH:mm"));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Backspace" && index < 3) {
@@ -47,38 +49,69 @@ export default function FourDigitCodeInput() {
       newCode[index] = "";
       setCode(newCode);
     } else if (e.key === "Enter") {
-      handleSubmit();
+      startQRScan();
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (qrCodeData: string) => {
     if (code.every((digit) => digit !== "")) {
       try {
         const studentNumber = code.join("");
         const response = await axios.get("/api/post/nightAT/getStudentCode", {
           params: { studentnumber: studentNumber },
         });
-        console.log(1, response.data.code.code);
-        console.log(2, qrCodeData);
-        if (response.status === 200 && response.data.code) {
-          if (response.data.code === qrCodeData) {
-            await axios.patch("/api/post/nightAT/page", {
-              studentnumber: studentNumber,
-              outTime: formattedTime,
-            });
-            alert("출석 확인되었습니다.");
+
+        if (response.status === 203) {
+          alert("등록된 학생이 없습니다.");
+          setIsScanning(false);
+        }
+
+        if (response.status === 200 && response.data.code.code) {
+          if (response.data.code.code === qrCodeData) {
+            await axios
+              .patch("/api/post/nightAT/page", {
+                studentnumber: studentNumber,
+                outTime: formattedTime,
+              })
+              .then((response) => {
+                if (response.status === 200) {
+                  alert(`${response.data.message}`);
+                } else {
+                  alert(`${response.data.message}`);
+                }
+              });
+            setAttempts(0);
+            setCode(["", "", "", ""]);
+            setIsScanning(false);
+            setScanAttempts(0);
           } else {
-            alert("QR 코드가 일치하지 않습니다. 계정 정보를 확인해주세요.");
+            if (scanAttempts < 2) {
+              setScanAttempts(scanAttempts + 1);
+              alert(`QR 인증 실패 ${scanAttempts + 1}회차. 다시 시도해주세요.`);
+            } else {
+              alert("QR 코드가 일치하지 않습니다. 계정 정보를 확인해주세요.");
+              setAttempts(0);
+              setCode(["", "", "", ""]); // 3회 실패 시 초기화
+              setScanAttempts(0);
+              setIsScanning(false);
+            }
           }
-        } else if (response.status === 200 && !response.data.code) {
-          alert("등록된 코드가 없습니다");
+        } else if (response.status === 200 && !response.data.code.code) {
+          alert("등록된 코드가 없습니다.");
+          setIsScanning(false);
         }
       } catch (error) {
         alert("오류가 발생했습니다. 새로고침 해주세요.");
-      } finally {
-        setCode(["", "", "", ""]);
-        inputRefs.current[0]?.focus();
+        setIsScanning(false);
       }
+    } else {
+      alert("모든 칸에 숫자를 입력해주세요.");
+    }
+  };
+
+  const startQRScan = () => {
+    if (code.every((digit) => digit !== "")) {
+      setIsScanning(true);
     } else {
       alert("모든 칸에 숫자를 입력해주세요.");
     }
@@ -90,15 +123,33 @@ export default function FourDigitCodeInput() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingLeft: "10rem",
-        paddingRight: "10rem",
+        paddingLeft: "5rem",
+        paddingRight: "5rem",
         height: "100vh",
       }}
     >
-      {/* <div>
+      <div>
         <div className="time">{currenttime}</div>
         <div className="formatted-time">{formattedTime}</div>
-      </div> */}
+        {isScanning && (
+          <div className="scanner">
+            <Scanner
+              allowMultiple={true}
+              components={{ zoom: true }}
+              scanDelay={3000}
+              onScan={(data) => {
+                if (data && data[0]?.rawValue) {
+                  handleSubmit(data[0].rawValue);
+                }
+              }}
+              onError={() => {
+                alert("QR 코드 스캔 중 오류가 발생했습니다.");
+                setIsScanning(false);
+              }}
+            />
+          </div>
+        )}
+      </div>
       <div
         style={{
           display: "flex",
@@ -124,18 +175,7 @@ export default function FourDigitCodeInput() {
             />
           ))}
         </div>
-        <div style={{ marginTop: "20px" }}>
-          <h5 className="subtitle">{qrCodeData}</h5>
-          <Scanner
-            allowMultiple={true}
-            components={{ zoom: true }}
-            onScan={(data) => {
-              if (data && data[0]?.rawValue) {
-                setQrCodeData(data[0].rawValue);
-              }
-            }}
-          />
-        </div>
+
         <button
           style={{
             display: "flex",
@@ -148,7 +188,7 @@ export default function FourDigitCodeInput() {
             marginBottom: "20px",
             boxSizing: "border-box",
           }}
-          onClick={handleSubmit}
+          onClick={startQRScan}
           className="ok-button"
         >
           퇴장하기

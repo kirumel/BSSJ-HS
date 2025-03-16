@@ -15,6 +15,7 @@ export default function NavOut() {
     "/signin",
     "/accountregister",
     "/posts",
+    "/nightAT2",
     "/support",
     "/guest",
   ];

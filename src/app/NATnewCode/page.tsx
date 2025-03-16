@@ -60,7 +60,6 @@ export default function Page({ setIsShaken }) {
 
   return (
     <div onClick={() => setIsShaken(false)}>
-      {" "}
       {/* QR 코드 영역 클릭 시 상태 변경 */}
       <div className="card-display">
         <div className="card">

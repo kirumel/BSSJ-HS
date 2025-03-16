@@ -19,7 +19,7 @@ export default function Nav() {
     "/",
     "/study",
     "/feed",
-    "/nightAT",
+    "/nightAT2",
     "/nightattendance",
   ];
 

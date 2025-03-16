@@ -28,7 +28,7 @@ export default async function handler(req, res) {
         where: { studentnumber: number, class: classNum, grade: grade },
       });
       if (!record) {
-        return res.status(404).json({ message: "등록된 학번이 없습니다." });
+        return res.status(203).json({ message: "등록된 학번이 없습니다." });
       }
       console.log(record);
       return res.status(200).json({ code: record });

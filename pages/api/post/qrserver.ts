@@ -16,6 +16,8 @@ export default async function handler(req: any, res: any) {
           code: id,
         },
       });
+      console.log(result);
+      console.log(id);
       res.status(200).json({ message: "성공!" });
     } catch (error) {
       res.status(500).json({ error });

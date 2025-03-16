@@ -29,3 +29,33 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 2.3vw;
   font-weight: 600;
 }
+@media screen and (max-width: 800px) {
+  .time {
+    display: none;
+  }
+  .formatted-time {
+    display: none;
+  }
+}
+.scanner {
+  width: 20vw;
+  height: 20vw;
+}
+.scanner svg {
+  border: none !important;
+}
+
+.scanner svg path {
+  fill: none !important;
+  stroke: rgb(138, 156, 255) !important;
+}
+
+.success-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.success-content {
+  font-size: 13px;
+  font-weight: 500;
+}
