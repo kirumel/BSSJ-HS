@@ -3,6 +3,7 @@ import { prisma } from "../../prisma/lib/prisma";
 export default async function handler(req, res) {
   if (req.method === "GET") {
     const studentNumber = parseInt(req.query.studentnumber, 10);
+    console.log(studentNumber);
     const parseStudentNumber = function (studentNumber: any) {
       const strNum = studentNumber.toString().padStart(4, "0"); // 4자리 유지
       return {
@@ -16,6 +17,7 @@ export default async function handler(req, res) {
       class: classNum,
       number,
     } = parseStudentNumber(studentNumber);
+    console.log(grade, classNum, number);
 
     const { studentnumber } = req.query;
     if (!studentnumber) {
@@ -28,7 +30,8 @@ export default async function handler(req, res) {
       if (!record) {
         return res.status(404).json({ message: "등록된 학번이 없습니다." });
       }
-      return res.status(200).json({ code: record.code });
+      console.log(record);
+      return res.status(200).json({ code: record });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import "./style.css";
 import dayjs from "dayjs";
 import axios from "axios";
-import QrScanner from "qr-scanner"; // QR 스캐너 라이브러리
+import { Scanner } from "@yudiel/react-qr-scanner";
 
 export default function FourDigitCodeInput() {
   const [code, setCode] = useState<string[]>(["", "", "", ""]);
@@ -11,7 +11,6 @@ export default function FourDigitCodeInput() {
   const [formattedTime, setFormattedTime] = useState<string>("");
   const [qrCodeData, setQrCodeData] = useState<string>("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -30,26 +29,6 @@ export default function FourDigitCodeInput() {
       setFormattedTime(dayjs().format("HH:mm"));
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
-
-  // QR 스캐너 설정
-  useEffect(() => {
-    if (videoRef.current) {
-      const scanner = new QrScanner(
-        videoRef.current,
-        (result) => {
-          console.log("decoded qr code:", result);
-          setQrCodeData(result.data);
-        },
-        {
-          returnDetailedScanResult: true,
-        }
-      );
-      scanner.start();
-      console.log(qrCodeData);
-
-      return () => scanner.stop();
-    }
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -76,10 +55,11 @@ export default function FourDigitCodeInput() {
     if (code.every((digit) => digit !== "")) {
       try {
         const studentNumber = code.join("");
-        const response = await axios.get("/api/getStudentCode", {
+        const response = await axios.get("/api/post/nightAT/getStudentCode", {
           params: { studentnumber: studentNumber },
         });
-
+        console.log(1, response.data.code.code);
+        console.log(2, qrCodeData);
         if (response.status === 200 && response.data.code) {
           if (response.data.code === qrCodeData) {
             await axios.patch("/api/post/nightAT/page", {
@@ -88,10 +68,10 @@ export default function FourDigitCodeInput() {
             });
             alert("출석 확인되었습니다.");
           } else {
-            alert("QR 코드가 일치하지 않습니다. 출석 실패.");
+            alert("QR 코드가 일치하지 않습니다. 계정 정보를 확인해주세요.");
           }
-        } else {
-          alert("등록된 학번이 없습니다.");
+        } else if (response.status === 200 && !response.data.code) {
+          alert("등록된 코드가 없습니다");
         }
       } catch (error) {
         alert("오류가 발생했습니다. 새로고침 해주세요.");
@@ -115,10 +95,10 @@ export default function FourDigitCodeInput() {
         height: "100vh",
       }}
     >
-      <div>
+      {/* <div>
         <div className="time">{currenttime}</div>
         <div className="formatted-time">{formattedTime}</div>
-      </div>
+      </div> */}
       <div
         style={{
           display: "flex",
@@ -144,10 +124,18 @@ export default function FourDigitCodeInput() {
             />
           ))}
         </div>
-        <video
-          ref={videoRef}
-          style={{ width: "200px", height: "200px", marginTop: "20px" }}
-        />
+        <div style={{ marginTop: "20px" }}>
+          <h5 className="subtitle">{qrCodeData}</h5>
+          <Scanner
+            allowMultiple={true}
+            components={{ zoom: true }}
+            onScan={(data) => {
+              if (data && data[0]?.rawValue) {
+                setQrCodeData(data[0].rawValue);
+              }
+            }}
+          />
+        </div>
         <button
           style={{
             display: "flex",

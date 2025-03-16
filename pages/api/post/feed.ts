@@ -3,7 +3,6 @@ import { prisma } from "../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     const { type2, subject, subSubject, grade, query } = req.query;
-    console.log(type2, subject, subSubject, grade, query);
 
     try {
       const posts = await prisma.post.findMany({

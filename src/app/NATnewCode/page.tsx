@@ -38,7 +38,7 @@ export default function Page({ setIsShaken }) {
   const sendUserIdToServer = async (id) => {
     try {
       await axios.patch("/api/post/qrserver", {
-        userId: id,
+        id: id,
         session,
       });
     } catch (error) {
