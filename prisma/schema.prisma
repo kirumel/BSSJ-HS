@@ -21,12 +21,14 @@ model Account {
   id_token                 String?
   session_state            String?
   createdAt                DateTime @default(now())
- updatedAt         DateTime @updatedAt  
+  updatedAt                DateTime @updatedAt
   refresh_token_expires_in Int?
-  user               User     @relation(fields: [userId], references: [id], map: "Account_userId_fkey")
-  sjhsUser           SJHSUser? @relation(fields: [userId], references: [id], map: "Account_sjhsUser_fkey") 
+
+  user User @relation(fields: [userId], references: [id])
+
   @@id([provider, providerAccountId])
 }
+
 
 model Comment {
   id         String   @id @default(cuid())
@@ -82,25 +84,6 @@ model Post {
   author               User      @relation(fields: [authorId], references: [id])
 }
 
-model SJHSUser {
-  id                String   @id @default(cuid())
-  providerId        String? 
-  name              String?
-  email             String   @unique
-  image             String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime? @default(now())
-  nickname          String?
-  password          String?
-  verificationToken String?
-  handle            String?
-  class             Int?
-  grade             Int?
-  role              String   @default("user")
-  User              User?    @relation(fields: [id], references: [id] ,onDelete: Cascade)
-
-  accounts Account[]
-}
 
 model Session {
   sessionToken String   @unique
@@ -134,19 +117,23 @@ model User {
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime?  @default(now())
+  updatedAt     DateTime? @default(now())
   role          String    @default("user")
   class         Int?
   grade         Int?
+  studentnumber Int?
   nickname      String?
   handle        String?
-  Account       Account[]
-  Comment       Comment[]
-  Like          Like[]
-  Post          Post[]
-  Session       Session[]
-  SJHSUser      SJHSUser? 
+  password          String?
+  providerId    String?
+  verificationToken String?
+  accounts      Account[]
+  comments      Comment[]
+  likes         Like[]
+  posts         Post[]
+  sessions      Session[]
 }
+
 
 model mainAttendanceObject {
   id            String   @id @default(cuid())
@@ -239,6 +226,7 @@ model nightAtSupervisor {
   outTimeT       String?
   outTimeST       String?
   updatedAt     String?
+  code          String?
 }
 
 model nightAttendanceObject {

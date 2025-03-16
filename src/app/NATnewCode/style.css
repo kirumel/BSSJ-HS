@@ -12,6 +12,7 @@
   border-radius: 0.7rem;
   position: relative;
   transform-style: preserve-3d;
+  box-sizing: border-box;
 }
 
 .card-face {

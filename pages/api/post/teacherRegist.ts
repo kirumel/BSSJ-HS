@@ -35,7 +35,7 @@ export default async function handler(req: any, res: any) {
 
     // 비밀번호 해싱
     const hashedPassword = await bcrypt.hash(password, 10);
-    const finduser = await prisma.sJHSUser.findUnique({
+    const finduser = await prisma.user.findUnique({
       where: {
         email: email,
       },
@@ -46,7 +46,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // 새로운 유저 생성
-    const newUser = await prisma.sJHSUser.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
@@ -55,16 +55,6 @@ export default async function handler(req: any, res: any) {
         name,
         nickname,
         role: "SjAdMin",
-        User: {
-          create: {
-            email,
-            grade: parseInt(grade, 10),
-            class: parseInt(clss, 10),
-            name,
-            nickname,
-            role: "SjAdMin",
-          },
-        },
       },
     });
 

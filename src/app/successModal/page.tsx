@@ -22,7 +22,7 @@ export default function PlusStudentModal(props: any) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dragY, setDragY] = useState(0);
 
-  const { name, content } = props.props; // 구조 분해 할당으로 props 사용
+  const { name, content } = props; // 구조 분해 할당으로 props 사용
 
   const options = {
     animationData: animationData,

@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
     month: "2-digit",
     day: "2-digit",
   });
-  console.log(formattedDate);
+  console.log("fdsf", formattedDate);
 
   const startOfDay = new Date(
     dateObj.getFullYear(),
@@ -48,6 +48,7 @@ export default async function handler(req: any, res: any) {
     });
 
     if (students.length === 0) {
+      console.log("No data");
       return res.status(400).json({ message: "No data" });
     }
     const pdf = new jsPDF();

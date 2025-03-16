@@ -18,7 +18,7 @@ export default function Setting() {
     session = { ...session, user: { ...session.user, name: "unknown" } };
   }
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { redirect: true }); // 소셜 로그인에 제공자 이름 사용
+    signIn(provider, { redirect: false }); // 소셜 로그인에 제공자 이름 사용
   };
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function Setting() {
         setDeletionMessage("오류 비밀번호가 일치하지 않습니다");
       }
     } catch (error) {
-      setDeletionMessage("An error occurred during account deletion.");
+      setDeletionMessage("오류입니다");
     }
   };
 
@@ -62,7 +62,9 @@ export default function Setting() {
                   ></img>
                   <div>
                     <h2>{session.user?.name}</h2>
-                    <p>{session.user?.grade}</p>
+                    <p>
+                      {session.user?.grade}학년 {session.user?.class}반
+                    </p>
                   </div>
                 </div>
               </div>
@@ -71,15 +73,18 @@ export default function Setting() {
             <Settimetable name={session.user?.name} />
             <div className="line"></div>
           </div>
-          <div className="insert main-container">
+          <div className="insert main-container" style={{ paddingTop: "10px" }}>
+            <h3>계정 연동</h3>
             <button
-              className="kakao"
+              className="ok-button"
+              style={{
+                backgroundColor: "#FEE500",
+                color: "black",
+                marginBottom: "10px",
+              }}
               onClick={() => handleSocialLogin("kakao")}
             >
-              kakao
-            </button>
-            <button className="ok-button" onClick={() => signOut()}>
-              로그아웃
+              kakao로 연동하기
             </button>
             <div className="delete-account">
               <h3>계정 삭제</h3>
@@ -91,12 +96,24 @@ export default function Setting() {
                 onChange={(e) => setPassword(e.target.value)}
                 style={{ marginBottom: "10px" }}
               />
-              <button className="ok-button" onClick={handleDeleteAccount}>
+              <button
+                style={{
+                  marginBottom: "10px",
+                  backgroundColor: "#F7717E",
+                  color: "black",
+                }}
+                className="ok-button"
+                onClick={handleDeleteAccount}
+              >
                 계정 삭제하기
               </button>
               {deletionMessage && <p>{deletionMessage}</p>}
             </div>
+            <button className="ok-button" onClick={() => signOut()}>
+              로그아웃
+            </button>
           </div>
+
           <div className="margin"></div>
         </>
       );

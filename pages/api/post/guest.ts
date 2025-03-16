@@ -23,7 +23,7 @@ export default async function handler(req: any, res: any) {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await prisma.sJHSUser.create({
+      await prisma.user.create({
         data: {
           email,
           password: hashedPassword,
@@ -34,7 +34,7 @@ export default async function handler(req: any, res: any) {
         },
       });
 
-      const finduser = await prisma.sJHSUser.findFirst({
+      const finduser = await prisma.user.findFirst({
         where: {
           email: email,
         },

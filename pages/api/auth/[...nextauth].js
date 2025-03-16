@@ -12,6 +12,7 @@ import { signOut } from "next-auth/react";
 import { prisma } from "../prisma/lib/prisma";
 
 export const authOptions = {
+  debug: true, // ✅ 디버그 모드 ON
   providers: [
     NaverProvider({
       clientId: process.env.NAVER_CLIENT_ID,
@@ -39,7 +40,7 @@ export const authOptions = {
         password: { label: "비밀번호", type: "password" },
       },
       async authorize(credentials) {
-        const user = await prisma.SJHSUser.findFirst({
+        const user = await prisma.user.findFirst({
           where: { email: credentials.email },
         });
 
@@ -76,50 +77,48 @@ export const authOptions = {
   callbacks: {
     jwt: async ({ token, user, account, profile }) => {
       if (account?.provider === "kakao") {
-        const existingUser = await prisma.sJHSUser.findFirst({
-          where: { providerId: account.providerAccountId },
-        });
+        const providerAccountId = profile?.id.toString(); // ✅ 수정된 부분
+        let userRecord;
 
-        const findUser = await prisma.sJHSUser.findFirst({
-          where: {
-            email: profile?.email,
-          },
-        });
-
-        if (findUser) {
-          if (!existingUser) {
-            if (token?.id) {
-              await prisma.sJHSUser.update({
-                where: { id: token.id },
-                data: {
-                  providerId: account.providerAccountId,
-                  name: profile?.nickname || "카카오 유저",
-                },
-              });
-
-              token.providerId = account.providerAccountId;
-              token.name = profile?.nickname || "카카오 유저";
-            }
-          }
-        } else if (!findUser && !existingUser) {
-          const newUser = await prisma.sJHSUser.create({
+        if (token.id) {
+          // 기존 사용자 업데이트
+          userRecord = await prisma.user.update({
+            where: { id: token.id },
             data: {
-              providerId: account.providerAccountId,
-              email:
-                profile?.kakao_account?.email ||
-                `${account.providerAccountId}@kakao.com`,
-              name: profile?.nickname || "카카오 유저",
-              User: {
-                create: {
-                  email: profile?.kakao_account?.email,
-                  name: profile?.kakao_account?.name,
-                },
-              },
+              providerId: providerAccountId,
+              name: profile?.nickname,
             },
           });
+        } else {
+          // 새로운 사용자 생성
+          // 먼저 이메일로 유저가 존재하는지 확인
+          userRecord = await prisma.user.findFirst({
+            where: { email: profile?.kakao_account?.email },
+          });
 
-          token.id = newUser.id;
+          if (!userRecord) {
+            // 이메일이 없으면 새로운 유저를 생성
+            userRecord = await prisma.user.create({
+              data: {
+                providerId: providerAccountId,
+                email: profile?.kakao_account?.email,
+                name: profile?.kakao_account?.nickname,
+              },
+            });
+            token.isNewUser = true;
+          } else {
+            // 이메일이 이미 존재하는 경우, 그 유저 정보를 업데이트할 수 있음
+            userRecord = await prisma.user.update({
+              where: { email: profile?.kakao_account?.email },
+              data: {
+                providerId: providerAccountId,
+                name: profile?.kakao_account?.nickname,
+              },
+            });
+          }
         }
+        token.id = userRecord.id;
+        token.providerId = userRecord.providerId;
       }
 
       if (user) {
@@ -141,24 +140,21 @@ export const authOptions = {
           return null; // 세션이 존재하지 않으면 null 반환
         }
 
-        session.user = token.user;
+        session.user.id = token.user.id;
+        session.user.name = token.user.name;
+        session.user.email = token.user.email;
+        session.user.image = token.user.image;
+        session.user.role = token.user.role;
+        session.user.grade = token.user.grade;
+        session.user.class = token.user.class;
+        session.user.sessionToken = token.user.sessionToken;
+        session.user.providerId = token.user.providerId;
+        session.user.nickname = token.user.nickname;
+        session.user.studentnumber = token.user.studentnumber;
       }
 
       return session;
     },
-  },
-  redirect: async ({ url, baseUrl, token, account }) => {
-    // 카카오 유저가 새로 생성되었을 경우 리디렉션
-    if (token?.isNewUser && account?.provider === "kakao") {
-      return "/welcome"; // 카카오 유저일 때만 리디렉션
-    }
-
-    // 크리덴셜 로그인일 때는 리디렉션을 하지 않음
-    if (account?.provider === "credentials") {
-      return baseUrl; // 크리덴셜 로그인 시 리디렉션을 하지 않음
-    }
-
-    return url; // 기본 URL을 리턴
   },
   pages: {
     signIn: "/signin",

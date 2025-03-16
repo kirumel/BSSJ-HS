@@ -39,7 +39,10 @@ export default function SignIn({
 
   // 소셜 로그인 핸들러
   const handleSocialLogin = (provider: string) => {
-    signIn(provider, { redirect: true }); // 소셜 로그인에 제공자 이름 사용
+    signIn(provider, {
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return (

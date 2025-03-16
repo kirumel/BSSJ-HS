@@ -61,7 +61,7 @@ export default function Meals(props: any) {
 
   return (
     <div className="home-layout">
-      <div className="main-container">
+      <div className="main-container etc-container" style={{ margin: "1rem" }}>
         <div className="subject-title">
           <div>
             <h2 style={{ margin: "2px" }}>{props.name}님의</h2>
@@ -71,10 +71,7 @@ export default function Meals(props: any) {
             초기화
           </button>
         </div>
-        <div
-          style={{ marginTop: "30px" }}
-          className="subject-row etc-container"
-        >
+        <div style={{ marginTop: "30px" }} className="subject-row ">
           {schedules.map((schedule, dayIndex) => (
             <div key={dayIndex} className="subject">
               <div className="slot1">{day[dayIndex]}</div>

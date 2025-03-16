@@ -26,7 +26,7 @@ export default function Home() {
         const { acceleration } = event;
 
         // 가속도 값이 일정 기준 이상이면 폰이 흔들린 것으로 판단
-        if (acceleration.x > 10 || acceleration.y > 10 || acceleration.z > 10) {
+        if (acceleration.x > 20 || acceleration.y > 20 || acceleration.z > 20) {
           setIsShaken(false);
         }
       };
@@ -45,7 +45,7 @@ export default function Home() {
         const { acceleration } = event;
 
         // 가속도 값이 일정 기준 이상이면 폰이 흔들린 것으로 판단
-        if (acceleration.x > 10 || acceleration.y > 10 || acceleration.z > 10) {
+        if (acceleration.x > 20 || acceleration.y > 20 || acceleration.z > 20) {
           setIsShaken(true);
         }
       };
@@ -64,7 +64,7 @@ export default function Home() {
 
   return (
     <>
-      {isShaken && <NATnewCode />}
+      {isShaken && <NATnewCode setIsShaken={setIsShaken} />}
       <div className="nav-home">
         <Link href="/">
           <Logo />
@@ -94,6 +94,28 @@ export default function Home() {
           <div className="scroll-containercenter">
             <div className="scroll-container">
               <div className="scroll-list">
+                <div
+                  className="box"
+                  style={{ backgroundColor: "rgb(138, 156, 255)" }}
+                >
+                  <button
+                    style={{
+                      color: "white",
+                      border: "none",
+                      background: "none",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                      textAlign: "center",
+                      padding: "0px",
+                    }}
+                    onClick={() => setIsShaken(true)}
+                  >
+                    출석
+                    <br />
+                    QR
+                  </button>
+                </div>
                 {maintaps.map((tab, index) => (
                   <a
                     href={tab.route}

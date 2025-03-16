@@ -46,6 +46,7 @@
     "next.js": "^1.0.3",
     "nodemailer": "^6.9.13",
     "prisma": "^5.17.0",
+    "qr-scanner": "^1.4.2",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-async": "^10.0.1",

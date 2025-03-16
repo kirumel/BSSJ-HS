@@ -102,7 +102,7 @@ export default function PlusStudentModal(props: any) {
           backgroundColor: "white",
           padding: "20px",
           borderRadius: "10px 10px 0 0",
-          height: "38vh",
+          height: "80vh",
           touchAction: "none",
         }}
       >
@@ -121,7 +121,7 @@ export default function PlusStudentModal(props: any) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              height: "32vh",
+              height: "50vh",
             }}
           >
             <div
@@ -139,8 +139,8 @@ export default function PlusStudentModal(props: any) {
                 options={options}
                 style={{
                   margin: 0,
-                  width: "23vh",
-                  height: "23vh",
+                  width: "33vh",
+                  height: "33vh",
                 }}
               />
             </div>

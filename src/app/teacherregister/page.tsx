@@ -77,10 +77,8 @@ export default function Write() {
     <div className="dish-display">
       {showModal && (
         <SuccessModal
-          props={{
-            name: "성공!",
-            content: "5초 후 메인화면으로 이동합니다",
-          }}
+          name={"성공!"}
+          content={"5초 후 메인화면으로 이동합니다"}
         />
       )}
 

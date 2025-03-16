@@ -8,6 +8,8 @@ import "./style.css";
 import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 import GenerateModal from "./generaterModal/page";
+import GenerateModal2 from "./generaterModal2/page";
+import GenerateModal3 from "./generaterModal3/page";
 
 interface Attendance {
   secondNumber: string;
@@ -27,7 +29,6 @@ interface Attendance {
 }
 
 const todayDate = new Date();
-const today = new Date();
 const formattedDate = todayDate.toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "2-digit",
@@ -48,8 +49,10 @@ export default function Page() {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [sortState, setSortstate] = useState(true);
   const [filteredStudents, setFilteredStudents] = useState<Attendance[]>([]);
-  const [modal1, setmodal1] = useState(true);
+  const [modal1, setmodal1] = useState(false);
   const [modal2, setmodal2] = useState(false);
+  const [modal3, setmodal3] = useState(false);
+  const [passN, setPassN] = useState(false);
 
   // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
@@ -99,42 +102,113 @@ export default function Page() {
 
   const handlePatch = async () => {
     try {
+      const todayDate1 = new Date();
+      todayDate1.setDate(todayDate1.getDate() - 1);
+      const formattedDate1 = todayDate1.toLocaleDateString("ko-KR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
       setmodal1(true);
       const generateY = await axios
-        .post("/api/post/nightAT/generateY")
-        .then((response) => response.data.json());
-      if (generateY.status === 203) {
-        setmodal1(false);
-        alert("어제 만들어지지 않은 출석부가 없습니다");
-      } else if (generateY.status === 200) {
-        alert("어제 만들어지지 않은 출석부가 존재합니다");
-        setmodal1(false);
-        setmodal2(true);
-      }
+        .get("/api/post/nightAT/generateY", {
+          params: { grade: 3, date: formattedDate1 },
+        }) // params로 전달
+        .then(async (response) => {
+          const responseBody = response; // declare a new variable and assign response to it
+          setTimeout(async () => {
+            if (responseBody.status === 203) {
+              setmodal1(false);
+              setPassN(true);
+              setTimeout(async () => {
+                setPassN(false);
+                setmodal2(false);
+                setmodal3(true);
+                const response3 = await axios
+                  .post(
+                    "/api/post/nightAT/fetchTime2",
+                    { firstcommitstudent },
+                    {
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  )
+                  .then((response) => {
+                    if (response.status === 200) {
+                      setSuccessModalTimer();
+                    }
+                  });
+              }, 2000);
+            } else if (responseBody.status === 200) {
+              setmodal1(false);
+              setmodal2(true);
 
-      const response = await axios.post(
-        "/api/post/nightAT/fetchTime2",
-        { firstcommitstudent },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.status === 200) {
-        setIsLoading(false);
-        setSuccessModalTimer();
-      }
+              const payload = {
+                date: formattedDate1,
+                grade: Number(3),
+              };
+              const pdfResponse = await axios.post("/api/post/nightAT/PDF", {
+                payload,
+              });
+              if (pdfResponse.status !== 200) {
+                alert("PDF 파일 생성 실패");
+                return;
+              }
+
+              const xlsxResponse = await axios.post("/api/post/nightAT/xlsx", {
+                payload,
+              });
+              if (xlsxResponse.status !== 200) {
+                alert("엑셀 파일 생성 실패");
+                return;
+              }
+
+              const backupResponse = await axios.post(
+                "/api/post/nightAT/sevenDaysBackup",
+                { payload }
+              );
+              if (backupResponse.status !== 200) {
+                alert("백업 파일 생성 실패");
+                return;
+              }
+              setTimeout(async () => {
+                setPassN(false);
+                setmodal2(false);
+                setmodal3(true);
+                const response3 = await axios
+                  .post(
+                    "/api/post/nightAT/fetchTime2",
+                    { firstcommitstudent },
+                    {
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  )
+                  .then((response) => {
+                    setmodal3(false);
+                    if (response.status === 200) {
+                      setSuccessModalTimer();
+                    }
+                  });
+              }, 2000);
+            }
+          }, 2000);
+        });
     } catch (error) {
       console.log(error);
     }
   };
 
   const setSuccessModalTimer = () => {
-    setSuccessModal(true);
+    setTimeout(() => {
+      setmodal3(false);
+      setSuccessModal(true);
+    }, 3000);
     setTimeout(() => {
       setSuccessModal(false);
-    }, 2500);
+    }, 10000);
   };
 
   const handleStateChange = (newState: any) => {
@@ -213,7 +287,7 @@ export default function Page() {
     if (mostCommonError) {
       const errorMessage =
         maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
-      return { error: errorMessage, disabled: true };
+      return { error: errorMessage, disabled: false };
     }
     return { error: "", disabled: false };
   }, [firstcommitstudent]);
@@ -311,7 +385,27 @@ export default function Page() {
             content={"잠시만 기다려주세요"}
           />
         )}
-        {successModal && <SuccessModal props={successModal} />}
+        {modal2 && (
+          <GenerateModal2
+            name={"미생성 파일을 찾았습니다!"}
+            content={"어제의 출석부를 생성중입니다"}
+          />
+        )}
+        {modal3 && (
+          <GenerateModal2
+            name={"출석을 저장중입니다"}
+            content={"잠시만 기다려주세요"}
+          />
+        )}
+        {passN && (
+          <GenerateModal
+            name={"이미 파일이 생성되었거나"}
+            content={"어제의 출석이 완료되지 않았습니다"}
+          />
+        )}
+        {successModal && (
+          <SuccessModal name={"완료!"} content={"출석이 완료되었습니다"} />
+        )}
         <div className="attendance-top-container-display">
           <div className="attendance-top-in1">
             <p>총 인원: {attendance.length}</p>

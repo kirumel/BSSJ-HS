@@ -28,7 +28,7 @@ export default async function handler(
       }
 
       // 이메일 중복 체크
-      const existingUser = await prisma.sJHSUser.findUnique({
+      const existingUser = await prisma.user.findUnique({
         where: { email: email as string },
       });
 
@@ -40,7 +40,7 @@ export default async function handler(
       const clss = unverifiedUser.class;
 
       // SJHSUser 생성
-      const newSJHSUser = await prisma.sJHSUser.create({
+      const newSJHSUser = await prisma.user.create({
         data: {
           email: email as string,
           password,
