@@ -206,7 +206,7 @@ export default function Page() {
 
         <div className="admin-mainBottom">
           <div className="display-flex" style={{ alignItems: "flex-start" }}>
-            <p className="admin-title">8교시 출석 / 개발중입니다</p>
+            <p className="admin-title">8교시 출석 / beta 1.0</p>
             <div className="admin-AT">
               {["1", "2", "3"].map((data, i) => (
                 <div className="admin-AT-container" key={i}>
@@ -352,6 +352,12 @@ export default function Page() {
               <button className="event-box-button" style={{ color: "black" }}>
                 설명서 <br />
                 pdf
+              </button>
+            </Link>
+            <Link href="delFile">
+              <button className="event-box-button" style={{ color: "black" }}>
+                출석 <br />
+                취소
               </button>
             </Link>
           </div>

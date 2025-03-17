@@ -256,10 +256,8 @@ export default function Page() {
           <div>
             {successModal && (
               <SuccessModal
-                props={{
-                  name: "성공!",
-                  content: "1차 출석이 저장되었어요",
-                }}
+                name={"성공!"}
+                content={"1차 출석이 저장되었어요"}
               />
             )}
           </div>

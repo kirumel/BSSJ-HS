@@ -74,7 +74,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          // 반과 학생번호 순으로 정렬: 먼저 반 기준, 같은 반이면 학생번호 기준
+          // Sort by class and then student number
           const sortedData = data.sort((a, b) => {
             const classA = parseInt(a.class as unknown as string);
             const classB = parseInt(b.class as unknown as string);
@@ -84,19 +84,23 @@ export default function Page() {
             return parseInt(a.studentnumber) - parseInt(b.studentnumber);
           });
 
+          // Filter for 3rd grade students
           const sortedData3 = sortedData.filter(
             (student) => student.grade === 3
           );
 
+          // Separate present and absent students
           const presentStudents = sortedData3.filter(
             (student) => student.check !== "0"
           );
           const absentStudents = sortedData3.filter(
             (student) => student.check === "0"
           );
+
+          // Concatenate present and absent students
           const finalSortedData = [...presentStudents, ...absentStudents];
 
-          // 오늘 날짜로 formattedDate 설정
+          // Get today's date in the format "yyyy-MM-dd"
           const todayDate = new Date();
           const formattedDate = todayDate.toLocaleDateString("ko-KR", {
             year: "numeric",
@@ -104,21 +108,36 @@ export default function Page() {
             day: "2-digit",
           });
 
-          // updatedAt과 비교 후 check, comment 수정된 데이터
+          // Map through the final data and update `check` and `comment`
           const updatedFinalData = finalSortedData.map((student) => {
             const isUpdatedToday = student.updatedAt === formattedDate;
 
+            // Reset check and comment if not updated today
             return {
               ...student,
-              check: isUpdatedToday ? student.check : "", // 오늘 날짜가 아니면 초기화
-              comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
+              check: isUpdatedToday ? student.check : "",
+              comment: isUpdatedToday ? student.comment : "",
             };
           });
 
-          // setAttendance로 수정된 데이터 반영
-          setAttendance(updatedFinalData);
+          // Now, separate out students with check === "2" and place them at the bottom
+          const studentsWithCheck2 = updatedFinalData.filter(
+            (student) => student.check === "2"
+          );
+          const studentsWithoutCheck2 = updatedFinalData.filter(
+            (student) => student.check !== "2"
+          );
 
-          // firstCommitStudent 데이터 초기화
+          // Combine the students, ensuring that check "2" students come last
+          const finalAttendanceData = [
+            ...studentsWithoutCheck2,
+            ...studentsWithCheck2,
+          ];
+
+          // Update the state with the final attendance data
+          setAttendance(finalAttendanceData);
+
+          // Initialize firstCommitStudent data
           const initialFirstCommitStudent = updatedFinalData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
@@ -132,6 +151,8 @@ export default function Page() {
             createdAt: student.createdAt,
             secondNumber: student.secondNumber,
           }));
+
+          // Update firstCommitStudent state
           setFirstCommitStudent(initialFirstCommitStudent);
         } else {
           console.error(data);
@@ -289,7 +310,14 @@ export default function Page() {
 
   return (
     <div className="right-left-margin">
-      <div>{successModal ? <SuccessModal props={successModal} /> : null}</div>
+      <div>
+        {successModal ? (
+          <SuccessModal
+            name={"성공"}
+            content={"출석부 저장이 완료되었습니다"}
+          />
+        ) : null}
+      </div>
       <div className="attendance-top-container-display">
         <div className="attendance-top-in1">
           <p>총 인원: {attendance.length}</p>
