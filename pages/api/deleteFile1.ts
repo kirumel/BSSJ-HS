@@ -25,6 +25,13 @@ export default async function handler(req, res) {
       },
     });
 
+    const nightAtSupervisor = await prisma.nightAtSupervisor.deleteMany({
+      where: {
+        createdAt: formattedDate,
+        grade: parseInt(grade, 10),
+      },
+    });
+
     const delete1 = await prisma.nightCompareAT2.deleteMany({
       where: {
         createdAt: formattedDate,
@@ -35,6 +42,7 @@ export default async function handler(req, res) {
         createdAt: formattedDate,
       },
     });
+
     console.log(delete2);
 
     res.status(200).send("선택된 학생들 복사 완료");

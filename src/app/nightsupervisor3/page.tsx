@@ -53,6 +53,9 @@ export default function Page() {
   const [modal2, setmodal2] = useState(false);
   const [modal3, setmodal3] = useState(false);
   const [passN, setPassN] = useState(false);
+  const [time, settime] = useState(false);
+
+  const [timeY, settimeY] = useState(false);
 
   // 선택된 반에 따라 필터링
   const getFilteredStudents = () => {
@@ -109,93 +112,108 @@ export default function Page() {
         month: "2-digit",
         day: "2-digit",
       });
-      setmodal1(true);
-      const generateY = await axios
-        .get("/api/post/nightAT/generateY", {
-          params: { grade: 3, date: formattedDate1 },
-        }) // params로 전달
-        .then(async (response) => {
-          const responseBody = response; // declare a new variable and assign response to it
-          setTimeout(async () => {
-            if (responseBody.status === 203) {
-              setmodal1(false);
-              setPassN(true);
+      const findTime = [firstcommitstudent.find((a) => a.outTimeAT)];
+      if (findTime.length !== 0 && timeY == false) {
+        settime(true);
+      } else {
+        if (timeY == true) {
+          setmodal1(true);
+          const generateY = await axios
+            .get("/api/post/nightAT/generateY", {
+              params: { grade: 3, date: formattedDate1 },
+            }) // params로 전달
+            .then(async (response) => {
+              const responseBody = response;
               setTimeout(async () => {
-                setPassN(false);
-                setmodal2(false);
-                setmodal3(true);
-                const response3 = await axios
-                  .post(
-                    "/api/post/nightAT/fetchTime2",
-                    { firstcommitstudent },
+                if (responseBody.status === 203) {
+                  setmodal1(false);
+                  setPassN(true);
+                  setTimeout(async () => {
+                    setPassN(false);
+                    setmodal2(false);
+                    setmodal3(true);
+                    const response3 = await axios
+                      .post(
+                        "/api/post/nightAT/fetchTime2",
+                        { firstcommitstudent },
+                        {
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      )
+                      .then((response) => {
+                        if (response.status === 200) {
+                          setSuccessModalTimer();
+                        }
+                      });
+                  }, 2000);
+                } else if (responseBody.status === 200) {
+                  setmodal1(false);
+                  setmodal2(true);
+
+                  const payload = {
+                    date: formattedDate1,
+                    grade: Number(3),
+                  };
+                  const pdfResponse = await axios.post(
+                    "/api/post/nightAT/PDF",
                     {
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
+                      payload,
                     }
-                  )
-                  .then((response) => {
-                    if (response.status === 200) {
-                      setSuccessModalTimer();
-                    }
-                  });
-              }, 2000);
-            } else if (responseBody.status === 200) {
-              setmodal1(false);
-              setmodal2(true);
+                  );
+                  if (pdfResponse.status !== 200) {
+                    alert("PDF 파일 생성 실패");
+                    return;
+                  }
 
-              const payload = {
-                date: formattedDate1,
-                grade: Number(3),
-              };
-              const pdfResponse = await axios.post("/api/post/nightAT/PDF", {
-                payload,
-              });
-              if (pdfResponse.status !== 200) {
-                alert("PDF 파일 생성 실패");
-                return;
-              }
-
-              const xlsxResponse = await axios.post("/api/post/nightAT/xlsx", {
-                payload,
-              });
-              if (xlsxResponse.status !== 200) {
-                alert("엑셀 파일 생성 실패");
-                return;
-              }
-
-              const backupResponse = await axios.post(
-                "/api/post/nightAT/sevenDaysBackup",
-                { payload }
-              );
-              if (backupResponse.status !== 200) {
-                alert("백업 파일 생성 실패");
-                return;
-              }
-              setTimeout(async () => {
-                setPassN(false);
-                setmodal2(false);
-                setmodal3(true);
-                const response3 = await axios
-                  .post(
-                    "/api/post/nightAT/fetchTime2",
-                    { firstcommitstudent },
+                  const xlsxResponse = await axios.post(
+                    "/api/post/nightAT/xlsx",
                     {
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
+                      payload,
                     }
-                  )
-                  .then((response) => {
-                    setmodal3(false);
-                    if (response.status === 200) {
-                      setSuccessModalTimer();
-                    }
-                  });
+                  );
+                  if (xlsxResponse.status !== 200) {
+                    alert("엑셀 파일 생성 실패");
+                    return;
+                  }
+
+                  const backupResponse = await axios.post(
+                    "/api/post/nightAT/sevenDaysBackup",
+                    { payload }
+                  );
+                  if (backupResponse.status !== 200) {
+                    alert("백업 파일 생성 실패");
+                    return;
+                  }
+                  setTimeout(async () => {
+                    setPassN(false);
+                    setmodal2(false);
+                    setmodal3(true);
+                    const response3 = await axios
+                      .post(
+                        "/api/post/nightAT/fetchTime2",
+                        { firstcommitstudent },
+                        {
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      )
+                      .then((response) => {
+                        setmodal3(false);
+                        if (response.status === 200) {
+                          setSuccessModalTimer();
+                        }
+                      });
+                  }, 2000);
+                }
               }, 2000);
-            }
-          }, 2000);
-        });
+            });
+        } else {
+          null;
+        }
+      }
     } catch (error) {
       console.log(error);
     }
@@ -412,6 +430,13 @@ export default function Page() {
             content={"어제의 출석이 완료되지 않았습니다"}
           />
         )}
+        {time && (
+          <GenerateModal
+            name={"이런! 초기와 1,2차 모두"}
+            content={"퇴장시간이 기록되지 않았습니다"}
+          />
+        )}
+
         {successModal && (
           <SuccessModal name={"완료!"} content={"출석이 완료되었습니다"} />
         )}
