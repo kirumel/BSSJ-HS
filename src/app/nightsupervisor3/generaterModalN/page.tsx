@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Lottie from "react-lottie";
 import { useSpring, animated } from "react-spring";
 import { useDrag } from "@use-gesture/react";
-import animationData from "./find.json";
+import animationData from "./N.json";
 import "./style.css";
 
 interface Attendance {
@@ -17,12 +17,20 @@ interface Attendance {
   studentnumber: string;
 }
 
-export default function PlusStudentModal(props: any) {
+interface PlusStudentModalProps {
+  name?: string;
+  content?: string;
+  setTimeY: (value: boolean) => void;
+}
+
+export default function PlusStudentModal({
+  name,
+  content,
+  setTimeY,
+}: PlusStudentModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dragY, setDragY] = useState(0);
-
-  const { name, content } = props; // 구조 분해 할당으로 props 사용
 
   const options = {
     animationData: animationData,
@@ -138,11 +146,29 @@ export default function PlusStudentModal(props: any) {
               <Lottie
                 options={options}
                 style={{
-                  margin: 0,
-                  width: "33vh",
-                  height: "33vh",
+                  margin: 33,
+                  width: "20vh",
+                  height: "20vh",
                 }}
               />
+              <div className="success-content subtitle">
+                넘어가기를 누르시면 9:00으로 기록됩니다
+              </div>
+              <div
+                className="ok-button-div"
+                style={{ boxSizing: "border-box", gap: "10px" }}
+              >
+                <button
+                  className="ok-button"
+                  onClick={() => setTimeY(false)}
+                  style={{ backgroundColor: "gray" }}
+                >
+                  취소
+                </button>
+                <button onClick={() => setTimeY(true)} className="ok-button">
+                  넘어가기
+                </button>
+              </div>
             </div>
           </div>
         </div>

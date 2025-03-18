@@ -200,13 +200,13 @@ export default function Page() {
           <Link href="/cafe/boardSetting">
             <button style={{ width: "100%" }}>게시판 관리</button>
           </Link>
-          <button>이벤트 관리</button>
+          {/* <button>이벤트 관리</button> */}
         </div>
         <div className="line" style={{ marginTop: "10px" }}></div>
 
         <div className="admin-mainBottom">
           <div className="display-flex" style={{ alignItems: "flex-start" }}>
-            <p className="admin-title">8교시 출석 / beta 1.0</p>
+            <p className="admin-title">8교시 출석 / 이용가능</p>
             <div className="admin-AT">
               {["1", "2", "3"].map((data, i) => (
                 <div className="admin-AT-container" key={i}>
@@ -338,27 +338,67 @@ export default function Page() {
               </button>
             </Link>
           </div>
-
+          <div className="admin-AT">
+            {["1", "2", "3"].map((data, i) => (
+              <div className="admin-AT-container" key={i}>
+                <div
+                  className="admin-AT-circle"
+                  style={{
+                    backgroundColor:
+                      takeNATstatus.find((item) => item.grade === data) !==
+                      undefined
+                        ? "green"
+                        : "red",
+                  }}
+                ></div>
+                <div
+                  className="admin-title"
+                  style={{
+                    paddingLeft: "5px",
+                    margin: "0px",
+                    fontSize: "11px",
+                  }}
+                >
+                  {parseInt(data)}학년 / {""}
+                  {takeNATstatus.find((item) => item.grade === data) !==
+                  undefined
+                    ? "생성"
+                    : "미생성"}
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="line"></div>
           <p className="admin-title">기타항목 / 개편중입니다</p>
           <div className="event-box-container">
             <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석부 <br />
-                다운
+                목록
               </button>
             </Link>
-            <Link href="attendanceDB">
+            {/* <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
                 설명서 <br />
                 pdf
               </button>
-            </Link>
+            </Link> */}
             <Link href="delFile">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석 <br />
                 취소 <br />
-                (2차)
+              </button>
+            </Link>
+            <Link href="https://www.altisto.me/">
+              <button className="event-box-button" style={{ color: "black" }}>
+                출석 <br />
+                현황 <br />
+              </button>
+            </Link>
+            <Link href="https://www.altisto.me/">
+              <button className="event-box-button" style={{ color: "black" }}>
+                WEB <br />
+                이동 <br />
               </button>
             </Link>
           </div>

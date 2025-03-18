@@ -119,15 +119,21 @@ export default function Page() {
   };
 
   const handleCheckboxChange = (
-    index: number,
+    id: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const newData = [...firstcommitstudent];
-    newData[index] = {
-      ...newData[index],
-      check: event.target.name === "n" ? "0" : "1",
-    };
-    setFirstCommitStudent(newData);
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id
+          ? {
+              ...student,
+              check: event.target.name === "n" ? "0" : "1",
+              // 출석(체크박스 이름이 "y")일 경우 comment를 빈 문자열로 설정
+              comment: event.target.name === "y" ? "" : student.comment,
+            }
+          : student
+      )
+    );
   };
   const handlePatch = () => {
     setIsLoading(true);

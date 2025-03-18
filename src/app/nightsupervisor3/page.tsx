@@ -9,7 +9,7 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 import GenerateModal from "./generaterModal/page";
 import GenerateModal2 from "./generaterModal2/page";
-import GenerateModal3 from "./generaterModal3/page";
+import GenerateModalN from "./generaterModalN/page";
 
 interface Attendance {
   secondNumber: string;
@@ -90,19 +90,38 @@ export default function Page() {
       )
     );
   };
-
   const handleCheckboxChange = (
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const checkValue = event.target.name === "n" ? "0" : "1";
     setFirstCommitStudent((prev) =>
       prev.map((student) =>
-        student.id === id ? { ...student, check: checkValue } : student
+        student.id === id
+          ? {
+              ...student,
+              check: event.target.name === "n" ? "0" : "1",
+              // 출석(체크박스 이름이 "y")일 경우 comment를 빈 문자열로 설정
+              comment: event.target.name === "y" ? "" : student.comment,
+            }
+          : student
       )
     );
   };
+  useEffect(() => {
+    if (timeY) {
+      handlePatch(); // timeY가 true일 때만 handlePatch 실행
+    }
+  }, [timeY]);
 
+  const handelTmodal = (state: boolean) => {
+    if (state === true) {
+      settime(false);
+      settimeY(true); // 상태 변경
+    } else {
+      settimeY(false);
+      settime(false);
+    }
+  };
   const handlePatch = async () => {
     try {
       const todayDate1 = new Date();
@@ -112,11 +131,11 @@ export default function Page() {
         month: "2-digit",
         day: "2-digit",
       });
-      const findTime = [firstcommitstudent.find((a) => a.outTimeAT)];
+      const findTime = firstcommitstudent.filter((a) => a.outTimeST === "");
       if (findTime.length !== 0 && timeY == false) {
         settime(true);
       } else {
-        if (timeY == true) {
+        if (timeY == true || findTime.length === 0) {
           setmodal1(true);
           const generateY = await axios
             .get("/api/post/nightAT/generateY", {
@@ -209,6 +228,8 @@ export default function Page() {
                   }, 2000);
                 }
               }, 2000);
+              settimeY(false);
+              settime(false);
             });
         } else {
           null;
@@ -273,27 +294,34 @@ export default function Page() {
     const errorCounts: { [msg: string]: number } = {};
     for (const student of firstcommitstudent) {
       let errorMessageForStudent: string | null = null;
+
       if (!["0", "1", "2"].includes(student.check)) {
         errorMessageForStudent = "출석 여부가 선택되지 않았습니다.";
       } else if (student.check === "1") {
+        // 출석인 경우: 출석 퇴장 시간이 없으면 에러 발생
         if (!student.outTimeST) {
           errorMessageForStudent = "출석 퇴장 시간이 입력되지 않았습니다.";
         }
       } else if (student.check === "0" || student.check === "2") {
-        if (!student.outTimeT && !student.comment) {
+        // 미출석인 경우: 코멘트가 없으면 에러 발생 (trim으로 공백만 있는 경우도 체크)
+        const commentEmpty = !student.comment || student.comment.trim() === "";
+        if (commentEmpty && !student.outTimeT) {
           errorMessageForStudent =
             "퇴장 시간이 입력되지 않았으며, 미출석 사유도 입력되지 않았습니다.";
+        } else if (commentEmpty) {
+          errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
         } else if (!student.outTimeST) {
           errorMessageForStudent = "퇴장 시간이 입력되지 않았습니다.";
-        } else if (!student.comment) {
-          errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
         }
       }
+
       if (errorMessageForStudent) {
         errorCounts[errorMessageForStudent] =
           (errorCounts[errorMessageForStudent] || 0) + 1;
       }
     }
+
+    // 가장 많이 발생한 오류 메시지 산출
     let mostCommonError = "";
     let maxCount = 0;
     for (const [msg, count] of Object.entries(errorCounts)) {
@@ -302,10 +330,17 @@ export default function Page() {
         mostCommonError = msg;
       }
     }
-    if (mostCommonError) {
-      const errorMessage =
-        maxCount > 1 ? `다수의 ${mostCommonError}` : mostCommonError;
-      return { error: errorMessage, disabled: false };
+    let errorMessage = mostCommonError;
+    if (maxCount > 1) {
+      errorMessage = `다수의 ${mostCommonError}`;
+    }
+
+    const disabled = Object.keys(errorCounts).some(
+      (msg) => msg.includes("출석 여부") || msg.includes("미출석 사유")
+    );
+
+    if (errorMessage) {
+      return { error: errorMessage, disabled };
     }
     return { error: "", disabled: false };
   }, [firstcommitstudent]);
@@ -431,9 +466,10 @@ export default function Page() {
           />
         )}
         {time && (
-          <GenerateModal
-            name={"이런! 초기와 1,2차 모두"}
+          <GenerateModalN
+            name={"이런! 1,2차 모두 "}
             content={"퇴장시간이 기록되지 않았습니다"}
+            setTimeY={handelTmodal}
           />
         )}
 
