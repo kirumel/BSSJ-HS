@@ -4,9 +4,16 @@ import axios from "axios";
 
 export default function Page() {
   function deleteFile1() {
-    axios.delete("/api/deleteFile1", {
+    axios.delete("/api/deleteFile", {
       params: {
         targetDB: "attendanceObjectDB3",
+      },
+    });
+  }
+  function deleteFile2() {
+    axios.delete("/api/deleteFile1", {
+      params: {
+        grade: 3,
       },
     });
   }
@@ -38,7 +45,14 @@ export default function Page() {
         >
           8교시 출석 취소
         </button>
-        <button className="ok-button">야자 출석 취소</button>
+        <button
+          onClick={() => {
+            deleteFile2();
+          }}
+          className="ok-button"
+        >
+          야자 출석 취소
+        </button>
       </div>
     </div>
   );

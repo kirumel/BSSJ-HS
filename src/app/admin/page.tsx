@@ -357,7 +357,8 @@ export default function Page() {
             <Link href="delFile">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석 <br />
-                취소
+                취소 <br />
+                (2차)
               </button>
             </Link>
           </div>

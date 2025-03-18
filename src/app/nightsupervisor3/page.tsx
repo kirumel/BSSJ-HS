@@ -308,10 +308,19 @@ export default function Page() {
           const sortedData1 = sortedData.filter(
             (student) => student.grade === 3
           );
-          const presentStudents = sortedData1.filter(
+          const updatedFinalData = sortedData1.map((student) => {
+            const isUpdatedToday = student.updatedAt === formattedDate;
+
+            return {
+              ...student,
+              check: isUpdatedToday ? student.check : "", // 오늘 날짜가 아니면 초기화
+              comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
+            };
+          });
+          const presentStudents = updatedFinalData.filter(
             (student) => student.check !== "0"
           );
-          const absentStudents = sortedData1.filter(
+          const absentStudents = updatedFinalData.filter(
             (student) => student.check === "0"
           );
           const finalSortedData = [...presentStudents, ...absentStudents];

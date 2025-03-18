@@ -74,7 +74,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          // Sort by class and then student number
+          // 반과 학생번호 순으로 정렬: 먼저 반 기준, 같은 반이면 학생번호 기준
           const sortedData = data.sort((a, b) => {
             const classA = parseInt(a.class as unknown as string);
             const classB = parseInt(b.class as unknown as string);
@@ -84,61 +84,40 @@ export default function Page() {
             return parseInt(a.studentnumber) - parseInt(b.studentnumber);
           });
 
-          // Filter for 3rd grade students
           const sortedData3 = sortedData.filter(
             (student) => student.grade === 3
           );
 
-          // Separate present and absent students
-          const presentStudents = sortedData3.filter(
-            (student) => student.check !== "0"
-          );
-          const absentStudents = sortedData3.filter(
-            (student) => student.check === "0"
-          );
-
-          // Concatenate present and absent students
-          const finalSortedData = [...presentStudents, ...absentStudents];
-
-          // Get today's date in the format "yyyy-MM-dd"
+          // 오늘 날짜로 formattedDate 설정
           const todayDate = new Date();
           const formattedDate = todayDate.toLocaleDateString("ko-KR", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
           });
-
-          // Map through the final data and update `check` and `comment`
-          const updatedFinalData = finalSortedData.map((student) => {
+          // updatedAt과 비교 후 check, comment 수정된 데이터
+          const updatedFinalData = sortedData3.map((student) => {
             const isUpdatedToday = student.updatedAt === formattedDate;
 
-            // Reset check and comment if not updated today
             return {
               ...student,
-              check: isUpdatedToday ? student.check : "",
-              comment: isUpdatedToday ? student.comment : "",
+              check: isUpdatedToday ? student.check : "", // 오늘 날짜가 아니면 초기화
+              comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
             };
           });
-
-          // Now, separate out students with check === "2" and place them at the bottom
-          const studentsWithCheck2 = updatedFinalData.filter(
-            (student) => student.check === "2"
+          const presentStudents = updatedFinalData.filter(
+            (student) => student.check !== "0"
           );
-          const studentsWithoutCheck2 = updatedFinalData.filter(
-            (student) => student.check !== "2"
+          const absentStudents = updatedFinalData.filter(
+            (student) => student.check === "0"
           );
+          const finalSortedData = [...presentStudents, ...absentStudents];
 
-          // Combine the students, ensuring that check "2" students come last
-          const finalAttendanceData = [
-            ...studentsWithoutCheck2,
-            ...studentsWithCheck2,
-          ];
+          // setAttendance로 수정된 데이터 반영
+          setAttendance(finalSortedData);
 
-          // Update the state with the final attendance data
-          setAttendance(finalAttendanceData);
-
-          // Initialize firstCommitStudent data
-          const initialFirstCommitStudent = updatedFinalData.map((student) => ({
+          // firstCommitStudent 데이터 초기화
+          const initialFirstCommitStudent = finalSortedData.map((student) => ({
             id: student.id,
             updatedAt: formattedDate,
             name: student.name,
@@ -151,8 +130,6 @@ export default function Page() {
             createdAt: student.createdAt,
             secondNumber: student.secondNumber,
           }));
-
-          // Update firstCommitStudent state
           setFirstCommitStudent(initialFirstCommitStudent);
         } else {
           console.error(data);
@@ -164,7 +141,6 @@ export default function Page() {
         setIsLoading(false);
       });
   }, [session]);
-
   const handleCommitChange = (id: string, field: string, value: string) => {
     setFirstCommitStudent((prev) =>
       prev.map((student) =>

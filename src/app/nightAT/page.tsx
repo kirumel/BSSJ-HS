@@ -126,6 +126,7 @@ export default function FourDigitCodeInput() {
             alignItems: "center",
             marginTop: "30px",
             width: "15vw",
+            minWidth: "100px",
             height: "50px",
             borderRadius: "1rem",
             marginBottom: "20px",
