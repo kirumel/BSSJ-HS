@@ -26,13 +26,13 @@ interface Attendance {
 }
 
 export default function Page() {
-  //학생추가 모달창 스테이트
+  // 학생추가 모달창 스테이트
   const [modalOpen, setModalOpen] = useState(false);
 
-  //학생 리스트 저장 스테이트
+  // 학생 리스트 저장 스테이트
   const [attendance, setAttendance] = useState<Attendance[]>([]);
 
-  //로딩 부분
+  // 로딩 부분
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [firstcommitstudent, setFirstCommitStudent] = useState<
@@ -49,14 +49,14 @@ export default function Page() {
 
   const [successModal, setSuccessModal] = useState(false);
 
-  //처음 로딩
+  // 처음 로딩
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/nightAT/nightAT")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          // 숫자정렬
+          // 학생 번호 기준 숫자 정렬
           const sortedData = data.sort(
             (a, b) => parseInt(a.studentnumber) - parseInt(b.studentnumber)
           );
@@ -70,8 +70,8 @@ export default function Page() {
           const today = new Date();
           const isToday = todayDate.toDateString() === today.toDateString();
 
-          //날자 보기좋게
-          let formattedDate: string;
+          // 날짜 보기 좋게
+          let formattedDate: string = "";
           if (isToday) {
             formattedDate = todayDate.toLocaleDateString("ko-KR", {
               year: "numeric",
@@ -106,18 +106,26 @@ export default function Page() {
       });
   }, [session]);
 
-  const handleCommitChange = (index: number, field: string, value: string) => {
-    const newData = [...firstcommitstudent];
-    newData[index] = { ...newData[index], [field]: value };
-    setFirstCommitStudent(newData);
+  // id를 기반으로 comment를 업데이트
+  const handleCommitChange = (id: string, field: string, value: string) => {
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, [field]: value } : student
+      )
+    );
   };
-  const handleTimeChange = (index: number, field: string, value: string) => {
-    const newData = [...firstcommitstudent];
-    newData[index] = { ...newData[index], [field]: value };
-    setFirstCommitStudent(newData);
+
+  // id를 기반으로 시간 값을 업데이트
+  const handleTimeChange = (id: string, field: string, value: string) => {
+    setFirstCommitStudent((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, [field]: value } : student
+      )
+    );
     console.log(firstcommitstudent);
   };
 
+  // id를 기반으로 체크박스 상태 업데이트
   const handleCheckboxChange = (
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
@@ -128,13 +136,14 @@ export default function Page() {
           ? {
               ...student,
               check: event.target.name === "n" ? "0" : "1",
-              // 출석(체크박스 이름이 "y")일 경우 comment를 빈 문자열로 설정
+              // 출석(체크박스 이름이 "y")인 경우 comment를 빈 문자열로 설정
               comment: event.target.name === "y" ? "" : student.comment,
             }
           : student
       )
     );
   };
+
   const handlePatch = () => {
     setIsLoading(true);
     axios
@@ -171,6 +180,7 @@ export default function Page() {
       setSuccessModal(false);
     }, 2500);
   };
+
   const handleStateChange = (newState: any) => {
     setFirstCommitStudent((prevState) =>
       prevState.map((student) => {
@@ -199,10 +209,11 @@ export default function Page() {
       })
     );
   };
+
   const validation = useMemo(() => {
     const errorCounts: { [msg: string]: number } = {};
 
-    // 각 학생마다 한 가지 오류만 기록합니다.
+    // 각 학생마다 한 가지 오류만 기록
     for (const student of firstcommitstudent) {
       let errorMessageForStudent: string | null = null;
       if (!["0", "1", "2"].includes(student.check)) {
@@ -228,7 +239,7 @@ export default function Page() {
       }
     }
 
-    // 전체 학생 중 가장 많이 발생한 오류 메시지를 선택
+    // 전체 학생 중 가장 많이 발생한 오류 메시지 선택
     let mostCommonError = "";
     let maxCount = 0;
     for (const [msg, count] of Object.entries(errorCounts)) {
@@ -329,111 +340,124 @@ export default function Page() {
             </p>
           )}
           <div className="attendance-container">
-            {attendance.map((data, i) => (
-              <div
-                style={{
-                  backgroundColor: `${
-                    firstcommitstudent[i]?.check === "0"
-                      ? "#FFE8E8"
-                      : firstcommitstudent[i]?.check === "1"
-                      ? "#E8E8FF"
-                      : "white"
-                  }`,
-                }}
-                className="attendance-student"
-                key={i}
-              >
+            {attendance.map((data) => {
+              // attendance의 id를 이용해 firstcommitstudent에서 해당 학생을 찾습니다.
+              const student = firstcommitstudent.find((s) => s.id === data.id);
+              return (
                 <div
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: `${
-                      firstcommitstudent[i]?.check == "0" ? "normal" : "center"
+                    backgroundColor: `${
+                      student?.check === "0"
+                        ? "#FFE8E8"
+                        : student?.check === "1"
+                        ? "#E8E8FF"
+                        : "white"
                     }`,
                   }}
+                  className="attendance-student"
+                  key={data.id}
                 >
-                  <div className="attendance-student-title-display">
-                    <div className="attendance-student-title">
-                      <p className="attendance-student-name">{data.name}</p>
-                      <p className="attendance-student-gradeandclass">
-                        {data.grade}학년 {data.class}반
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: student?.check === "0" ? "normal" : "center",
+                    }}
+                  >
+                    <div className="attendance-student-title-display">
+                      <div className="attendance-student-title">
+                        <p className="attendance-student-name">{data.name}</p>
+                        <p className="attendance-student-gradeandclass">
+                          {data.grade}학년 {data.class}반
+                        </p>
+                      </div>
+                      <p className="attendance-student-number">
+                        {data.studentnumber}번
                       </p>
                     </div>
-                    <p className="attendance-student-number">
-                      {data.studentnumber}번
-                    </p>
-                  </div>
-                  <div>
-                    {firstcommitstudent[i]?.check === "0" ? (
-                      <div
-                        style={{ marginBottom: "20px" }}
-                        className="attendance-student-nocheck-comment"
-                      >
-                        <p style={{ marginBottom: "5px" }} className="subtitle">
-                          미출석 사유
-                        </p>
-                        <input
-                          type="text"
-                          className="text-input"
+                    <div>
+                      {student?.check === "0" ? (
+                        <div
+                          style={{ marginBottom: "20px" }}
+                          className="attendance-student-nocheck-comment"
+                        >
+                          <p
+                            style={{ marginBottom: "5px" }}
+                            className="subtitle"
+                          >
+                            미출석 사유
+                          </p>
+                          <input
+                            type="text"
+                            className="text-input"
+                            style={{
+                              padding: "5px",
+                              paddingRight: "10px",
+                              paddingLeft: "10px",
+                              boxSizing: "border-box",
+                              fontSize: "11px",
+                            }}
+                            value={student?.comment || ""}
+                            onChange={(e) =>
+                              handleCommitChange(
+                                data.id,
+                                "comment",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      ) : null}
+                      {student?.check === "1" ? (
+                        <p
                           style={{
-                            padding: "5px",
-                            paddingRight: "10px",
-                            paddingLeft: "10px",
-                            boxSizing: "border-box",
-                            fontSize: "11px",
+                            marginBottom: "5px",
+                            textAlign: "right",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            color: "#8176FE",
                           }}
-                          value={firstcommitstudent[i]?.comment || ""}
-                          onChange={(e) =>
-                            handleCommitChange(i, "comment", e.target.value)
-                          }
-                        />
-                      </div>
-                    ) : null}
-                    {firstcommitstudent[i]?.check === "1" ? (
-                      <p
-                        style={{
-                          marginBottom: "5px",
-                          textAlign: "right",
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                          color: "#8176FE",
-                        }}
-                      >
-                        출석
-                      </p>
-                    ) : null}
+                        >
+                          출석
+                        </p>
+                      ) : null}
 
-                    <div style={{ display: "flex", justifyContent: "right" }}>
-                      <div style={{ marginRight: "20px" }}>
+                      <div style={{ display: "flex", justifyContent: "right" }}>
+                        <div style={{ marginRight: "20px" }}>
+                          <input
+                            className="time-input"
+                            type="time"
+                            value={student?.outTimeT || ""}
+                            onChange={(e) =>
+                              handleTimeChange(
+                                data.id,
+                                "outTimeT",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+
                         <input
-                          className="time-input"
-                          type="time"
-                          value={firstcommitstudent[i]?.outTimeT || ""}
-                          onChange={(e) =>
-                            handleTimeChange(i, "outTimeT", e.target.value)
-                          }
+                          type="checkbox"
+                          className="no-check"
+                          name="n"
+                          checked={student?.check === "0"}
+                          onChange={(e) => handleCheckboxChange(data.id, e)}
+                        />
+                        <input
+                          type="checkbox"
+                          className="yes-check"
+                          name="y"
+                          checked={student?.check === "1"}
+                          onChange={(e) => handleCheckboxChange(data.id, e)}
                         />
                       </div>
-
-                      <input
-                        type="checkbox"
-                        className="no-check"
-                        name="n"
-                        checked={firstcommitstudent[i]?.check === "0"}
-                        onChange={(e) => handleCheckboxChange(i, e)}
-                      />
-                      <input
-                        type="checkbox"
-                        className="yes-check"
-                        name="y"
-                        checked={firstcommitstudent[i]?.check === "1"}
-                        onChange={(e) => handleCheckboxChange(i, e)}
-                      />
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {modalOpen ? (

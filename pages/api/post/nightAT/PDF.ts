@@ -89,7 +89,7 @@ export default async function handler(req: any, res: any) {
         student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
-        student.outTimeST ? student.outTimeST : "등록되지 않았습니다",
+        student.outTimeST ? student.outTimeST : "21:00",
         student.outTime ? student.outTime : "등록되지 않았습니다",
       ];
       세로.push(studentsData);

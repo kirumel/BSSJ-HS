@@ -178,15 +178,32 @@ export default function Page({
     }
   };
 
-  // 전체 선택/해제: 아직 처리되지 않은 학생들을 대상으로 함
   const handleSetStateAll = () => {
-    const allAvailable = filteredStudents.filter(
-      (student) => !(student.check || student.comment)
+    // 선택된 반의 학생 중에서 check가 "2"가 아닌 학생들을 available로 필터링
+    const available = filteredStudents.filter((s) => s.check !== "2");
+    // available 배열 중에서 check가 "0" 또는 "1"인 학생들을 찾음
+    const allAbsent = available.filter(
+      (s) => s.check === "0" || s.check === "1"
     );
-    if (tempSelection.length === allAvailable.length) {
-      setTempSelection([]);
+
+    // 만약 모든 available 학생들이 check "0" 또는 "1"이라면(즉, 길이가 같다면)
+    if (available.length === allAbsent.length) {
+      // 해당 학생들의 check와 comment를 undefined로 업데이트하여 해제함
+      setStudentsData((prev) =>
+        prev.map((s) => {
+          if (
+            s.grade === selectedClass?.grade &&
+            s.class === selectedClass?.class &&
+            (s.check === "0" || s.check === "1")
+          ) {
+            return { ...s, check: "", comment: "" };
+          }
+          return s;
+        })
+      );
     } else {
-      setTempSelection(allAvailable);
+      // 그렇지 않으면, available 학생들을 임시 선택(tempSelection)에 설정 (전체 선택)
+      setTempSelection(available);
     }
   };
 

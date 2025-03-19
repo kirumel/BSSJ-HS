@@ -2,40 +2,23 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
-  if (req.method == "GET") {
-    const todayDate = new Date();
-
-    //날자 보기좋게
-    let formattedDate: string;
-
-    formattedDate = todayDate.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+  if (req.method === "GET") {
     try {
-      const getstudent1 = await prisma.attendanceObjectDB.findMany({
-        where: {
-          createdAt: formattedDate,
-        },
-      });
-      const getstudent2 = await prisma.attendanceObjectDB2.findMany({
-        where: {
-          createdAt: formattedDate,
-        },
-      });
-      const getstudent3 = await prisma.attendanceObjectDB3.findMany({
-        where: {
-          createdAt: formattedDate,
-        },
-      });
+      const student1 = await prisma.attendanceObjectDB.findMany({});
+      const student2 = await prisma.attendanceObjectDB2.findMany({});
+      const student3 = await prisma.attendanceObjectDB3.findMany({});
 
-      const getReq = await prisma.nightAttendanceObjectDB.findMany({
-        where: {
-          createdAt: formattedDate,
-        },
+      // 각 DB의 결과에 grade 필드 추가
+      const getstudent1 = student1.map((record) => ({ ...record, grade: "1" }));
+      const getstudent2 = student2.map((record) => ({ ...record, grade: "2" }));
+      const getstudent3 = student3.map((record) => ({ ...record, grade: "3" }));
+
+      const getReq = await prisma.nightAttendanceObjectDB.findMany({});
+
+      res.status(200).json({
+        night: getReq, // 야자 파일 리스트 (nightAttendanceObjectDB)
+        eight: [...getstudent1, ...getstudent2, ...getstudent3], // 8교시 파일 리스트 (각각 grade 추가됨)
       });
-      res.status(200).send(getReq, getstudent1, getstudent2, getstudent3);
     } catch (error) {
       res.status(400).send("error");
     }

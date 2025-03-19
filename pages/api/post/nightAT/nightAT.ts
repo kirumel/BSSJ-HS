@@ -57,11 +57,7 @@ export default async function handler(req: any, res: any) {
             where: {
               id: id,
             },
-            data: {
-              comment,
-              check,
-              author,
-            },
+            data: { updatedAt: formattedDate, comment, check, author },
           });
 
           return updateAttendance;
@@ -83,6 +79,7 @@ export default async function handler(req: any, res: any) {
                 id: id,
               },
               data: {
+                updatedAt: formattedDate,
                 comment,
                 check,
                 author,

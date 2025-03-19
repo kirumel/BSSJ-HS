@@ -220,7 +220,6 @@ export default function Page() {
                         }
                       )
                       .then((response) => {
-                        setmodal3(false);
                         if (response.status === 200) {
                           setSuccessModalTimer();
                         }
