@@ -100,7 +100,7 @@ export default function FileListPage() {
         <div className="file-list">
           {fileList && fileList.length > 0 ? (
             <div className="table-container">
-              <div>
+              <div className="slider">
                 {fileList.map((file) => (
                   <div
                     style={{

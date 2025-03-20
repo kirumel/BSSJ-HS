@@ -60,7 +60,7 @@ export default async function handler(req: any, res: any) {
       const studentsData = [
         formattedDate,
         student.name,
-        student.check == "2" ? "0" : student.check == "0" ? "0" : "1",
+        student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
       ];

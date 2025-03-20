@@ -445,3 +445,8 @@
   justify-content: center;
   width: 90%;
 }
+.file-list {
+  height: 80vh;
+  overflow-y: scroll;
+  border-radius: 1rem;
+}

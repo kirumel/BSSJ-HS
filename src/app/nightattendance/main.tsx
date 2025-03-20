@@ -4,7 +4,8 @@ import { useSession } from "next-auth/react";
 import "./style.css";
 
 import PlusStudentModal from "./plusStudentModal";
-import SuccessModal from "./successModal";
+
+import SuccessModal from "../successModal/page";
 
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../choiceATteacher/style.css";
@@ -300,7 +301,9 @@ export default function Page() {
 
         <div className="right-left-margin">
           <div>
-            {successModal ? <SuccessModal props={successModal} /> : null}
+            {successModal && (
+              <SuccessModal name={"완료!"} content={"출석이 완료되었습니다"} />
+            )}
           </div>
           <div className="attendance-top-container-display">
             <div className="attendance-top-in1">
