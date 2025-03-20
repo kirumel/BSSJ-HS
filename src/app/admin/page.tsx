@@ -268,7 +268,7 @@ export default function Page() {
           </div>
           <div className="line"></div>
           <div className="display-flex" style={{ alignItems: "flex-start" }}>
-            <p className="admin-title">야자 출석 / 이용 가능</p>
+            <p className="admin-title">야자 출석 / 테스트</p>
             {""}
             <div className="admin-AT">
               {["1", "2", "3"].map((data, i) => (
