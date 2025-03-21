@@ -6,7 +6,7 @@ import "../style.css";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import "../../choiceATteacher/style.css";
 import axios from "axios";
-import SuccessModal from "../successModal";
+import SuccessModal from "../../successModal/page";
 
 interface Attendance {
   outTimeAT: string;
@@ -199,7 +199,9 @@ export default function Page() {
         )}
       </div>
       <div className="right-left-margin">
-        {successModal && <SuccessModal props={successModal} />}
+        {successModal && (
+          <SuccessModal name={"성공!"} content={"출석이 저장되었습니다"} />
+        )}
         <div className="attendance-top-container-display">
           <button
             className="plus-attendance-button"
