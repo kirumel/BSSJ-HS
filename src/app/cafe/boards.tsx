@@ -18,15 +18,25 @@ interface PageProps {
 }
 
 export default function Page({ onSelectBoard }: PageProps) {
-  const [boards, setBoards] = useState<Board[]>([]);
+  const [boards, setBoards] = useState<Board[]>([
+    {
+      id: "cm837yu2f0000r1ud0exdpgqp",
+      name: "자유게시판",
+      description: "자유임",
+    },
+  ]);
   const { data: session } = useSession();
-  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null); // Add state to track selected board
+  const [selectedBoardId, setSelectedBoardId] = useState<string>(
+    "cm837yu2f0000r1ud0exdpgqp"
+  );
 
   useEffect(() => {
     if (session) {
       axios
         .get("/api/board/boards")
-        .then((response) => setBoards(response.data));
+        .then((response) =>
+          setBoards(response.data.filter((board) => board.name !== "feed"))
+        );
     }
   }, [session]);
 
@@ -38,7 +48,7 @@ export default function Page({ onSelectBoard }: PageProps) {
     );
 
   if (boards.length === 0) {
-    return <p>생성된 게시판이 없습니다</p>;
+    return <p></p>;
   }
 
   if (!session) {
@@ -50,6 +60,7 @@ export default function Page({ onSelectBoard }: PageProps) {
     setSelectedBoardId(boardId === selectedBoardId ? null : boardId); // Toggle selection
     onSelectBoard(boardId); // Call the callback function
   };
+  console.log(boards);
   return (
     <>
       <div className="cafe-boards-flex">
@@ -80,9 +91,12 @@ export default function Page({ onSelectBoard }: PageProps) {
                 marginTop: "10px",
                 marginBottom: "0",
                 paddingBottom: "0",
+                justifyContent: "right",
               }}
             >
-              <h3 className="title">{board.name}</h3>
+              <h3 className="title" style={{ marginRight: "10px" }}>
+                {board.name}📄
+              </h3>
             </div>
           )}
         </div>

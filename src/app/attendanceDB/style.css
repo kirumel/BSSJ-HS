@@ -171,7 +171,7 @@
   flex-direction: column;
   width: 100%;
 }
-.container {
+.containerQ {
   display: flex;
   flex-direction: column;
 }
@@ -446,7 +446,15 @@
   width: 90%;
 }
 .file-list {
-  height: 80vh;
+  height: 73vh;
   overflow-y: scroll;
   border-radius: 1rem;
+}
+.btn {
+  padding: 5px 10px;
+  background-color: #dddddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }

@@ -6,16 +6,19 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Board from "./boards";
 import { useState } from "react";
+import BestPosts from "./BestPosts";
 export default function Page() {
   const { data: session } = useSession();
   const [boardState, setBoardState] = useState("");
   const handleBoardSelect = (boardId: string) => {
     setBoardState(boardId);
   };
+
   return (
     <div className="cafe-body">
       <Board onSelectBoard={handleBoardSelect} />
       <div className="cafe-middle-container">
+        <BestPosts boardState={boardState} />
         <Cafe session={session} boardState={boardState} />
       </div>
       <div className="margin"></div>

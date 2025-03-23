@@ -139,7 +139,7 @@ export default function Page() {
           setmodal1(true);
           const generateY = await axios
             .get("/api/post/nightAT/generateY", {
-              params: { grade: 3, date: formattedDate1 },
+              params: { grade: 1, date: formattedDate1 },
             }) // params로 전달
             .then(async (response) => {
               const responseBody = response;
@@ -173,7 +173,7 @@ export default function Page() {
 
                   const payload = {
                     date: formattedDate1,
-                    grade: Number(3),
+                    grade: Number(1),
                   };
                   const pdfResponse = await axios.post(
                     "/api/post/nightAT/PDF",
@@ -367,7 +367,7 @@ export default function Page() {
             return parseInt(a.studentnumber) - parseInt(b.studentnumber);
           });
           const sortedData1 = sortedData.filter(
-            (student) => student.grade === 3
+            (student) => student.grade === 1
           );
           const presentStudents = sortedData1.filter(
             (student) => student.check !== "0"

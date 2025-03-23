@@ -67,7 +67,6 @@ export default function Page() {
 
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
-
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/attendance")
@@ -90,7 +89,7 @@ export default function Page() {
             return parseInt(a.studentnumber) - parseInt(b.studentnumber);
           });
           const sortedData1 = sortedData.filter(
-            (student) => student.grade === 3
+            (student) => student.grade === 1
           );
           const presentStudents = sortedData1.filter(
             (student) => student.check !== "0"
@@ -158,16 +157,10 @@ export default function Page() {
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    const checkValue = event.target.name === "n" ? "0" : "1";
     setFirstCommitStudent((prev) =>
       prev.map((student) =>
-        student.id === id
-          ? {
-              ...student,
-              check: event.target.name === "n" ? "0" : "1",
-              // 출석(체크박스 이름이 "y")일 경우 comment를 빈 문자열로 설정
-              comment: event.target.name === "y" ? "" : student.comment,
-            }
-          : student
+        student.id === id ? { ...student, check: checkValue } : student
       )
     );
   };
@@ -214,13 +207,13 @@ export default function Page() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "/api/post/filegenerater3/choiceATsupervisor2",
+        "/api/post/filegenerater1/choiceATsupervisor2",
         {
           firstcommitstudent,
         }
       );
       const response2 = await axios.post(
-        "/api/post/filegenerater3/choiceATsupervisor",
+        "/api/post/filegenerater1/choiceATsupervisor",
         {
           firstcommitstudent,
         }
@@ -228,7 +221,7 @@ export default function Page() {
 
       const response3 = await axios.post("/api/post/compareAT", {
         firstcommitstudent,
-        grade: "3",
+        grade: "1",
         formattedDate,
       });
       const reset = await axios.patch("/api/post/resetAttendance", {});

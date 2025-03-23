@@ -175,7 +175,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      <div className="container">
+      <div className="containerA">
         <div className="upload-box">
           <h3 style={{ marginBottom: 0 }}>학생 업로드</h3>
           <p className="subtitle" style={{ fontSize: "10px", margin: 0 }}>

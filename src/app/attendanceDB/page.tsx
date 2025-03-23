@@ -5,12 +5,18 @@ import { useEffect, useState } from "react";
 import "./style.css";
 
 export default function FileListPage() {
-  // API에서 받아온 전체 데이터 상태 (night와 eight 리스트 포함)
+  // 전체 데이터 상태 (night와 eight 리스트 포함)
   const [data, setData] = useState(null);
   // 현재 보여줄 리스트 타입 (초기값은 8교시)
   const [currentView, setCurrentView] = useState("eight");
+  // 필터 입력 상태: 날짜와 학년
+  const [filterDate, setFilterDate] = useState("");
+  const [filterGrade, setFilterGrade] = useState("");
+  // 적용된 필터 상태
+  const [appliedFilterDate, setAppliedFilterDate] = useState("");
+  const [appliedFilterGrade, setAppliedFilterGrade] = useState("");
 
-  // 컴포넌트 마운트 시 API 호출 (오늘 날짜 기준)
+  // API에서 오늘 날짜 기준 데이터 호출
   useEffect(() => {
     axios
       .get("/api/atList")
@@ -26,22 +32,37 @@ export default function FileListPage() {
     return <div>로딩중...</div>;
   }
 
-  // 보여줄 파일 리스트: 8교시와 야자에 따라 분리
-  const fileList = currentView === "eight" ? data.eight : data.night;
+  // 선택한 파일 리스트 (8교시 또는 야자)
+  let fileList = currentView === "eight" ? data.eight : data.night;
+
+  // 필터링 함수: 적용된 날짜 및 학년 필터 사용
+  const applyFilters = () => {
+    return fileList.filter((file) => {
+      // 날짜 필터: file.createdAt 값이 적용된 필터 날짜와 일치하는지 확인
+      // file.createdAt이 "YYYY-MM-DD" 형식의 문자열이라고 가정합니다.
+      const matchDate = appliedFilterDate
+        ? file.createdAt.startsWith(appliedFilterDate)
+        : true;
+      // 학년 필터: appliedFilterGrade가 지정되면 file.grade와 정확히 일치해야 함
+      const matchGrade = appliedFilterGrade
+        ? String(file.grade) === String(appliedFilterGrade)
+        : true;
+      return matchDate && matchGrade;
+    });
+  };
+
+  const filteredList = applyFilters();
+
   const downloadFile = (file) => {
-    // 만약 file.link가 "http"로 시작하면 URL로 간주
     if (file.link.startsWith("http")) {
       const a = document.createElement("a");
       a.href = file.link;
-      // 같은 출처가 아니라면 download 속성이 무시될 수 있으므로, 새 창으로 열도록 합니다.
       a.target = "_blank";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     } else {
-      // base64 문자열 등이라면 Blob으로 변환
       try {
-        // base64 문자열에서 MIME 타입 추출 (예: "data:application/pdf;base64,.....")
         let mimeType = "";
         let base64Data = file.link;
         if (file.link.startsWith("data:")) {
@@ -51,7 +72,6 @@ export default function FileListPage() {
           const mimeParts = meta.match(/data:(.*);base64/);
           mimeType = mimeParts && mimeParts[1] ? mimeParts[1] : "";
         } else {
-          // file.link가 순수 base64 문자열이라면, 파일 타입에 따라 지정 (예: pdf, excel)
           mimeType =
             file.type === "pdf"
               ? "application/pdf"
@@ -80,80 +100,132 @@ export default function FileListPage() {
       }
     }
   };
+
+  // 필터 초기화 함수
+  const resetFilters = () => {
+    setFilterDate("");
+    setFilterGrade("");
+    setAppliedFilterDate("");
+    setAppliedFilterGrade("");
+  };
+
   return (
-    <div className="right-left-margin">
-      <div className="container">
+    <>
+      <div className="nav">
         <div className="controls">
           <button
+            style={{ marginRight: "10px", fontSize: "11px" }}
             className={`btn ${currentView === "eight" ? "active" : ""}`}
             onClick={() => setCurrentView("eight")}
           >
             8교시 파일 리스트
           </button>
           <button
+            style={{ marginRight: "10px", fontSize: "11px" }}
             className={`btn ${currentView === "night" ? "active" : ""}`}
             onClick={() => setCurrentView("night")}
           >
             야자 파일 리스트
           </button>
         </div>
-        <div className="file-list">
-          {fileList && fileList.length > 0 ? (
-            <div className="table-container">
-              <div className="slider">
-                {fileList.map((file) => (
-                  <div
-                    style={{
-                      background:
-                        file.type === "pdf"
-                          ? "linear-gradient(135deg,rgba(227, 150, 154, 0.45) ,rgb(255, 198, 196) 100%)"
-                          : "linear-gradient(135deg,rgba(147, 172, 219, 0.51) ,rgb(172, 201, 255) 100%)",
-                    }}
-                    className="attendance-student"
-                    key={file.id}
-                  >
+        <button className="back-A" onClick={() => router.back()}>
+          ←
+        </button>
+      </div>
+      <div className="right-left-margin">
+        <div className="containerQ">
+          {/* 날짜 및 학년 필터링 컨트롤 */}
+          <div className="filter-controls" style={{ marginTop: "10px" }}>
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              style={{ marginRight: "5px", fontSize: "11px", width: "80px" }}
+            />
+            <input
+              type="number"
+              placeholder="학년 (예: 3)"
+              value={filterGrade}
+              onChange={(e) => setFilterGrade(e.target.value)}
+              style={{ marginRight: "5px", width: "20px", fontSize: "11px" }}
+            />
+            <button
+              className="btn"
+              onClick={() => {
+                // 필터 적용 버튼 클릭 시, 입력된 값을 적용
+                setAppliedFilterDate(filterDate);
+                setAppliedFilterGrade(filterGrade);
+              }}
+              style={{ marginRight: "5px", fontSize: "11px" }}
+            >
+              필터 적용
+            </button>
+            <button
+              className="btn"
+              style={{ marginRight: "5px", fontSize: "11px" }}
+              onClick={resetFilters}
+            >
+              초기화
+            </button>
+          </div>
+          <div className="file-list" style={{ marginTop: "10px" }}>
+            {filteredList && filteredList.length > 0 ? (
+              <div className="table-container">
+                <div className="slider">
+                  {filteredList.map((file) => (
                     <div
+                      key={file.id}
+                      className="attendance-student"
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        background:
+                          file.type === "pdf"
+                            ? "linear-gradient(135deg,rgba(227, 150, 154, 0.45), rgb(255, 198, 196) 100%)"
+                            : "linear-gradient(135deg,rgba(147, 172, 219, 0.51), rgb(172, 201, 255) 100%)",
                       }}
                     >
-                      <div className="attendance-student-title-display">
-                        <div className="attendance-student-title">
-                          <p className="attendance-student-name">
-                            {file.author || "-"}
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div className="attendance-student-title-display">
+                          <div className="attendance-student-title">
+                            <p className="attendance-student-name">
+                              {file.author || "-"}
+                            </p>
+                          </div>
+                          <p className="attendance-student-number">
+                            {file.createdAt}
+                            <div>{file.grade}학년</div>
                           </p>
                         </div>
-                        <p className="attendance-student-number">
-                          {file.createdAt}
-                          <div>{file.grade}학년</div>
-                        </p>
-                      </div>
-                      <div className="attendance-student-button">
-                        <button
-                          style={{
-                            cursor: "pointer",
-                            background: "none",
-                            border: "none",
-                            fontWeight: "bold",
-                            fontSize: "13px",
-                          }}
-                          onClick={() => downloadFile(file)}
-                        >
-                          {file.type} / 다운로드
-                        </button>
+                        <div className="attendance-student-button">
+                          <button
+                            style={{
+                              cursor: "pointer",
+                              background: "none",
+                              border: "none",
+                              fontWeight: "bold",
+                              fontSize: "13px",
+                            }}
+                            onClick={() => downloadFile(file)}
+                          >
+                            {file.type} / 다운로드
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : (
-            <p>조회된 파일이 없습니다.</p>
-          )}
+            ) : (
+              <p>조회된 파일이 없습니다.</p>
+            )}
+          </div>
         </div>
-      </div>{" "}
-    </div>
+      </div>
+    </>
   );
 }

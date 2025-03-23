@@ -53,7 +53,7 @@ export default function Page() {
   // 처음 로딩
   useEffect(() => {
     setIsLoading(true);
-    fetch("/api/post/nightAT/nightAT")
+    fetch("/api/post/nightAT/page")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
@@ -346,6 +346,7 @@ export default function Page() {
             {attendance.map((data) => {
               // attendance의 id를 이용해 firstcommitstudent에서 해당 학생을 찾습니다.
               const student = firstcommitstudent.find((s) => s.id === data.id);
+
               return (
                 <div
                   style={{

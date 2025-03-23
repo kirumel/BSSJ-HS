@@ -106,7 +106,7 @@ export default function Page() {
   };
 
   return (
-    <div className="container">
+    <div className="containerK">
       <div className="section">
         <div className="sectionTitle">만들어지지 않은 파일</div>
         {uncreatedFiles.length > 0 ? (

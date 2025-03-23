@@ -4,6 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import "./cafe.css";
 import Loading from "../loading/page";
+import Write from "../write/page";
 
 interface Post {
   id: string;
@@ -31,19 +32,13 @@ interface Comment {
   createdAt: Date;
 }
 
-interface CafeProps {
-  session: any; // Adjust the type as needed
-  boardState: any;
-}
-
-export default function Cafe(
-  { session }: CafeProps,
-  { boardState }: CafeProps
-) {
+export default function Cafe({ session, boardState }: any) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  console.log(boardState);
+  useEffect(() => {
+    console.log("Updated boardState in Cafe:", boardState);
+  }, [boardState]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -59,7 +54,7 @@ export default function Cafe(
       })
       .catch((error) => console.log(error))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [boardState]);
 
   if (isLoading) {
     return (
@@ -130,11 +125,9 @@ export default function Cafe(
 
   return (
     <div style={{ marginLeft: "0.5rem", marginRight: "0.5rem" }}>
-      <a href="/write">
-        <button className="write-button">작성하기</button>
-      </a>
+      <Write />
 
-      {posts.length > 0 && (
+      {posts.length > 0 ? (
         <>
           {posts.map((post: Post) => {
             const postDate = new Date(post.createdAt);
@@ -205,16 +198,16 @@ export default function Cafe(
                                   xmlns="http://www.w3.org/2000/svg"
                                   viewBox="0 0 512 512"
                                   style={{
-                                    width: "25px",
-                                    height: "25px",
+                                    width: "20px",
+                                    height: "20px",
                                     marginRight: "8px",
                                   }}
                                 >
                                   <path
                                     style={{
                                       fill: "red",
-                                      height: "25px",
-                                      width: "25px",
+                                      height: "20px",
+                                      width: "20px",
                                       marginRight: "10px",
                                     }}
                                     d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
@@ -231,8 +224,8 @@ export default function Cafe(
                               >
                                 <svg
                                   style={{
-                                    height: "25px",
-                                    width: "25px",
+                                    height: "20px",
+                                    width: "20px",
                                     marginRight: "10px",
                                   }}
                                   className="width50"
@@ -250,8 +243,8 @@ export default function Cafe(
                             >
                               <svg
                                 style={{
-                                  height: "25px",
-                                  width: "25px",
+                                  height: "20px",
+                                  width: "20px",
                                   marginRight: "10px",
                                 }}
                                 className="width50"
@@ -296,16 +289,16 @@ export default function Cafe(
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 512 512"
                             style={{
-                              width: "25px",
-                              height: "25px",
+                              width: "20px",
+                              height: "20px",
                               marginRight: "8px",
                             }}
                           >
                             <path
                               style={{
                                 fill: "red",
-                                height: "25px",
-                                width: "25px",
+                                height: "20px",
+                                width: "20px",
                                 marginRight: "10px",
                               }}
                               d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
@@ -361,6 +354,8 @@ export default function Cafe(
             );
           })}
         </>
+      ) : (
+        <>게시판에 글이 없어요!</>
       )}
     </div>
   );

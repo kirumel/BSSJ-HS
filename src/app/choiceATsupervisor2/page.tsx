@@ -67,36 +67,13 @@ export default function Page() {
 
   const filteredStudents = getFilteredStudents();
   const classList = getClassList();
-
   useEffect(() => {
     setIsLoading(true);
     fetch("/api/post/attendance")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {
-          // 반과 학생번호 순으로 정렬: 먼저 반 기준, 같은 반이면 학생번호 기준
-          const sortedData = data.sort((a, b) => {
-            const classA = parseInt(a.class as unknown as string);
-            const classB = parseInt(b.class as unknown as string);
-            if (classA !== classB) {
-              return classA - classB;
-            }
-            return parseInt(a.studentnumber) - parseInt(b.studentnumber);
-          });
-
-          const sortedData3 = sortedData.filter(
-            (student) => student.grade === 2
-          );
-
-          // 오늘 날짜로 formattedDate 설정
-          const todayDate = new Date();
-          const formattedDate = todayDate.toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          });
-          // updatedAt과 비교 후 check, comment 수정된 데이터
-          const updatedFinalData = sortedData3.map((student) => {
+          const updatedFinalData = data.map((student) => {
             const isUpdatedToday = student.updatedAt === formattedDate;
 
             return {
@@ -105,10 +82,19 @@ export default function Page() {
               comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
             };
           });
-          const presentStudents = updatedFinalData.filter(
+          const sortedData = updatedFinalData.sort((a, b) => {
+            if (a.class !== b.class) {
+              return a.class - b.class;
+            }
+            return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+          });
+          const sortedData1 = sortedData.filter(
+            (student) => student.grade === 2
+          );
+          const presentStudents = sortedData1.filter(
             (student) => student.check !== "0"
           );
-          const absentStudents = updatedFinalData.filter(
+          const absentStudents = sortedData1.filter(
             (student) => student.check === "0"
           );
           const finalSortedData = [...presentStudents, ...absentStudents];

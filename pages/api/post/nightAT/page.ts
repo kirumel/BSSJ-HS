@@ -41,6 +41,7 @@ export default async function handler(req: any, res: any) {
             },
             data: {
               outTimeT: outTimeT,
+              comment,
               check,
               author,
               updatedAt: formattedDate,

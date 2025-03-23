@@ -28,8 +28,7 @@ export default function Page() {
   const [afterdata, setAfterdata] = useState<DataItem[]>([]);
   const [currenttime, setCurrentTime] = useState<string>("");
   const router = useRouter();
-  const [take8ATstatus, setTake8ATstatus] = useState<DataItem[]>([]);
-  const [takeNATstatus, setTakeNATstatus] = useState<DataItem[]>([]);
+  const [Status, setStatus] = useState();
   if (!session) {
     alert("권환 오류! 다시 로그인 해주세요");
   }
@@ -106,27 +105,14 @@ export default function Page() {
     }
   }, []);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const status1 = await axios
-          .get("/api/admin/take8ATstatus")
-          .then((response) => {
-            if (response.status === 200) {
-              setTake8ATstatus(response.data);
-            }
-          });
-        const status2 = await axios
-          .get("/api/admin/takeNATstatus")
-          .then((response) => {
-            if (response.status === 200) {
-              setTakeNATstatus(response.data);
-            }
-          });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
+    fetch("/api/takeAT") // 실제 API 경로로 변경
+      .then((res) => {
+        if (!res.ok) throw new Error("네트워크 응답 에러");
+        return res.json();
+      })
+      .then((data) => {
+        setStatus(data.fileStatus);
+      });
   }, []);
   useEffect(() => {
     const fetchAfterData = async (): Promise<void> => {
@@ -213,11 +199,9 @@ export default function Page() {
                   <div
                     className="admin-AT-circle"
                     style={{
-                      backgroundColor:
-                        take8ATstatus.find((item) => item.grade === data) !==
-                        undefined
-                          ? "green"
-                          : "red",
+                      backgroundColor: Status?.[`grade${i + 1}`]
+                        ? "green"
+                        : "red",
                     }}
                   ></div>
                   <div
@@ -229,10 +213,7 @@ export default function Page() {
                     }}
                   >
                     {parseInt(data)}학년 / {""}
-                    {take8ATstatus.find((item) => item.grade === data) !==
-                    undefined
-                      ? "출석 완료"
-                      : "출석 안 됨"}
+                    {Status?.[`grade${i + 1}`] ? "출석 완료" : "출석 안 됨"}
                   </div>
                 </div>
               ))}
@@ -268,7 +249,7 @@ export default function Page() {
           </div>
           <div className="line"></div>
           <div className="display-flex" style={{ alignItems: "flex-start" }}>
-            <p className="admin-title">야자 출석 / 테스트</p>
+            <p className="admin-title">야자 출석 / 이용가능</p>
             {""}
             <div className="admin-AT">
               {["1", "2", "3"].map((data, i) => (
@@ -276,11 +257,9 @@ export default function Page() {
                   <div
                     className="admin-AT-circle"
                     style={{
-                      backgroundColor:
-                        takeNATstatus.find((item) => item.grade === data) !==
-                        undefined
-                          ? "green"
-                          : "red",
+                      backgroundColor: Status?.[`compareATNight${i + 1}`]
+                        ? "green"
+                        : "red",
                     }}
                   ></div>
                   <div
@@ -292,8 +271,7 @@ export default function Page() {
                     }}
                   >
                     {parseInt(data)}학년 / {""}
-                    {takeNATstatus.find((item) => item.grade === data) !==
-                    undefined
+                    {Status?.[`compareATNight${i + 1}`]
                       ? "출석 완료"
                       : "출석 안 됨"}
                   </div>
@@ -345,11 +323,9 @@ export default function Page() {
                 <div
                   className="admin-AT-circle"
                   style={{
-                    backgroundColor:
-                      takeNATstatus.find((item) => item.grade === data) !==
-                      undefined
-                        ? "green"
-                        : "red",
+                    backgroundColor: Status?.[`night${i + 1}`]
+                      ? "green"
+                      : "red",
                   }}
                 ></div>
                 <div
@@ -361,10 +337,9 @@ export default function Page() {
                   }}
                 >
                   {parseInt(data)}학년 / {""}
-                  {takeNATstatus.find((item) => item.grade === data) !==
-                  undefined
-                    ? "생성"
-                    : "미생성"}
+                  {Status?.[`night${i + 1}`]
+                    ? "출석부 생성 완료"
+                    : "출석부 생성 안 됨"}
                 </div>
               </div>
             ))}
@@ -390,16 +365,10 @@ export default function Page() {
                 취소 <br />
               </button>
             </Link>
-            <Link href="https://www.altisto.me/">
+            <Link href="takeAT">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석 <br />
                 현황 <br />
-              </button>
-            </Link>
-            <Link href="https://www.altisto.me/">
-              <button className="event-box-button" style={{ color: "black" }}>
-                WEB <br />
-                이동 <br />
               </button>
             </Link>
           </div>
