@@ -41,7 +41,7 @@ export default function PlusStudentModal(props: {
       .then((response) => response.json())
       .then((data) => {
         closeModal();
-        fetch("/api/post/nightAT/nightAT")
+        fetch("/api/post/nightAT/page")
           .then((response) => response.json())
           .then((data: Attendance[]) => {
             updateAttendance(data);

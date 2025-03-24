@@ -59,7 +59,7 @@ export default function Page() {
       setLoading(true);
       try {
         const response = await axios
-          .get("/api/post/nightAT/nightAT")
+          .get("/api/post/nightAT/page")
           .then((response) => response.data) // Access the response data directly
           .then((data: any) => {
             console.log(data);
