@@ -1,6 +1,7 @@
 import { prisma } from "../prisma/lib/prisma";
 
 export default async function handler(req: any, res: any) {
+  console.log(req.method);
   if (req.method === "GET") {
     try {
       // Get boardName from query parameters
@@ -80,7 +81,6 @@ export default async function handler(req: any, res: any) {
         .json({ message: "오류가 발생했습니다 콘솔을 확인해주세요" });
     }
   } else {
-    res.setHeader("Allow", ["GET", "POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
