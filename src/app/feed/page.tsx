@@ -29,6 +29,7 @@ interface Like {
   userId: string;
   createdAt: Date;
 }
+
 interface Comment {
   id: string;
   postId: number;
@@ -37,10 +38,23 @@ interface Comment {
   createdAt: Date;
 }
 
+interface Assignment {
+  teacherName: string;
+  startDate: string;
+  endDate: string;
+  title: string;
+  status: string;
+  link: string;
+}
+
 export default function Cafe() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [expandedPost, setExpandedPost] = useState<Set<string>>(new Set());
+  console.log(assignments);
+
+  // 피드 데이터 로드
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -49,66 +63,33 @@ export default function Cafe() {
         setPosts(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.error("피드 로드 오류:", error);
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, []);
 
-  const handleLike = async (id: any) => {
-    const userId = session?.user?.id;
-
-    setPosts((prevPosts) =>
-      prevPosts.map((post) => {
-        if (post.id === id) {
-          const hasLiked = post.likes.some(
-            (like: Like) => like.userId === userId
-          );
-          return {
-            ...post,
-            likes: hasLiked
-              ? post.likes.filter((like: Like) => like.userId !== userId)
-              : [
-                  ...post.likes,
-                  {
-                    id: "temp-id",
-                    postId: post.id,
-                    userId,
-                    createdAt: new Date(),
-                  },
-                ],
-          };
-        }
-        return post;
+  // 과제(공지) 크롤링 데이터 로드
+  useEffect(() => {
+    axios
+      .get("/api/flfhtmznf")
+      .then((response) => {
+        // response.data가 Assignment 배열이라고 가정
+        setAssignments(response.data);
       })
-    );
-
-    if (!userId) {
-      console.error("User ID is missing");
-      return;
-    }
-
-    try {
-      await axios.post(`/api/post/likes/${id}`, { userId });
-      axios.get(`/api/post/likes/${id}`).then((res) => {
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.id === id ? { ...post, likes: res.data } : post
-          )
-        );
+      .catch((error) => {
+        console.error("과제 데이터 로드 오류:", error);
       });
-    } catch (error) {
-      console.error("좋아요 처리 오류:", error);
-    }
-  };
+  }, []);
+
   const handleToggleContent = (id: string) => {
     setExpandedPost((prev) => {
       const newExpandedPost = new Set(prev);
       if (newExpandedPost.has(id)) {
-        newExpandedPost.delete(id); // 이미 펼쳐져 있으면 접기
+        newExpandedPost.delete(id);
       } else {
-        newExpandedPost.add(id); // 펼치기
+        newExpandedPost.add(id);
       }
       return newExpandedPost;
     });
@@ -129,15 +110,62 @@ export default function Cafe() {
           marginTop: "1rem",
         }}
       >
-        {
-          //상단 타이틀
-        }
+        {/* 피드 상단 타이틀 */}
         <div className="feed">
           <h2 style={{ margin: "0" }}>피드</h2>
           <p className="subtitle" style={{ fontSize: "12px" }}>
             학교의 알림을 모아볼 수 있어요!
           </p>
         </div>
+        {assignments.length > 0 && (
+          <>
+            {assignments.map((assignment, index) => (
+              <div className="cafe-body" key={index}>
+                <div className="display-flex">
+                  <div className="feed-text-post margin-topbottom10px">
+                    <div className="display-center">
+                      <img
+                        src="https://i.imgur.com/tgVDqj1.jpeg"
+                        style={{
+                          width: "7%",
+                          maxWidth: "30px",
+                          minWidth: "20px",
+                          height: "auto",
+                          borderRadius: "0.3rem",
+                        }}
+                        alt="프로필"
+                      />
+                      <div>
+                        <p className="cafe-nickname">리로스쿨 알리미</p>
+                      </div>
+                    </div>
+                    <p className="cafe-post-title"> {assignment.title}</p>
+                    <p className="feed-post-content">{assignment.status}</p>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        marginTop: "10px",
+                      }}
+                    ></div>
+                    <div
+                      className="display-between"
+                      style={{
+                        display: "flex",
+                        alignContent: "center",
+                        marginTop: "0px",
+                      }}
+                    >
+                      <p className="feed-post-date">
+                        {assignment.startDate} ~ {assignment.endDate}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
         {posts.length > 0 && (
           <>
             {posts.map((post: Post) => {
@@ -146,7 +174,7 @@ export default function Cafe() {
               const isToday = postDate.toDateString() === today.toDateString();
               const isSameYear = postDate.getFullYear() === today.getFullYear();
 
-              //날자 보기좋게
+              // 날짜를 보기 좋게 포맷팅
               let formattedDate;
               if (isToday) {
                 formattedDate = `오늘 ${postDate.toLocaleTimeString("ko-KR", {
@@ -170,7 +198,9 @@ export default function Cafe() {
                 });
               }
               const isContentOverflow = post.content.split("\n").length > 3;
-              if (post.image == null && post.video == null) {
+
+              // 이미지나 비디오가 없는 경우
+              if (!post.image && !post.video) {
                 return (
                   <div className="cafe-body" key={post.id}>
                     <div className="display-flex">
@@ -185,7 +215,8 @@ export default function Cafe() {
                               height: "auto",
                               borderRadius: "0.3rem",
                             }}
-                          ></img>
+                            alt="프로필"
+                          />
                           <div>
                             <p className="cafe-nickname">성지고 알리미</p>
                             <p className="cafe-nickname-sub">
@@ -202,15 +233,11 @@ export default function Cafe() {
                             WebkitBoxOrient: "vertical",
                             WebkitLineClamp: expandedPost.has(post.id)
                               ? "unset"
-                              : 3, // 3줄로 제한
+                              : 3,
                           }}
                         >
                           {post.content}
                         </p>
-
-                        {
-                          //태그부분
-                        }
                         <div
                           style={{
                             display: "flex",
@@ -242,11 +269,10 @@ export default function Cafe() {
                           style={{
                             display: "flex",
                             alignContent: "center",
-
                             marginTop: "10px",
                           }}
                         >
-                          <p className="feed-post-date">{formattedDate}</p>{" "}
+                          <p className="feed-post-date">{formattedDate}</p>
                           {isContentOverflow && !expandedPost.has(post.id) && (
                             <div
                               className="more"
@@ -270,6 +296,7 @@ export default function Cafe() {
                 );
               }
 
+              // 이미지나 비디오가 있는 경우
               return (
                 <div className="cafe-body" key={post.id}>
                   <div className="display-flex">
@@ -284,16 +311,20 @@ export default function Cafe() {
                             height: "auto",
                             borderRadius: "0.3rem",
                           }}
-                        ></img>
+                          alt="프로필"
+                        />
                         <div>
                           <p className="cafe-nickname">성지고 알리미</p>
                           <p className="cafe-nickname-sub">공지사항</p>
                         </div>
                       </div>
                       <div className="display-flex">
-                        <img className="feed-insta-img" src={post.image}></img>
+                        <img
+                          className="feed-insta-img"
+                          src={post.image}
+                          alt="피드 이미지"
+                        />
                       </div>
-
                       <p className="cafe-post-title">{post.title}</p>
                       <p className="feed-post-content">{post.content}</p>
                       <div className="display-between">
@@ -306,6 +337,8 @@ export default function Cafe() {
             })}
           </>
         )}
+        {/* 과제(공지) 섹션 */}
+
         <div className="margin"></div>
       </div>
     </div>
