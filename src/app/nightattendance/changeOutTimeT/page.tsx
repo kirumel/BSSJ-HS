@@ -46,7 +46,7 @@ export default function Page() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("/api/post/nightAT/nightAT")
+    fetch("/api/post/nightAT/page")
       .then((response) => response.json())
       .then((data: Attendance[]) => {
         if (Array.isArray(data)) {

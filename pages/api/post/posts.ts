@@ -73,7 +73,8 @@ export default async function handler(req: any, res: any) {
           gradeTags,
         },
       });
-      res.redirect(307, `/cafe`);
+
+      res.status(200).json(post);
     } catch (error) {
       console.error(error);
       res

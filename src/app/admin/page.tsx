@@ -337,9 +337,7 @@ export default function Page() {
                   }}
                 >
                   {parseInt(data)}학년 / {""}
-                  {Status?.[`night${i + 1}`]
-                    ? "출석부 생성 완료"
-                    : "출석부 생성 안 됨"}
+                  {Status?.[`night${i + 1}`] ? "생성 완료" : "생성 안 됨"}
                 </div>
               </div>
             ))}
