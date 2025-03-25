@@ -123,24 +123,41 @@ export default function Cafe() {
               <div className="cafe-body" key={index}>
                 <div className="display-flex">
                   <div className="feed-text-post margin-topbottom10px">
-                    <div className="display-center">
-                      <img
-                        src="https://i.imgur.com/tgVDqj1.jpeg"
-                        style={{
-                          width: "7%",
-                          maxWidth: "30px",
-                          minWidth: "20px",
-                          height: "auto",
-                          borderRadius: "0.3rem",
-                        }}
-                        alt="프로필"
-                      />
+                    <div
+                      className="display-between"
+                      style={{
+                        display: "flex",
+                        alignContent: "center",
+                        marginTop: "0px",
+                      }}
+                    >
                       <div>
-                        <p className="cafe-nickname">리로스쿨 알리미</p>
+                        <div className="display-center">
+                          <img
+                            src="https://riroschool.kr/assets/imgs/common/logo_cloud.svg"
+                            style={{
+                              width: "7%",
+                              maxWidth: "30px",
+                              minWidth: "20px",
+                              height: "auto",
+                              borderRadius: "0.3rem",
+                            }}
+                            alt="프로필"
+                          />
+                          <div>
+                            <p className="cafe-nickname">
+                              리로스쿨 / {assignment.teacherName}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="cafe-post-title">
+                          {assignment.title.split("-")[1]}
+                        </p>
                       </div>
+                      <button className="riro-status">
+                        {assignment.status}
+                      </button>
                     </div>
-                    <p className="cafe-post-title"> {assignment.title}</p>
-                    <p className="feed-post-content">{assignment.status}</p>
                     <div
                       style={{
                         display: "flex",
@@ -156,8 +173,24 @@ export default function Cafe() {
                         marginTop: "0px",
                       }}
                     >
+                      <div>
+                        <div style={{ display: "flex" }}>
+                          {assignment.title
+                            .split("-")[0]
+                            .toString()
+                            .slice(5)
+                            .split(" ")
+                            .filter((item) => item !== "")
+                            .map((tag, index) => (
+                              <div className="tags" key={index}>
+                                {tag}
+                              </div>
+                            ))}
+                        </div>
+                      </div>
                       <p className="feed-post-date">
-                        {assignment.startDate} ~ {assignment.endDate}
+                        {assignment.startDate} 부터
+                        <br /> {assignment.endDate} 까지
                       </p>
                     </div>
                   </div>

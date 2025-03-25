@@ -130,3 +130,12 @@
   text-align: left;
   background-color: rgb(236, 236, 236);
 }
+.riro-status {
+  border: none;
+  border-radius: 0.5rem;
+  color: white;
+  padding: 10px;
+  padding-left: 13px;
+  padding-right: 13px;
+  background: rgb(169, 169, 246);
+}
