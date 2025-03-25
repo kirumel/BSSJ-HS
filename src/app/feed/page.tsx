@@ -4,7 +4,7 @@ import axios from "axios";
 import "../cafe/cafe.css";
 import "./style.css";
 import Loading from "../loading/page";
-import Feednav from "./feednav";
+import Feednav from "./Feednav";
 
 interface Post {
   author: any;
@@ -40,68 +40,82 @@ interface Comment {
 
 interface Assignment {
   teacherName: string;
-  startDate: string;
+  startDate: string; // 예: "03-24 11:30:00"
   endDate: string;
   title: string;
   status: string;
   link: string;
 }
 
+// FeedItem 타입: 두 종류 데이터를 구분하기 위한 공통 타입
+export type FeedItem =
+  | { feedType: "assignment"; date: Date; data: Assignment }
+  | { feedType: "post"; date: Date; data: Post };
+
 export default function Cafe() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [expandedPost, setExpandedPost] = useState<Set<string>>(new Set());
-  console.log(assignments);
 
-  // 피드 데이터 로드
   useEffect(() => {
     setIsLoading(true);
-    axios
-      .get("/api/post/feed")
-      .then((response) => {
-        setPosts(response.data);
+    Promise.all([axios.get("/api/post/feed"), axios.get("/api/flfhtmznf")])
+      .then(([postResponse, assignmentResponse]) => {
+        const posts: Post[] = postResponse.data;
+        const assignments: Assignment[] = assignmentResponse.data;
+
+        // 일반 포스트: createdAt 그대로 사용
+        const postItems: FeedItem[] = posts.map((post) => ({
+          feedType: "post",
+          date: new Date(post.createdAt),
+          data: post,
+        }));
+
+        // 리로스쿨(과제): startDate에 현재 연도 붙여서 Date 객체 생성
+        const assignmentItems: FeedItem[] = assignments.map((assignment) => {
+          const currentYear = new Date().getFullYear();
+          const dateString = assignment.startDate.match(/^\d{4}/)
+            ? assignment.startDate
+            : `${currentYear}-${assignment.startDate}`;
+          return {
+            feedType: "assignment",
+            date: new Date(dateString),
+            data: assignment,
+          };
+        });
+
+        // 두 배열 합치고 날짜 내림차순 정렬
+        const combined = [...postItems, ...assignmentItems].sort(
+          (a, b) => b.date.getTime() - a.date.getTime()
+        );
+        setFeedItems(combined);
       })
       .catch((error) => {
-        console.error("피드 로드 오류:", error);
+        console.error("피드 데이터 로드 오류:", error);
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, []);
 
-  // 과제(공지) 크롤링 데이터 로드
-  useEffect(() => {
-    axios
-      .get("/api/flfhtmznf")
-      .then((response) => {
-        // response.data가 Assignment 배열이라고 가정
-        setAssignments(response.data);
-      })
-      .catch((error) => {
-        console.error("과제 데이터 로드 오류:", error);
-      });
-  }, []);
-
   const handleToggleContent = (id: string) => {
     setExpandedPost((prev) => {
-      const newExpandedPost = new Set(prev);
-      if (newExpandedPost.has(id)) {
-        newExpandedPost.delete(id);
-      } else {
-        newExpandedPost.add(id);
-      }
-      return newExpandedPost;
+      const newSet = new Set(prev);
+      newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+      return newSet;
     });
   };
 
   if (isLoading) {
     return <Loading />;
   }
-
   return (
     <div>
-      <Feednav postdata={setPosts} />
+      <Feednav
+        postdata={(newFeedItems: FeedItem[]) => {
+          setFeedItems(newFeedItems);
+        }}
+      />
       <div className="line"></div>
       <div
         style={{
@@ -117,10 +131,13 @@ export default function Cafe() {
             학교의 알림을 모아볼 수 있어요!
           </p>
         </div>
-        {assignments.length > 0 && (
-          <>
-            {assignments.map((assignment, index) => (
-              <div className="cafe-body" key={index}>
+
+        {feedItems.map((item, index) => {
+          if (item.feedType === "assignment") {
+            const assignment = item.data as Assignment;
+
+            return (
+              <div className="cafe-body" key={`assignment-${index}`}>
                 <div className="display-flex">
                   <div className="feed-text-post margin-topbottom10px">
                     <div
@@ -154,7 +171,17 @@ export default function Cafe() {
                           {assignment.title.split("-")[1]}
                         </p>
                       </div>
-                      <button className="riro-status">
+                      <button
+                        className="riro-status"
+                        style={{
+                          backgroundColor:
+                            assignment.status === "제출"
+                              ? ""
+                              : assignment.status === "마감"
+                              ? "#FD7373"
+                              : "#C6C6C6",
+                        }}
+                      >
                         {assignment.status}
                       </button>
                     </div>
@@ -181,8 +208,8 @@ export default function Cafe() {
                             .slice(5)
                             .split(" ")
                             .filter((item) => item !== "")
-                            .map((tag, index) => (
-                              <div className="tags" key={index}>
+                            .map((tag, idx) => (
+                              <div className="tags" key={idx}>
                                 {tag}
                               </div>
                             ))}
@@ -196,140 +223,40 @@ export default function Cafe() {
                   </div>
                 </div>
               </div>
-            ))}
-          </>
-        )}
-        {posts.length > 0 && (
-          <>
-            {posts.map((post: Post) => {
-              const postDate = new Date(post.createdAt);
-              const today = new Date();
-              const isToday = postDate.toDateString() === today.toDateString();
-              const isSameYear = postDate.getFullYear() === today.getFullYear();
+            );
+          } else {
+            // 일반 포스트 렌더링 (기존 코드 유지)
+            const post = item.data as Post;
+            const postDate = new Date(post.createdAt);
+            const today = new Date();
+            const isToday = postDate.toDateString() === today.toDateString();
+            const isSameYear = postDate.getFullYear() === today.getFullYear();
 
-              // 날짜를 보기 좋게 포맷팅
-              let formattedDate;
-              if (isToday) {
-                formattedDate = `오늘 ${postDate.toLocaleTimeString("ko-KR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}`;
-              } else if (isSameYear) {
-                formattedDate = postDate.toLocaleDateString("ko-KR", {
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-              } else {
-                formattedDate = postDate.toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
-              }
-              const isContentOverflow = post.content.split("\n").length > 3;
+            let formattedDate;
+            if (isToday) {
+              formattedDate = `오늘 ${postDate.toLocaleTimeString("ko-KR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}`;
+            } else if (isSameYear) {
+              formattedDate = postDate.toLocaleDateString("ko-KR", {
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            } else {
+              formattedDate = postDate.toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            }
+            const isContentOverflow = post.content.split("\n").length > 3;
 
-              // 이미지나 비디오가 없는 경우
-              if (!post.image && !post.video) {
-                return (
-                  <div className="cafe-body" key={post.id}>
-                    <div className="display-flex">
-                      <div className="feed-text-post margin-topbottom10px">
-                        <div className="display-center">
-                          <img
-                            src="https://i.imgur.com/tgVDqj1.jpeg"
-                            style={{
-                              width: "7%",
-                              maxWidth: "30px",
-                              minWidth: "20px",
-                              height: "auto",
-                              borderRadius: "0.3rem",
-                            }}
-                            alt="프로필"
-                          />
-                          <div>
-                            <p className="cafe-nickname">성지고 알리미</p>
-                            <p className="cafe-nickname-sub">
-                              /{post.type2.join("")}/{post.subSubjectTags}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="cafe-post-title">{post.title}</p>
-                        <p
-                          className="feed-post-content"
-                          style={{
-                            display: "webkit-box",
-                            overflow: "hidden",
-                            WebkitBoxOrient: "vertical",
-                            WebkitLineClamp: expandedPost.has(post.id)
-                              ? "unset"
-                              : 3,
-                          }}
-                        >
-                          {post.content}
-                        </p>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginTop: "10px",
-                          }}
-                        >
-                          <div>
-                            {post.subjectTags &&
-                              post.subjectTags.map((subject) => (
-                                <p className="tags" key={subject}>
-                                  {subject}
-                                </p>
-                              ))}
-                          </div>
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            {post.gradeTags &&
-                              post.gradeTags.map((grade) => (
-                                <p className="tags" key={grade}>
-                                  {grade}
-                                </p>
-                              ))}
-                          </div>
-                        </div>
-                        <div
-                          className="display-between"
-                          style={{
-                            display: "flex",
-                            alignContent: "center",
-                            marginTop: "10px",
-                          }}
-                        >
-                          <p className="feed-post-date">{formattedDate}</p>
-                          {isContentOverflow && !expandedPost.has(post.id) && (
-                            <div
-                              className="more"
-                              onClick={() => handleToggleContent(post.id)}
-                            >
-                              <button>더보기 ▼</button>
-                            </div>
-                          )}
-                          {expandedPost.has(post.id) && (
-                            <div
-                              className="more"
-                              onClick={() => handleToggleContent(post.id)}
-                            >
-                              <button>접기 ▲</button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              // 이미지나 비디오가 있는 경우
+            if (!post.image && !post.video) {
               return (
                 <div className="cafe-body" key={post.id}>
                   <div className="display-flex">
@@ -348,30 +275,120 @@ export default function Cafe() {
                         />
                         <div>
                           <p className="cafe-nickname">성지고 알리미</p>
-                          <p className="cafe-nickname-sub">공지사항</p>
+                          <p className="cafe-nickname-sub">
+                            /{post.type2.join("")}/{post.subSubjectTags}
+                          </p>
                         </div>
                       </div>
-                      <div className="display-flex">
-                        <img
-                          className="feed-insta-img"
-                          src={post.image}
-                          alt="피드 이미지"
-                        />
-                      </div>
                       <p className="cafe-post-title">{post.title}</p>
-                      <p className="feed-post-content">{post.content}</p>
-                      <div className="display-between">
+                      <p
+                        className="feed-post-content"
+                        style={{
+                          display: "webkit-box",
+                          overflow: "hidden",
+                          WebkitBoxOrient: "vertical",
+                          WebkitLineClamp: expandedPost.has(post.id)
+                            ? "unset"
+                            : 3,
+                        }}
+                      >
+                        {post.content}
+                      </p>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <div>
+                          {post.subjectTags &&
+                            post.subjectTags.map((subject) => (
+                              <p className="tags" key={subject}>
+                                {subject}
+                              </p>
+                            ))}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          {post.gradeTags &&
+                            post.gradeTags.map((grade) => (
+                              <p className="tags" key={grade}>
+                                {grade}
+                              </p>
+                            ))}
+                        </div>
+                      </div>
+                      <div
+                        className="display-between"
+                        style={{
+                          display: "flex",
+                          alignContent: "center",
+                          marginTop: "10px",
+                        }}
+                      >
                         <p className="feed-post-date">{formattedDate}</p>
+                        {isContentOverflow && !expandedPost.has(post.id) && (
+                          <div
+                            className="more"
+                            onClick={() => handleToggleContent(post.id)}
+                          >
+                            <button>더보기 ▼</button>
+                          </div>
+                        )}
+                        {expandedPost.has(post.id) && (
+                          <div
+                            className="more"
+                            onClick={() => handleToggleContent(post.id)}
+                          >
+                            <button>접기 ▲</button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
               );
-            })}
-          </>
-        )}
-        {/* 과제(공지) 섹션 */}
+            }
 
+            return (
+              <div className="cafe-body" key={post.id}>
+                <div className="display-flex">
+                  <div className="feed-text-post margin-topbottom10px">
+                    <div className="display-center">
+                      <img
+                        src="https://i.imgur.com/tgVDqj1.jpeg"
+                        style={{
+                          width: "7%",
+                          maxWidth: "30px",
+                          minWidth: "20px",
+                          height: "auto",
+                          borderRadius: "0.3rem",
+                        }}
+                        alt="프로필"
+                      />
+                      <div>
+                        <p className="cafe-nickname">성지고 알리미</p>
+                        <p className="cafe-nickname-sub">공지사항</p>
+                      </div>
+                    </div>
+                    <div className="display-flex">
+                      <img
+                        className="feed-insta-img"
+                        src={post.image}
+                        alt="피드 이미지"
+                      />
+                    </div>
+                    <p className="cafe-post-title">{post.title}</p>
+                    <p className="feed-post-content">{post.content}</p>
+                    <div className="display-between">
+                      <p className="feed-post-date">{formattedDate}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+        })}
         <div className="margin"></div>
       </div>
     </div>

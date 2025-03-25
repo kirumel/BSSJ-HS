@@ -1,12 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
-import logo from "../../../public/logo.png";
-import { useSession } from "next-auth/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useState, useEffect, useRef } from "react";
+"use client";
+import { useState } from "react";
 import axios from "axios";
-import { useSpring, animated } from "react-spring"; // react-spring import
+import { useSpring, animated } from "react-spring";
+import { FeedItem } from "./Cafe"; // FeedItem 타입 가져오기
 
 interface Post {
   author: any;
@@ -37,8 +33,20 @@ interface Comment {
   content: string;
   createdAt: Date;
 }
+interface Assignment {
+  teacherName: string;
+  startDate: string; // 예: "03-24 11:30:00"
+  endDate: string;
+  title: string;
+  status: string;
+  link: string;
+}
 
-export default function Page(props: { postdata: (value: Post[]) => void }) {
+interface FeednavProps {
+  postdata: (value: FeedItem[]) => void;
+}
+
+export default function Feednav({ postdata }: FeednavProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
@@ -51,38 +59,33 @@ export default function Page(props: { postdata: (value: Post[]) => void }) {
   const grades = ["1학년", "2학년", "3학년"];
   const typeOptions = ["공지사항", "시험범위", "수행평가"];
 
-  // 애니메이션을 적용할 spring 훅
   const modalAnimation = useSpring({
-    transform: isModalOpen ? "translateY(0)" : "translateY(100%)", // 모달이 열리면 위로 슬라이드, 닫히면 아래로 슬라이드
-    opacity: isModalOpen ? 1 : 0, // 모달이 열리면 보이고, 닫히면 사라짐
-    config: { tension: 300, friction: 30 }, // 애니메이션 속도 조정
+    transform: isModalOpen ? "translateY(0)" : "translateY(100%)",
+    opacity: isModalOpen ? 1 : 0,
+    config: { tension: 300, friction: 30 },
   });
 
   const handleTypeClick = (type: string) => {
-    setSelectedType((prevType) => (prevType === type ? "" : type));
+    setSelectedType((prev) => (prev === type ? "" : type));
   };
 
   const handleSubjectClick = (subject: string) => {
-    setSelectedSubject((prevSubject) =>
-      prevSubject === subject ? "" : subject
-    );
+    setSelectedSubject((prev) => (prev === subject ? "" : subject));
   };
 
-  const handleGradeClick = (grade: any) => {
-    setSelectedGrade((prevGrade) => (prevGrade === grade ? "" : grade));
+  const handleGradeClick = (grade: string) => {
+    setSelectedGrade((prev) => (prev === grade ? "" : grade));
   };
 
   const handleSubTagChange = (subject: string, value: string) => {
-    setSubTags((prevTags) => ({
-      ...prevTags,
-      [subject]: value,
-    }));
+    setSubTags((prev) => ({ ...prev, [subject]: value }));
   };
 
   const handleSearch = async () => {
     setIsModalOpen(false);
     try {
-      const response = await axios.get("/api/post/feed", {
+      // posts: 백엔드에서 검색 조건을 적용한 API 호출 (여기선 그대로 호출)
+      const postResponse = await axios.get("/api/post/feed", {
         params: {
           type2: selectedType,
           subject: selectedSubject,
@@ -91,22 +94,84 @@ export default function Page(props: { postdata: (value: Post[]) => void }) {
           query: searchQuery,
         },
       });
-      props.postdata(response.data);
+      // assignments: 전체 데이터를 받아온 후 클라이언트에서 필터링
+      const assignmentResponse = await axios.get("/api/flfhtmznf");
+      const posts: Post[] = postResponse.data;
+      const assignments: Assignment[] = assignmentResponse.data;
+
+      // assignments 필터링 (검색어가 포함되어 있는지 검사)
+      let filteredAssignments = assignments;
+      if (searchQuery || selectedType || selectedSubject || selectedGrade) {
+        console.log("검색어:", searchQuery.trim());
+        console.log(
+          "필터 조건:",
+          selectedType,
+          selectedSubject,
+          selectedGrade,
+          subTags[selectedSubject]
+        );
+
+        filteredAssignments = assignments.filter((assignment) => {
+          const tagsField = assignment.title
+            .split("-")[0]
+            .slice(5)
+            .split(" ")
+            .filter((item) => item !== ""); // 제목에서 추출한 태그들
+
+          const teacherField = assignment.teacherName;
+          const titleField = assignment.title.split("-")[1] || "";
+
+          // ✅ 검색어가 제목, 태그, 선생님 이름 중 하나라도 포함하는지 확인
+          const matchesSearchQuery =
+            teacherField.includes(searchQuery) ||
+            titleField.includes(searchQuery);
+
+          // ✅ 선택한 필터 (type, subject, grade) 조건 확인
+          const matchesFilters =
+            (!selectedType || tagsField.includes(selectedType)) &&
+            (!selectedSubject || tagsField.includes(selectedSubject)) &&
+            (!selectedGrade || tagsField.includes(selectedGrade));
+          return matchesSearchQuery && matchesFilters;
+        });
+      }
+
+      const postItems: FeedItem[] = posts.map((post) => ({
+        feedType: "post",
+        date: new Date(post.createdAt),
+        data: post,
+      }));
+
+      const assignmentItems: FeedItem[] = filteredAssignments.map(
+        (assignment) => {
+          const currentYear = new Date().getFullYear();
+          const dateString = assignment.startDate.match(/^\d{4}/)
+            ? assignment.startDate
+            : `${currentYear}-${assignment.startDate}`;
+          return {
+            feedType: "assignment",
+            date: new Date(dateString),
+            data: assignment,
+          };
+        }
+      );
+
+      const combined = [...postItems, ...assignmentItems].sort(
+        (a, b) => b.date.getTime() - a.date.getTime()
+      );
+      postdata(combined);
     } catch (error) {
       console.error("Search request failed:", error);
     }
   };
 
-  // 터치 시작 시 위치 저장
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartTouch(e.touches[0].clientY);
   };
 
-  // 터치 끝나면 모달 내려가는지 체크
   const handleTouchEnd = (e: React.TouchEvent) => {
     const endTouch = e.changedTouches[0].clientY;
     if (startTouch - endTouch > 100) {
-      setIsModalOpen(false); // 100px 이상 위로 드래그하면 모달 닫기
+      setIsModalOpen(false);
     }
   };
 
@@ -115,7 +180,7 @@ export default function Page(props: { postdata: (value: Post[]) => void }) {
       <div className="cafe-top" style={{ height: "50px" }}>
         <div
           style={{
-            width: "100%",
+            width: "80%",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -128,7 +193,7 @@ export default function Page(props: { postdata: (value: Post[]) => void }) {
             className="cafe-top-search"
             placeholder="검색어를 입력해주세요"
             type="search"
-          ></input>
+          />
         </div>
         <button
           style={{ border: "none", backgroundColor: "transparent" }}
@@ -140,165 +205,158 @@ export default function Page(props: { postdata: (value: Post[]) => void }) {
             <div className="option"></div>
           </div>
         </button>
+      </div>
 
-        {isModalOpen && (
-          <>
+      {isModalOpen && (
+        <>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 999,
+            }}
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+          <animated.div
+            style={{
+              ...modalAnimation,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <div
               style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                zIndex: 999,
+                margin: "0",
+                borderBottomLeftRadius: "0",
+                borderBottomRightRadius: "0",
+                height: "90vh",
+                overflow: "hidden",
+                paddingRight: "20px",
+                paddingLeft: "20px",
+                paddingBottom: "20px",
+                paddingTop: "0px",
+                boxSizing: "border-box",
               }}
-              onClick={() => setIsModalOpen(false)}
-            ></div>
-
-            {/* Modal Content */}
-            <animated.div
-              style={{
-                ...modalAnimation,
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                zIndex: 1000,
-              }}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
+              className="modal-content"
             >
               <div
+                onClick={() => setIsModalOpen(false)}
+                className="modal-close-button"
                 style={{
-                  margin: "0",
-                  borderBottomLeftRadius: "0",
-                  borderBottomRightRadius: "0",
-                  height: "90vh",
-                  overflow: "hidden",
-                  paddingRight: "20px",
-                  paddingLeft: "20px",
-                  paddingBottom: "20px",
-                  paddingTop: "0px",
-                  boxSizing: "border-box",
+                  cursor: "pointer",
+                  position: "static",
+                  display: "flex",
+                  justifyContent: "right",
+                  marginTop: "3px",
+                  marginBottom: "3px",
                 }}
-                className="modal-content"
               >
-                <div
-                  onClick={() => setIsModalOpen(false)}
-                  className="modal-close-button"
-                  style={{
-                    cursor: "pointer",
-                    position: "static",
-                    display: "flex",
-                    justifyContent: "right",
-                    marginTop: "3px",
-                    marginBottom: "3px",
-                  }}
-                >
-                  &times;
+                &times;
+              </div>
+              <div
+                style={{
+                  overflow: "scroll",
+                  height: "calc(100% - 100px)",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <input
+                  className="adminfeed-input"
+                  type="text"
+                  placeholder={`${selectedSubject} 내용 검색`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <p className="adminfeed-title">타입 선택</p>
+                <div>
+                  {typeOptions.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => handleTypeClick(type)}
+                      className="adminfeed-button"
+                      style={{
+                        backgroundColor:
+                          selectedType === type ? "#BCC5F7" : "#CFD0D1",
+                      }}
+                    >
+                      {type}
+                    </button>
+                  ))}
                 </div>
-
-                <div
-                  style={{
-                    overflow: "scroll",
-                    height: "calc(100% - 100px)",
-                    borderRadius: "0.5rem",
-                  }}
-                >
-                  <input
-                    className="adminfeed-input"
-                    type="text"
-                    placeholder={`${selectedSubject} 내용 검색`}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <p className="adminfeed-title">타입 선택</p>
-                  <div>
-                    {typeOptions.map((type) => (
+                <div className="line"></div>
+                <p className="adminfeed-title">과목 선택</p>
+                <div>
+                  {subjects.map((subject) => (
+                    <div key={subject}>
                       <button
-                        key={type}
-                        onClick={() => handleTypeClick(type)}
-                        className="adminfeed-button"
+                        onClick={() => handleSubjectClick(subject)}
+                        className="feed-button"
                         style={{
                           backgroundColor:
-                            selectedType === type ? "#BCC5F7" : "#CFD0D1",
+                            selectedSubject === subject ? "lightblue" : "",
                         }}
                       >
-                        {type}
+                        {subject}
                       </button>
-                    ))}
-                  </div>
-                  <div className="line"></div>
-
-                  <p className="adminfeed-title">과목 선택</p>
-                  <div>
-                    {subjects.map((subject) => (
-                      <div key={subject}>
-                        <button
-                          key={subject}
-                          onClick={() => handleSubjectClick(subject)}
-                          className="feed-button"
-                          style={{
-                            backgroundColor:
-                              selectedSubject === subject ? "lightblue" : "",
-                          }}
-                        >
-                          {subject}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-
-                  {selectedSubject && (
-                    <div>
-                      <div className="line"></div>
-                      <p className="adminfeed-title">
-                        {selectedSubject} 세부과목
-                      </p>
-                      <input
-                        className="adminfeed-input"
-                        type="text"
-                        placeholder={`${selectedSubject} 세부 과목`}
-                        value={subTags[selectedSubject] || ""}
-                        onChange={(e) =>
-                          handleSubTagChange(selectedSubject, e.target.value)
-                        }
-                      />
                     </div>
-                  )}
-                  <div className="line"></div>
-                  <p className="adminfeed-title">학년 선택</p>
-                  <div>
-                    {grades.map((grade) => (
-                      <div>
-                        <button
-                          key={grade}
-                          onClick={() => handleGradeClick(grade)}
-                          className="feed-button"
-                          style={{
-                            backgroundColor:
-                              selectedGrade === grade ? "lightgreen" : "",
-                          }}
-                        >
-                          {grade}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-                <button
-                  style={{ marginTop: "0.8rem" }}
-                  onClick={handleSearch}
-                  className="ok-button"
-                >
-                  검색
-                </button>
+                {selectedSubject && (
+                  <div>
+                    <div className="line"></div>
+                    <p className="adminfeed-title">
+                      {selectedSubject} 세부과목
+                    </p>
+                    <input
+                      className="adminfeed-input"
+                      type="text"
+                      placeholder={`${selectedSubject} 세부 과목`}
+                      value={subTags[selectedSubject] || ""}
+                      onChange={(e) =>
+                        handleSubTagChange(selectedSubject, e.target.value)
+                      }
+                    />
+                  </div>
+                )}
+                <div className="line"></div>
+                <p className="adminfeed-title">학년 선택</p>
+                <div>
+                  {grades.map((grade) => (
+                    <div key={grade}>
+                      <button
+                        onClick={() => handleGradeClick(grade)}
+                        className="feed-button"
+                        style={{
+                          backgroundColor:
+                            selectedGrade === grade ? "lightgreen" : "",
+                        }}
+                      >
+                        {grade}
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </animated.div>
-          </>
-        )}
-      </div>
+              <button
+                style={{ marginTop: "0.8rem" }}
+                onClick={handleSearch}
+                className="ok-button"
+              >
+                검색
+              </button>
+            </div>
+          </animated.div>
+        </>
+      )}
     </div>
   );
 }
