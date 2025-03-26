@@ -343,7 +343,7 @@ export default function Page() {
             ))}
           </div>
           <div className="line"></div>
-          <p className="admin-title">기타항목 / 개편중입니다</p>
+          <p className="admin-title">기타항목</p>
           <div className="event-box-container">
             <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
