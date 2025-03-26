@@ -3,6 +3,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./style.css";
+import { usePathname, useRouter } from "next/navigation";
+import Loading from "../loading/page";
 
 export default function FileListPage() {
   // 전체 데이터 상태 (night와 eight 리스트 포함)
@@ -15,6 +17,7 @@ export default function FileListPage() {
   // 적용된 필터 상태
   const [appliedFilterDate, setAppliedFilterDate] = useState("");
   const [appliedFilterGrade, setAppliedFilterGrade] = useState("");
+  const router = useRouter();
 
   // API에서 오늘 날짜 기준 데이터 호출
   useEffect(() => {
@@ -29,7 +32,7 @@ export default function FileListPage() {
   }, []);
 
   if (!data) {
-    return <div>로딩중...</div>;
+    return <Loading />;
   }
 
   // 선택한 파일 리스트 (8교시 또는 야자)

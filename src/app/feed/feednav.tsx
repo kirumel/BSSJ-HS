@@ -83,8 +83,8 @@ export default function Feednav({ postdata }: FeednavProps) {
 
   const handleSearch = async () => {
     setIsModalOpen(false);
+    console.log("handleSearch 함수 실행됨"); // 추가
     try {
-      // posts: 백엔드에서 검색 조건을 적용한 API 호출 (여기선 그대로 호출)
       const postResponse = await axios.get("/api/post/feed", {
         params: {
           type2: selectedType,
@@ -94,17 +94,17 @@ export default function Feednav({ postdata }: FeednavProps) {
           query: searchQuery,
         },
       });
-      // assignments: 전체 데이터를 받아온 후 클라이언트에서 필터링
+
       const assignmentResponse = await axios.get("/api/flfhtmznf");
+      console.log("API 요청 완료", postResponse, assignmentResponse); // 추가
+
       const posts: Post[] = postResponse.data;
       const assignments: Assignment[] = assignmentResponse.data;
 
-      // assignments 필터링 (검색어가 포함되어 있는지 검사)
       let filteredAssignments = assignments;
       if (searchQuery || selectedType || selectedSubject || selectedGrade) {
         console.log("검색어:", searchQuery.trim());
         console.log(
-          "필터 조건:",
           selectedType,
           selectedSubject,
           selectedGrade,
@@ -116,49 +116,53 @@ export default function Feednav({ postdata }: FeednavProps) {
             .split("-")[0]
             .slice(5)
             .split(" ")
-            .filter((item) => item !== ""); // 제목에서 추출한 태그들
+            .filter((item) => item !== "");
 
           const teacherField = assignment.teacherName;
           const titleField = assignment.title.split("-")[1] || "";
 
-          // ✅ 검색어가 제목, 태그, 선생님 이름 중 하나라도 포함하는지 확인
           const matchesSearchQuery =
             teacherField.includes(searchQuery) ||
             titleField.includes(searchQuery);
 
-          // ✅ 선택한 필터 (type, subject, grade) 조건 확인
           const matchesFilters =
             (!selectedType || tagsField.includes(selectedType)) &&
             (!selectedSubject || tagsField.includes(selectedSubject)) &&
             (!selectedGrade || tagsField.includes(selectedGrade));
+
           return matchesSearchQuery && matchesFilters;
         });
+
+        console.log("필터링된 assignments:"); // 추가
+
+        const postItems: FeedItem[] = posts.map((post) => ({
+          feedType: "post",
+          date: new Date(post.createdAt),
+          data: post,
+        }));
+
+        let currentYear = "";
+
+        const assignmentItems: FeedItem[] = filteredAssignments.map(
+          (assignment) => {
+            currentYear = assignment.title.split("-")[0].slice(0, 4);
+            const dateString = assignment.startDate.match(/^\d{4}/)
+              ? assignment.startDate
+              : `${currentYear}-${assignment.startDate}`;
+            return {
+              feedType: "assignment",
+              date: new Date(dateString),
+              data: assignment,
+            };
+          }
+        );
+
+        const combined = [...postItems, ...assignmentItems].sort(
+          (a, b) => b.date.getTime() - a.date.getTime()
+        );
+
+        postdata(combined);
       }
-
-      const postItems: FeedItem[] = posts.map((post) => ({
-        feedType: "post",
-        date: new Date(post.createdAt),
-        data: post,
-      }));
-
-      const assignmentItems: FeedItem[] = filteredAssignments.map(
-        (assignment) => {
-          const currentYear = new Date().getFullYear();
-          const dateString = assignment.startDate.match(/^\d{4}/)
-            ? assignment.startDate
-            : `${currentYear}-${assignment.startDate}`;
-          return {
-            feedType: "assignment",
-            date: new Date(dateString),
-            data: assignment,
-          };
-        }
-      );
-
-      const combined = [...postItems, ...assignmentItems].sort(
-        (a, b) => b.date.getTime() - a.date.getTime()
-      );
-      postdata(combined);
     } catch (error) {
       console.error("Search request failed:", error);
     }

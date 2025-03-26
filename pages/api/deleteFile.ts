@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     });
     console.log(delete2);
 
-    res.status(200).send("선택된 학생들 복사 완료");
+    res.status(200).send(delete2);
   } catch (error) {
     console.error(error);
     res.status(500).send("복사 실패");

@@ -47,7 +47,9 @@ export default function Page({ boardState }: any) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("/api/post/posts", { params: { boardId: boardState } })
+      .get("/api/post/posts", {
+        params: { boardId: boardState || "cm837yu2f0000r1ud0exdpgqp" },
+      })
       .then((response) => {
         const sortedPosts = response.data.sort((a: Post, b: Post) => {
           const dateA = new Date(a.createdAt);
@@ -93,8 +95,9 @@ export default function Page({ boardState }: any) {
         className="cafe-title"
         style={{
           marginLeft: "0.5rem",
-          marginTop: "1rem",
-          marginBottom: "0.5rem",
+          marginTop: "0",
+          marginBottom: "0",
+          fontSize: "15px",
         }}
       >
         이번주 인기글 top10 👑
@@ -328,8 +331,8 @@ export default function Page({ boardState }: any) {
           );
         })}
       </div>
-      <div className="margin" style={{ height: "20px" }}></div>
-      <h3 className="title" style={{ marginLeft: "0.5rem" }}>
+      <div className="margin" style={{ height: "10px" }}></div>
+      <h3 className="title" style={{ marginLeft: "0.5rem", fontSize: "15px" }}>
         게시글
       </h3>
     </>

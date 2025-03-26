@@ -20,6 +20,7 @@ export default function Nav() {
     "/study",
     "/feed",
     "/nightAT2",
+    "/attendanceDB",
     "/nightattendance",
   ];
 

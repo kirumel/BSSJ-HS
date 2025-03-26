@@ -2,24 +2,54 @@
 
 import axios from "axios";
 import { useState } from "react";
+import SuccessModal from "../successModal/page";
 
 export default function Page() {
   const [selectedGrade, setSelectedGrade] = useState(3);
 
+  const [successModal, setsuccessModal] = useState(false);
+  const [successModal2, setsuccessModal2] = useState(false);
+
   function deleteFile1() {
-    axios.delete("/api/deleteFile", {
-      params: {
-        targetDB: `attendanceObjectDB${selectedGrade}`,
-      },
-    });
+    axios
+      .delete("/api/deleteFile", {
+        params: {
+          targetDB: `attendanceObjectDB${selectedGrade}`,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.data.count === 0) {
+            setsuccessModal2(true);
+            setTimeout(() => {
+              window.location.reload();
+            }, 5000);
+          } else {
+            setsuccessModal(true);
+          }
+        }
+      });
   }
 
   function deleteFile2() {
-    axios.delete("/api/deleteFile1", {
-      params: {
-        grade: selectedGrade,
-      },
-    });
+    axios
+      .delete("/api/deleteFile1", {
+        params: {
+          grade: selectedGrade,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.data.count === 0) {
+            setsuccessModal2(true);
+            setTimeout(() => {
+              window.location.reload();
+            }, 5000);
+          } else {
+            setsuccessModal(true);
+          }
+        }
+      });
   }
 
   return (
@@ -31,6 +61,12 @@ export default function Page() {
         alignItems: "center",
       }}
     >
+      {successModal && (
+        <SuccessModal name="성공!" content="2차 출석 파일들이 삭제되었습니다" />
+      )}
+      {successModal2 && (
+        <SuccessModal name="확인 필요" content="2차 출석의 파일이 없습니다" />
+      )}
       <div
         style={{
           width: "100vw",

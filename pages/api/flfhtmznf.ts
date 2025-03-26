@@ -5,7 +5,7 @@ export default async function handler(req: any, res: any) {
   const loginUrl = "https://bssj.riroschool.kr/ajax.php"; // 로그인 요청 URL
   const targetUrl =
     "https://bssj.riroschool.kr/portfolio.php?club=index&action=idx&db=1551&sort=dateup&t_year=2025&t_grade=&t_doc=&from=&t_year=1&s1=&key="; // 크롤링할 페이지 URL (페이지 번호는 별도 파라미터)
-  const maxPages = 1; // 최대 페이지 수 설정 (필요시 변경)
+  const maxPages = 3; // 최대 페이지 수 설정 (필요시 변경)
 
   // 최종 결과를 저장할 배열 (여기서는 allAssignments 배열만 사용)
   const allAssignments: {

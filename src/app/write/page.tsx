@@ -20,6 +20,11 @@ export default function Page() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [dragY, setDragY] = useState(0);
 
+  // 폼 관련 상태
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
+
   const modalAnimation = useSpring({
     transform: `translateY(${isModalOpen ? dragY : 100}%)`,
     opacity: isModalOpen ? 1 : 0,
@@ -60,7 +65,29 @@ export default function Page() {
   });
   const { data: session } = useSession();
 
-  const board = axios.get("/api/board/boards").then((res) => res.data);
+  // 확인 버튼 클릭 시 서버에 데이터를 전송하는 함수
+  const handleSubmit = async () => {
+    try {
+      // 전송할 데이터 구성
+      const postData = {
+        boardId: "cm837yu2f0000r1ud0exdpgqp",
+        boardName: "자유게시판",
+        title,
+        content,
+        nickname: session?.user?.nickname,
+        authorId: session?.user?.id,
+      };
+
+      // axios POST 요청
+      const response = await axios.post("/api/post/posts", postData);
+      console.log("서버 응답:", response.data);
+      // 요청 성공 후 모달 닫기 또는 알림 등 추가 로직 작성 가능
+      closeModal();
+    } catch (error) {
+      console.error("서버 요청 에러:", error);
+      // 에러 처리 로직 추가
+    }
+  };
 
   return (
     <div>
@@ -108,6 +135,8 @@ export default function Page() {
                         className="checkbox-input"
                         type="checkbox"
                         id="check"
+                        checked={anonymous}
+                        onChange={(e) => setAnonymous(e.target.checked)}
                       />
                       <label htmlFor="check">익명</label>
                     </div>
@@ -117,7 +146,9 @@ export default function Page() {
                   </div>
 
                   <div className="ok-button-div">
-                    <button className="con-button">확인</button>
+                    <button className="con-button" onClick={handleSubmit}>
+                      확인
+                    </button>
                   </div>
                 </div>
                 <div>
@@ -126,6 +157,8 @@ export default function Page() {
                       className="title-input"
                       name="title"
                       placeholder="제목을 입력해주세요"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
                   <div>
@@ -135,6 +168,8 @@ export default function Page() {
                       placeholder="글내용"
                       rows={4}
                       cols={50}
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                     ></textarea>
                   </div>
                   <input

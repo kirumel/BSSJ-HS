@@ -43,7 +43,9 @@ export default function Cafe({ session, boardState }: any) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("/api/post/posts", { params: { boardId: boardState } })
+      .get("/api/post/posts", {
+        params: { boardId: boardState || "cm837yu2f0000r1ud0exdpgqp" },
+      })
       .then((response) => {
         const sortedPosts = response.data.sort((a: any, b: any) => {
           const dateA = new Date(a.createdAt as string);

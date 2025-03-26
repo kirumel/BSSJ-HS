@@ -70,10 +70,10 @@ export default function Cafe() {
           date: new Date(post.createdAt),
           data: post,
         }));
-
+        let currentYear = "";
         // 리로스쿨(과제): startDate에 현재 연도 붙여서 Date 객체 생성
         const assignmentItems: FeedItem[] = assignments.map((assignment) => {
-          const currentYear = new Date().getFullYear();
+          currentYear = assignment.title.split("-")[0].slice(0, 4);
           const dateString = assignment.startDate.match(/^\d{4}/)
             ? assignment.startDate
             : `${currentYear}-${assignment.startDate}`;
