@@ -139,12 +139,14 @@ export default function Cafe() {
             return (
               <div className="cafe-body" key={`assignment-${index}`}>
                 <div className="display-flex">
-                  <div className="feed-text-post margin-topbottom10px">
-                    <a
-                      href={`${assignment.link.split("?")[0]}/portfolio.php?${
-                        assignment.link.split("?")[1]
-                      }`}
-                    >
+                  <a
+                    href={`${assignment.link.split("?")[0]}/portfolio.php?${
+                      assignment.link.split("?")[1]
+                    }`}
+                    target="_blank"
+                    className="cafe-nickname"
+                  >
+                    <div className="feed-text-post margin-topbottom10px">
                       <div
                         className="display-between"
                         style={{
@@ -225,8 +227,8 @@ export default function Cafe() {
                           <br /> {assignment.endDate} 까지
                         </p>
                       </div>
-                    </a>
-                  </div>
+                    </div>
+                  </a>
                 </div>
               </div>
             );
