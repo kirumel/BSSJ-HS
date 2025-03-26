@@ -140,86 +140,92 @@ export default function Cafe() {
               <div className="cafe-body" key={`assignment-${index}`}>
                 <div className="display-flex">
                   <div className="feed-text-post margin-topbottom10px">
-                    <div
-                      className="display-between"
-                      style={{
-                        display: "flex",
-                        alignContent: "center",
-                        marginTop: "0px",
-                      }}
+                    <a
+                      href={`${assignment.link.split("?")[0]}/portfolio.php?${
+                        assignment.link.split("?")[1]
+                      }`}
                     >
-                      <div>
-                        <div className="display-center">
-                          <img
-                            src="https://riroschool.kr/assets/imgs/common/logo_cloud.svg"
-                            style={{
-                              width: "7%",
-                              maxWidth: "30px",
-                              minWidth: "20px",
-                              height: "auto",
-                              borderRadius: "0.3rem",
-                            }}
-                            alt="프로필"
-                          />
-                          <div>
-                            <p className="cafe-nickname">
-                              리로스쿨 / {assignment.teacherName}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="cafe-post-title">
-                          {assignment.title.split("-")[1]}
-                        </p>
-                      </div>
-                      <button
-                        className="riro-status"
+                      <div
+                        className="display-between"
                         style={{
-                          backgroundColor:
-                            assignment.status === "제출"
-                              ? ""
-                              : assignment.status === "마감"
-                              ? "#FD7373"
-                              : "#C6C6C6",
+                          display: "flex",
+                          alignContent: "center",
+                          marginTop: "0px",
                         }}
                       >
-                        {assignment.status}
-                      </button>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginTop: "10px",
-                      }}
-                    ></div>
-                    <div
-                      className="display-between"
-                      style={{
-                        display: "flex",
-                        alignContent: "center",
-                        marginTop: "0px",
-                      }}
-                    >
-                      <div>
-                        <div style={{ display: "flex" }}>
-                          {assignment.title
-                            .split("-")[0]
-                            .toString()
-                            .slice(5)
-                            .split(" ")
-                            .filter((item) => item !== "")
-                            .map((tag, idx) => (
-                              <div className="tags" key={idx}>
-                                {tag}
-                              </div>
-                            ))}
+                        <div>
+                          <div className="display-center">
+                            <img
+                              src="https://riroschool.kr/assets/imgs/common/logo_cloud.svg"
+                              style={{
+                                width: "7%",
+                                maxWidth: "30px",
+                                minWidth: "20px",
+                                height: "auto",
+                                borderRadius: "0.3rem",
+                              }}
+                              alt="프로필"
+                            />
+                            <div>
+                              <p className="cafe-nickname">
+                                리로스쿨 / {assignment.teacherName}
+                              </p>
+                            </div>
+                          </div>
+                          <p className="cafe-post-title">
+                            {assignment.title.split("-")[1]}
+                          </p>
                         </div>
+                        <button
+                          className="riro-status"
+                          style={{
+                            backgroundColor:
+                              assignment.status === "제출"
+                                ? ""
+                                : assignment.status === "마감"
+                                ? "#FD7373"
+                                : "#C6C6C6",
+                          }}
+                        >
+                          {assignment.status}
+                        </button>
                       </div>
-                      <p className="feed-post-date">
-                        {assignment.startDate} 부터
-                        <br /> {assignment.endDate} 까지
-                      </p>
-                    </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginTop: "10px",
+                        }}
+                      ></div>
+                      <div
+                        className="display-between"
+                        style={{
+                          display: "flex",
+                          alignContent: "center",
+                          marginTop: "0px",
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex" }}>
+                            {assignment.title
+                              .split("-")[0]
+                              .toString()
+                              .slice(5)
+                              .split(" ")
+                              .filter((item) => item !== "")
+                              .map((tag, idx) => (
+                                <div className="tags" key={idx}>
+                                  {tag}
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                        <p className="feed-post-date">
+                          {assignment.startDate} 부터
+                          <br /> {assignment.endDate} 까지
+                        </p>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>
