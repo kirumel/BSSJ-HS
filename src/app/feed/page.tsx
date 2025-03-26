@@ -117,6 +117,7 @@ export default function Cafe() {
         }}
       />
       <div className="line"></div>
+
       <div
         style={{
           marginLeft: "0.5rem",
