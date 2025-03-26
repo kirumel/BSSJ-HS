@@ -30,7 +30,6 @@ export default function Meals({
     localStorage.setItem("mealData2", JSON.stringify(mealsData));
     return mealsData;
   }
-  console.log(meals);
 
   // 초기 데이터 로드
   useEffect(() => {
