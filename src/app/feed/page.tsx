@@ -143,8 +143,8 @@ export default function Cafe() {
                     href={`${assignment.link.split("?")[0]}/portfolio.php?${
                       assignment.link.split("?")[1]
                     }`}
-                    target="_blank"
-                    className="cafe-nickname"
+                    // target="_blank"
+                    // className="cafe-nickname"
                   >
                     <div className="feed-text-post margin-topbottom10px">
                       <div
