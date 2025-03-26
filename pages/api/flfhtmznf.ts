@@ -70,7 +70,7 @@ export default async function handler(req: any, res: any) {
       pageNumber <= 5 && pageNumber <= maxPages;
       pageNumber++
     ) {
-      const response = await instance.get(`${targetUrl}?page=${pageNumber}`);
+      const response = await instance.get(`${targetUrl}&page=${pageNumber}`);
       const $ = cheerio.load(response.data);
 
       // 각 행을 순회하며 데이터 추출
