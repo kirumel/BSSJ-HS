@@ -4,7 +4,7 @@ import axios from "axios";
 import "../cafe/cafe.css";
 import "./style.css";
 import Loading from "../loading/page";
-import Feednav from "./Feednav";
+import Feednav from "./feednav";
 
 interface Post {
   author: any;
