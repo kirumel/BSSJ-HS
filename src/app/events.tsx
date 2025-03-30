@@ -38,7 +38,7 @@ export default function Events() {
               <img className="home-event-img" src="altisto.png" alt="Slide 2" />
               <div className="event-overlay">
                 <h2 className="event-title">성지고등학교 app</h2>
-                <p>version 1.0.1</p>
+                <p>version 1.0.2</p>
               </div>
             </div>
           </SwiperSlide>
@@ -52,23 +52,23 @@ export default function Events() {
           <div className="scroll-container">
             <a href="/qrScan">
               <div className="main-event-imgbox">
-                <img className="main-event-img" src="logofull.jpg"></img>
+                <img className="main-event-img" src="altisto.png"></img>
                 <div
                   className="main-event-overlay2"
-                  style={{ backgroundColor: "rgb(0, 0, 0)" }}
+                  style={{ backgroundColor: "rgba(93, 73, 202)" }}
                 ></div>
                 <div
                   className="main-event-overlay1"
                   style={{
                     backgroundImage:
-                      "linear-gradient(180deg, transparent 48.15%, rgba(0, 0, 0) 94.91%)",
+                      "linear-gradient(180deg, transparent 48.15%, rgba(93, 73, 202) 94.91%)",
                     color: "white",
                   }}
                 ></div>
                 <p className="main-event-title" style={{ color: "white" }}>
-                  event
+                  성지고등학교 app
                   <br />
-                  event
+                  version 1.0.2
                 </p>
               </div>
             </a>

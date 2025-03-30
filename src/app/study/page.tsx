@@ -63,8 +63,13 @@ export default function Home() {
 
       setTime(ATSdata);
 
+      // outTime 값이 "0"인 항목을 제외한 데이터
+      const filteredData = ATSdata.filter(
+        (item: any) => (item.outTime || item.outTimeT || item.outTimeST) !== "0"
+      );
+
       // 일주일 누적 시간 계산
-      const totalTime = ATSdata.reduce((acc: number, item: any) => {
+      const totalTime = filteredData.reduce((acc: number, item: any) => {
         const studyTime = calculateStudyTime(
           item.startTime,
           item.outTime || item.outTimeT || item.outTimeST
@@ -81,7 +86,7 @@ export default function Home() {
       <div className="right-left-margin">
         <div className="night-container">
           <HalfCircleProgressBar totalTime={totalStudyTime} maxTime={5} />
-          <h3 className="night-title">일주일 누적 참여 시간</h3>
+          <h3 className="night-title">일주일 누적 야자 참여 시간</h3>
           <p className="night-title2">
             {convertDecimalTimeToHM(totalStudyTime)}
           </p>
@@ -96,15 +101,27 @@ export default function Home() {
                 : convertDecimalTimeToHM(todayStudyTime2)}
             </p>
           </div>
+          {time.length === 0 && <p>출석이 완료된 항목이 없습니다</p>}
 
           {time.map((item: any, index: number) => (
             <div key={index}>
               <div className="time-T">
                 <div className="display-flexStudy">
                   <div>{item.createdAt}</div>
-                  <div>{item.outTime || item.outTimeT || item.outTimeST}</div>
+                  <div>
+                    퇴장 :{" "}
+                    {(item.outTime || item.outTimeT || item.outTimeST) !== "0"
+                      ? item.outTime || item.outTimeT || item.outTimeST
+                      : "미출석"}
+                  </div>
                 </div>
-                <div className="timeCheck">
+                <div
+                  className="timeCheck"
+                  style={{
+                    backgroundColor:
+                      item.check == "1" ? "" : "rgb(255, 150, 150)",
+                  }}
+                >
                   {item.check == "1" ? "출석" : "미출석"}
                 </div>
               </div>

@@ -75,7 +75,7 @@ export default function Setting() {
           </div>
           <div className="insert main-container" style={{ paddingTop: "10px" }}>
             <h3>계정 연동</h3>
-            <button
+            {/* <button
               className="ok-button"
               style={{
                 backgroundColor: "#FEE500",
@@ -85,7 +85,7 @@ export default function Setting() {
               onClick={() => handleSocialLogin("kakao")}
             >
               kakao로 연동하기
-            </button>
+            </button> */}
             <div className="delete-account">
               <h3>계정 삭제</h3>
               <input

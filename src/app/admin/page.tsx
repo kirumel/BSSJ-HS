@@ -351,12 +351,7 @@ export default function Page() {
                 목록
               </button>
             </Link>
-            {/* <Link href="attendanceDB">
-              <button className="event-box-button" style={{ color: "black" }}>
-                설명서 <br />
-                pdf
-              </button>
-            </Link> */}
+
             <Link href="delFile">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석 <br />
