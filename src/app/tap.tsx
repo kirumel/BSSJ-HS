@@ -22,11 +22,13 @@ const tabs = [
     icon: faBowlFood,
     label: "커뮤니티",
   },
-  // {
-  //   route: "/study",
-  //   icon: faUserCircle,
-  //   label: "공부",
-  // },
+
+  {
+    route: "/study",
+    icon: faCalendarDays,
+    label: "야자",
+  },
+
   {
     route: "/setting",
     icon: faUserCircle,

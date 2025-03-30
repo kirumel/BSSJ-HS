@@ -17,7 +17,6 @@ export default function Nav() {
     "/accountregister",
     "/accountdelete",
     "/",
-    "/study",
     "/feed",
     "/nightAT2",
     "/attendanceDB",

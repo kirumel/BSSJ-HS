@@ -77,11 +77,12 @@ export default async function handler(req: any, res: any) {
       $("tbody tr").each((index, element) => {
         if (index === 0) return; // 첫 번째 행(제목 행) 스킵
 
-        // 날짜 정보 추출 (7번째 td 요소)
-        const dateElement = $(element).find("td").eq(6);
+        let dateElement = $(element).find("td").eq(7);
+
         const dateText = dateElement.html();
         let startDate = "";
         let endDate = "";
+        console.log("dateText:", dateText);
 
         if (dateText) {
           if (dateText.includes("<br>")) {

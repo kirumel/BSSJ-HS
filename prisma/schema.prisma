@@ -222,6 +222,7 @@ model nightAtSupervisor {
   class         Int?
   grade         Int?
   studentnumber Int?
+  startTime     String?
   outTime       String?
   outTimeT       String?
   outTimeST       String?
