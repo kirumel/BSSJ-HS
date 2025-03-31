@@ -132,11 +132,26 @@ export default function Page() {
         day: "2-digit",
       });
       const findTime = firstcommitstudent.filter((a) => a.outTimeST === "");
+      const startTime = `${new Date()
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${new Date()
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+
+      setFirstCommitStudent((prev) =>
+        prev.map((student) => ({
+          ...student,
+          startTime: startTime,
+        }))
+      );
       if (findTime.length !== 0 && timeY == false) {
         settime(true);
       } else {
         if (timeY == true || findTime.length === 0) {
           setmodal1(true);
+
           const generateY = await axios
             .get("/api/post/nightAT/generateY", {
               params: { grade: 3, date: formattedDate1 },
