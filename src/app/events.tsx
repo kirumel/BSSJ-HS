@@ -50,7 +50,7 @@ export default function Events() {
       >
         <div className="scroll-containercenter">
           <div className="scroll-container">
-            <a href="/qrScan">
+            <div>
               <div className="main-event-imgbox">
                 <img className="main-event-img" src="altisto.png"></img>
                 <div
@@ -71,7 +71,7 @@ export default function Events() {
                   version 1.0.2
                 </p>
               </div>
-            </a>
+            </div>
           </div>
         </div>
       </div>

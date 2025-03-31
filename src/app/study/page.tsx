@@ -98,6 +98,8 @@ export default function Home() {
             <p className="night-titleT2">
               {convertDecimalTimeToHM(todayStudyTime2) == "0시간 0분"
                 ? "출석이 완료되지 않았습니다"
+                : convertDecimalTimeToHM(todayStudyTime2) == "NaN시간 NaN분"
+                ? "미출석"
                 : convertDecimalTimeToHM(todayStudyTime2)}
             </p>
           </div>

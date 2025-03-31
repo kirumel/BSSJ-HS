@@ -74,7 +74,7 @@ export default function Setting() {
             <div className="line"></div>
           </div>
           <div className="insert main-container" style={{ paddingTop: "10px" }}>
-            <h3>계정 연동</h3>
+            {/* <h3>계정 연동</h3> */}
             {/* <button
               className="ok-button"
               style={{
