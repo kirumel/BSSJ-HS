@@ -345,7 +345,7 @@ export default function Page() {
           <div className="line"></div>
           <p className="admin-title">기타항목</p>
           <div className="event-box-container">
-            <Link href="https://drive.google.com/file/d/1ralZfMMQDjn5uWfNwN-daYKjQ_sD2-Jp/view?usp=drive_link">
+            <Link href="https://drive.google.com/file/d/1ltVQod1J7o7irWRV0SkRyuGsWQl2SS3H/view?usp=sharing">
               <button className="event-box-button" style={{ color: "black" }}>
                 설명서 <br />
                 다운
