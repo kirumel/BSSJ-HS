@@ -94,20 +94,20 @@ export default function Page() {
           </li>
           <li>
             <a
-              href="https://support.google.com/admob/answer/6128543?hl=ko"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              AdMob
-            </a>
-          </li>
-          <li>
-            <a
               href="https://expo.dev/privacy"
               target="_blank"
               rel="noopener noreferrer"
             >
               Expo
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://supabase.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              supabase
             </a>
           </li>
         </ul>
@@ -161,7 +161,7 @@ export default function Page() {
           식별 정보를 의도적으로 수집하지 않습니다. 만약 서비스 제공자가 13세
           미만 아동이 개인 정보를 제공했다는 사실을 알게 될 경우, 이를 즉시
           서버에서 삭제할 것입니다. 부모나 보호자 분들께서 자녀가 개인 정보를
-          제공했다는 사실을 알고 계신 경우,{" "}
+          제공했다는 사실을 알고 계신 경우,
           <a href="mailto:admin@altisto.me">admin@altisto.me</a>로 연락해 주시기
           바랍니다.
         </p>

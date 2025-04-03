@@ -345,6 +345,12 @@ export default function Page() {
           <div className="line"></div>
           <p className="admin-title">기타항목</p>
           <div className="event-box-container">
+            <Link href="https://www.altisto.me/accountregister">
+              <button className="event-box-button" style={{ color: "black" }}>
+                설명서 <br />
+                다운
+              </button>
+            </Link>
             <Link href="attendanceDB">
               <button className="event-box-button" style={{ color: "black" }}>
                 출석부 <br />
