@@ -74,6 +74,8 @@ export default async function handler(req: any, res: any) {
     const 가로 = [
       "일자",
       "이름",
+      "반",
+      "번호",
       "출석 여부",
       "미출석 이유",
       "작성자",
@@ -86,6 +88,8 @@ export default async function handler(req: any, res: any) {
       const studentsData = [
         formattedDate,
         student.name,
+        student.class,
+        student.studentnumber,
         student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,

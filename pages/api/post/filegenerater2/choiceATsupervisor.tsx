@@ -48,13 +48,23 @@ export default async function handler(req: any, res: any) {
     pdf.addImage(logo, "PNG", 13, 13, imgWidth, imgHeight);
 
     // 테이블 헤더와 데이터
-    const 가로 = ["일자", "이름", "출석 여부", "미출석 이유", "작성자"];
+    const 가로 = [
+      "일자",
+      "이름",
+      "반",
+      "번호",
+      "출석 여부",
+      "미출석 이유",
+      "작성자",
+    ];
     const 세로: any[] = [];
 
     students.firstcommitstudent.forEach((student: any) => {
       const studentsData = [
         formattedDate,
         student.name,
+        student.class,
+        student.studentnumber,
         student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,

@@ -43,7 +43,15 @@ export default async function handler(req: any, res: any) {
     };
 
     // 열 제목 추가 및 스타일 설정
-    worksheet.addRow(["일자", "이름", "출석 여부", "미출석 이유", "작성자"]);
+    worksheet.addRow([
+      "일자",
+      "이름",
+      "반",
+      "번호",
+      "출석 여부",
+      "미출석 이유",
+      "작성자",
+    ]);
     const headerRow = worksheet.getRow(2);
     headerRow.eachCell({ includeEmpty: true }, (cell) => {
       cell.fill = {
@@ -71,6 +79,8 @@ export default async function handler(req: any, res: any) {
       const row = [
         formattedDate,
         student.name,
+        student.class,
+        student.studentnumber,
         student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
