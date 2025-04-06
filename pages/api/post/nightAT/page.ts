@@ -117,6 +117,7 @@ export default async function handler(req: any, res: any) {
       const findDB = await prisma.nightAtSupervisor.findMany({
         where: {
           studentnumber: number,
+          check: "1",
           class: classNum,
           grade: grade,
           createdAt: {

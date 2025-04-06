@@ -13,7 +13,6 @@ import GenerateModalN from "./generaterModalN/page";
 
 interface Attendance {
   secondNumber: string;
-  outTimeAT: string;
   outTimeST: string;
   outTimeT: string;
   name: string;
@@ -21,6 +20,11 @@ interface Attendance {
   comment: string;
   check: string;
   author: string;
+  monTime: string;
+  tueTime: string;
+  wedTime: string;
+  thuTime: string;
+  friTime: string;
   grade: number;
   class: number;
   studentnumber: string;
@@ -297,7 +301,8 @@ export default function Page() {
   };
 
   function convertTo12Hour(time24: string) {
-    if (!time24) return "설정된 시간 없음";
+    if (!time24) return "미출석";
+    if (time24 === "0") return "미출석";
     let [hours, minutes] = time24.split(":").map(Number);
     let period = hours >= 12 ? "PM" : "AM";
     hours = hours % 12 || 12;
@@ -368,11 +373,10 @@ export default function Page() {
           // 기본 정렬: 반과 번호 기준
           const updatedFinalData = data.map((student) => {
             const isUpdatedToday = student.updatedAt === formattedDate;
-
             return {
               ...student,
-              check: isUpdatedToday ? student.check : "", // 오늘 날짜가 아니면 초기화
-              comment: isUpdatedToday ? student.comment : "", // 오늘 날짜가 아니면 초기화
+              check: isUpdatedToday ? student.check : "",
+              comment: isUpdatedToday ? student.comment : "",
             };
           });
           const sortedData = updatedFinalData.sort((a, b) => {
@@ -384,32 +388,69 @@ export default function Page() {
           const sortedData1 = sortedData.filter(
             (student) => student.grade === 3
           );
-          const presentStudents = sortedData1.filter(
-            (student) => student.check !== "0"
-          );
-          const absentStudents = sortedData1.filter(
-            (student) => student.check === "0"
-          );
-          const finalSortedData = [...presentStudents, ...absentStudents];
-          console.log(absentStudents);
-          // 원래 순서를 저장
+          // // 기존 순서와 present/absent 분리 (필요시 유지)
+          // const presentStudents = sortedData1.filter(
+          //   (student) => student.check !== "0"
+          // );
+          // const absentStudents = sortedData1.filter(
+          //   (student) => student.check === "0"
+          // );
+          // const finalSortedData = [...presentStudents, ...absentStudents];
+          const finalSortedData = sortedData1;
+          const todayDay = new Date().getDay();
+          const initialFirstCommitStudent = finalSortedData.map((student) => {
+            let defaultTime = "";
+            switch (todayDay) {
+              case 1:
+                defaultTime = student.monTime || "0";
+                break;
+              case 2:
+                defaultTime = student.tueTime || "0";
+                break;
+              case 3:
+                defaultTime = student.wedTime || "0";
+                break;
+              case 4:
+                defaultTime = student.thuTime || "0";
+                break;
+              case 5:
+                defaultTime = student.friTime || "0";
+                break;
+              default:
+                defaultTime = "0";
+            }
 
-          const initialFirstCommitStudent = finalSortedData.map((student) => ({
-            id: student.id,
-            updatedAt: formattedDate,
-            name: student.name,
-            class: student.class,
-            grade: student.grade,
-            studentnumber: student.studentnumber,
-            check: student.check === "0" ? "2" : "",
-            outTimeT: student.outTimeT || student.outTimeAT || "",
-            outTimeST: student.outTimeT || student.outTimeAT || "",
-            outTimeAT: student.outTimeAT || "", // Add this line
-            comment: student.comment || "",
-            author: session?.user?.name || "",
-            createdAt: student.createdAt,
-            secondNumber: student.secondNumber || "",
-          }));
+            const defaultCheck = defaultTime === "0" ? "2" : "1";
+
+            return {
+              id: student.id,
+              updatedAt: formattedDate,
+              name: student.name,
+              class: student.class,
+              grade: student.grade,
+              studentnumber: student.studentnumber,
+              check:
+                student.check === "0"
+                  ? "2"
+                  : student.check === "1"
+                  ? "1"
+                  : defaultCheck,
+              outTimeT: student.outTimeT || defaultTime,
+              outTimeST: student.outTimeT || defaultTime,
+              comment:
+                (student.check === "1" ? "" : student.comment) ||
+                (defaultCheck === "1" ? "" : "요일 미출석 학생"),
+              author: session?.user?.name || "",
+              createdAt: student.createdAt,
+              secondNumber: student.secondNumber || "",
+
+              monTime: student.monTime || "", // Add this line
+              tueTime: student.tueTime || "", // Add this line
+              wedTime: student.wedTime || "", // Add this line
+              thuTime: student.thuTime || "", // Add this line
+              friTime: student.friTime || "", // Add this line
+            };
+          });
           console.log(initialFirstCommitStudent);
           setAttendance(initialFirstCommitStudent);
           setOriginalAttendance(initialFirstCommitStudent);
@@ -589,18 +630,21 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
-                  {(i === filteredStudents.length - 1 ||
-                    filteredStudents[i + 1].class !== data.class) && (
-                    <div
-                      className="line"
-                      style={{
-                        backgroundColor: "blue",
-                        height: "1px",
-                        marginTop: "20px",
-                        marginBottom: "20px",
-                      }}
-                    ></div>
-                  )}
+                  {sortState == true &&
+                    (i === filteredStudents.length - 1 ||
+                      filteredStudents[i + 1].class !== data.class) && (
+                      <div className="class-line">
+                        <div
+                          className="line"
+                          style={{
+                            width: "90%",
+                            backgroundColor: "rgb(138, 156, 255)",
+                            height: "1px",
+                          }}
+                        ></div>
+                        <div>{data.class}반</div>
+                      </div>
+                    )}
                 </div>
               );
             } else {

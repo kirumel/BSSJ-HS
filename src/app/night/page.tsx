@@ -68,6 +68,7 @@ export default function Page() {
 
     try {
       const find = await axios.post("/api/post/nightAT/find", payload);
+      console.log(find);
       if (find.data.length === 0) {
         alert("유저 데이터 x");
         return;

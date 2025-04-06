@@ -1,5 +1,5 @@
 "use client";
-import Addstudent from "./addStudentObject/page";
+import Addstudent from "./addStudentObject2/page";
 import ShowAllStudent from "./showAllStudent/page";
 import { useEffect, useState } from "react";
 import "./studentObject.css";

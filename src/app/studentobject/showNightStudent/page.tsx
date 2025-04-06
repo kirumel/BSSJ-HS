@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import SuccessModal from "../../successModal/page";
 import Loading from "@/app/loading/page";
 
-// 모달 컴포넌트 개선
+// 모달 컴포넌트 (공통)
 const Modal = ({ isOpen, onClose, onConfirm, title, modalContent }: any) => {
   if (!isOpen) return null;
 
@@ -50,9 +50,9 @@ export default function Page() {
   const [selectedClass, setSelectedClass] = useState("");
   const [successModal, setsuccessModal] = useState(false);
 
-  console.log(selectedClass);
-
-  console.log(students.filter((student) => student.studentnumber == 2));
+  // 추가: 요일별 시간 수정 모달 상태 및 선택 학생 정보
+  const [isEditTimeModalOpen, setIsEditTimeModalOpen] = useState(false);
+  const [studentToEdit, setStudentToEdit] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -60,9 +60,8 @@ export default function Page() {
       try {
         const response = await axios
           .get("/api/post/nightAT/page")
-          .then((response) => response.data) // Access the response data directly
+          .then((response) => response.data)
           .then((data: any) => {
-            console.log(data);
             const sortedData = data.sort((a, b) => {
               if (a.grade !== b.grade) {
                 return a.grade - b.grade;
@@ -72,7 +71,6 @@ export default function Page() {
                 return parseInt(a.studentnumber) - parseInt(b.studentnumber);
               }
             });
-
             setStudents(sortedData);
           });
       } catch (error) {
@@ -81,27 +79,25 @@ export default function Page() {
         setLoading(false);
       }
     };
-
     fetchStudents();
   }, []);
+
   const getClassList = () => {
     const classSet = new Set(students.map((student) => student.class));
     return Array.from(classSet).sort();
   };
+
   const getFilteredStudents = () => {
     if (!selectedGrade && !selectedClass) {
       return students;
     }
-
     if (selectedGrade && !selectedClass) {
       return students.filter((student) => student.grade == selectedGrade);
     }
-
     if (!selectedGrade && selectedClass) {
       return students.filter((student) => student.class == selectedClass);
     }
-
-    // 학년과 반 모두 선택되었을 때
+    // 학년과 반 모두 선택된 경우
     return students.filter(
       (student) =>
         student.grade == selectedGrade && student.class == selectedClass
@@ -110,6 +106,7 @@ export default function Page() {
 
   const classList = getClassList();
   const filteredStudents = getFilteredStudents();
+
   const handleSelectStudent = (studentId: string) => {
     setSelectedStudents((prevSelected) => {
       const newSelected = new Set(prevSelected);
@@ -148,7 +145,8 @@ export default function Page() {
       console.error("Failed to delete selected students:", error);
     }
   };
-  const handleSecondNumberChange = (event: any, id) => {
+
+  const handleSecondNumberChange = (event: any, id: string) => {
     const secondNumber = event.target.value;
     setStudents((prevstate) =>
       prevstate.map((student) =>
@@ -161,7 +159,7 @@ export default function Page() {
     try {
       await axios
         .post("/api/post/nightdeleteStudent", {
-          studentIds: [studentId], // 하나의 학생만 삭제
+          studentIds: [studentId],
         })
         .then((response) => {
           if (response.status === 200) {
@@ -171,7 +169,7 @@ export default function Page() {
             alert("오류발생");
           }
         });
-      setStudentToDelete(null); // 삭제 후 모달 닫기
+      setStudentToDelete(null);
     } catch (error) {
       console.error("Failed to delete student:", error);
     }
@@ -204,7 +202,7 @@ export default function Page() {
       if (studentData) {
         await axios
           .post("/api/post/copyMultipleToDB", {
-            students: [studentData], // 하나의 학생만 복사
+            students: [studentData],
             targetDB: copyDB,
           })
           .then((response) => {
@@ -213,25 +211,24 @@ export default function Page() {
             }
           });
       }
-      setStudentToDelete(null); // 복사 후 모달 닫기
+      setStudentToDelete(null);
     } catch (error) {
       console.error("Failed to copy student:", error);
     }
   };
+
   const handleSort = async () => {
     setsuccessModal(false);
     setLoading(true);
-    const update = await axios
-      .patch("/api/post/sortNight", students)
-      .then((response) => {
-        if (response.status === 200) {
-          setLoading(false);
-          setsuccessModal(true);
-        } else {
-          setLoading(false);
-          alert("오류발생");
-        }
-      });
+    await axios.patch("/api/post/sortNight", students).then((response) => {
+      if (response.status === 200) {
+        setLoading(false);
+        setsuccessModal(true);
+      } else {
+        setLoading(false);
+        alert("오류발생");
+      }
+    });
   };
 
   if (loading) {
@@ -248,15 +245,15 @@ export default function Page() {
           }}
         />
       )}
+
+      {/* 삭제 확인 모달 */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => {
-          // 만약 선택된 학생이 있으면 선택된 학생들만 삭제
           if (selectedStudents.size > 0) {
             deleteSelectedStudents();
           } else if (studentToDelete) {
-            // 아니면, 개별 학생 삭제
             deleteStudent(studentToDelete);
           }
         }}
@@ -264,15 +261,14 @@ export default function Page() {
         modalContent={<p>정말 이 학생을 삭제하시겠습니까?</p>}
       />
 
+      {/* 복사 모달 */}
       <Modal
         isOpen={isCopyModalOpen}
         onClose={() => setIsCopyModalOpen(false)}
         onConfirm={() => {
-          // 만약 선택된 학생이 있으면 선택된 학생들만 복사
           if (selectedStudents.size > 0) {
             copySelectedStudentsToDB();
           } else if (studentToDelete) {
-            // 아니면, 개별 학생 복사
             copyStudentToDB(studentToDelete);
           }
         }}
@@ -292,6 +288,83 @@ export default function Page() {
         }
       />
 
+      {/* 요일별 시간 수정 모달 */}
+      <Modal
+        isOpen={isEditTimeModalOpen}
+        onClose={() => setIsEditTimeModalOpen(false)}
+        onConfirm={async () => {
+          if (studentToEdit) {
+            try {
+              // 수정된 학생 데이터를 서버에 전송하는 API 요청
+              const response = await axios.patch(
+                `/api/post/updateStudent/${studentToEdit.id}`,
+                studentToEdit
+              );
+              if (response.status === 200) {
+                // 서버 업데이트 성공 시, 로컬 상태도 업데이트
+                setStudents((prev) =>
+                  prev.map((s) =>
+                    s.id === studentToEdit.id ? studentToEdit : s
+                  )
+                );
+                alert("수정 완료");
+              } else {
+                alert("업데이트 실패");
+              }
+            } catch (error) {
+              console.error("수정 요청 실패:", error);
+              alert("업데이트 중 오류가 발생했습니다.");
+            } finally {
+              setIsEditTimeModalOpen(false);
+            }
+          }
+        }}
+        title="요일별 시간 수정"
+        modalContent={
+          studentToEdit && (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            >
+              {["monTime", "tueTime", "wedTime", "thuTime", "friTime"].map(
+                (day) => {
+                  const dayLabels: Record<string, string> = {
+                    monTime: "월요일",
+                    tueTime: "화요일",
+                    wedTime: "수요일",
+                    thuTime: "목요일",
+                    friTime: "금요일",
+                  };
+
+                  return (
+                    <div key={day}>
+                      <label>
+                        {dayLabels[day]}
+                        <input
+                          type="text"
+                          value={studentToEdit[day] || ""}
+                          onChange={(e) =>
+                            setStudentToEdit({
+                              ...studentToEdit,
+                              [day]: e.target.value,
+                            })
+                          }
+                          style={{
+                            marginLeft: "10px",
+                            padding: "5px",
+                            width: "80%",
+                          }}
+                        />
+                      </label>
+                    </div>
+                  );
+                }
+              )}
+            </div>
+          )
+        }
+      />
+
+      {/* 상단 컨트롤 영역 */}
       <div
         style={{
           display: "flex",
@@ -337,6 +410,7 @@ export default function Page() {
         </div>
       </div>
 
+      {/* 학생 목록 */}
       <div
         className="attendance-container"
         style={{ height: "60vh", width: "100%" }}
@@ -355,13 +429,21 @@ export default function Page() {
                   >
                     {data.grade}학년 {data.class}반
                   </p>
-                </div>
-                <div>
-                  <p className="attendance-student-number">
+                  <p
+                    className="attendance-student-gradeandclass"
+                    style={{ fontSize: "10px" }}
+                  >
                     {data.studentnumber}번
                   </p>
                 </div>
-                <div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   <input
                     className="select-button"
                     type="checkbox"
@@ -380,7 +462,7 @@ export default function Page() {
                     }}
                     value={data.secondNumber}
                     onChange={(e) => handleSecondNumberChange(e, data.id)}
-                  ></input>
+                  />
                   <button
                     className="delete-button"
                     onClick={() => {
@@ -390,6 +472,57 @@ export default function Page() {
                   >
                     삭제
                   </button>
+
+                  {/* 추가: 요일별 시간 수정 버튼 */}
+                </div>
+              </div>
+              <div className="editTime">
+                <div
+                  style={{
+                    fontSize: "10px",
+                    marginTop: "4px",
+                    color: "#555",
+                  }}
+                >
+                  <div
+                    style={{
+                      gap: "3px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "3px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {data.monTime && <div>월 {data.monTime}</div>}
+                      {data.tueTime && <div>화 {data.tueTime}</div>}
+                      {data.wedTime && <div>수 {data.wedTime}</div>}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "3px",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {data.thuTime && <div>목 {data.thuTime}</div>}
+                      {data.friTime && <div>금 {data.friTime}</div>}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <button
+                    className="copy-button"
+                    onClick={() => {
+                      setStudentToEdit({ ...data });
+                      setIsEditTimeModalOpen(true);
+                    }}
+                  >
+                    시간 수정
+                  </button>{" "}
                   <button
                     className="copy-button"
                     onClick={() => {
