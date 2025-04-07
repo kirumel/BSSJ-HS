@@ -243,7 +243,6 @@ model nightAttendanceObject {
   updatedAt     String?
   outTimeT       String?
   outTimeST       String?
-  outTimeAT       String?
   secondNumber  String?
   monTime        String?  
   monChecked     String? 

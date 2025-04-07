@@ -19,10 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        시스템 점검중입니다
-        {/* <AuthSession>
+        <AuthSession>
           <ProtectedPage children={children} />
-        </AuthSession> */}
+        </AuthSession>
       </body>
     </html>
   );

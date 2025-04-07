@@ -13,6 +13,14 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 
 interface Attendance {
+  monTime: string;
+  tueTime: string;
+  wedTime: string;
+  thuTime: string;
+  friTime: string;
+  comment: any;
+  createdAt: any;
+  secondNumber: string;
   outTimeAT: string;
   outTimeT: string;
   name: string;
@@ -80,20 +88,55 @@ export default function Page() {
               day: "2-digit",
             });
           }
+          const todayDay = new Date().getDay();
+          const initialFirstCommitStudent = sortedData.map((student) => {
+            let defaultTime = "";
+            switch (todayDay) {
+              case 1:
+                defaultTime = student.monTime || "0";
+                break;
+              case 2:
+                defaultTime = student.tueTime || "0";
+                break;
+              case 3:
+                defaultTime = student.wedTime || "0";
+                break;
+              case 4:
+                defaultTime = student.thuTime || "0";
+                break;
+              case 5:
+                defaultTime = student.friTime || "0";
+                break;
+              default:
+                defaultTime = "0";
+            }
 
-          const initialFirstCommitStudent = sortedData.map((student) => ({
-            id: student.id,
-            updatedAt: formattedDate,
-            name: student.name,
-            grade: student.grade,
-            class: student.class,
-            studentnumber: student.studentnumber,
-            outTimeAT: student.outTimeAT || "",
-            outTimeT: student.outTimeAT || "",
-            check: "",
-            comment: "",
-            author: session?.user?.name || "",
-          }));
+            const defaultCheck = defaultTime === "0" ? "0" : "1";
+
+            return {
+              id: student.id,
+              updatedAt: formattedDate,
+              name: student.name,
+              class: student.class,
+              grade: student.grade,
+              studentnumber: student.studentnumber,
+              check: defaultCheck,
+              outTimeT: defaultTime || "",
+              outTimeST: defaultTime || "",
+              comment:
+                (student.check === "1" ? "" : student.comment) ||
+                (defaultCheck === "1" ? "" : "요일 미출석 학생"),
+              author: session?.user?.name || "",
+              createdAt: student.createdAt,
+              secondNumber: student.secondNumber || "",
+
+              monTime: student.monTime || "", // Add this line
+              tueTime: student.tueTime || "", // Add this line
+              wedTime: student.wedTime || "", // Add this line
+              thuTime: student.thuTime || "", // Add this line
+              friTime: student.friTime || "", // Add this line
+            };
+          });
           const filteredData = initialFirstCommitStudent.filter(
             (student) =>
               student.grade === session?.user?.grade &&

@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <>
       <div>
-        <div className="nav">
+        {/* <div className="nav">
           <div style={{ display: "flex", alignItems: "center" }}>
             <div>
               <button
@@ -33,7 +33,7 @@ export default function Page() {
           <button className="back-A" onClick={() => router.back()}>
             ←
           </button>
-        </div>
+        </div> */}
       </div>
       <div>
         {page === "main" ? (
