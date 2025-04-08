@@ -8,7 +8,7 @@ import { prisma } from "../../prisma/lib/prisma";
 export default async function handler(req: any, res: any) {
   const { grade, date } = req.body.payload;
   // 날짜 보기 좋게 설정          // ISO 형식의 문자열
-  const dateObj = new Date(date); // 문자열을 Date 객체로 변환
+  const dateObj = new Date(date);
   const formattedDate = dateObj.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "2-digit",

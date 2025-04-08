@@ -61,10 +61,7 @@ export default async function handler(req: any, res: any) {
 
     students.firstcommitstudent.forEach((student: any) => {
       // 날짜 포맷을 ISO 형식으로 변환
-      const formattedDate = student.createdAt.replace(
-        /(\d{4})\. (\d{2})\. (\d{2})/,
-        "$1-$2-$3"
-      );
+
       const studentsData = [
         formattedDate,
         student.name,

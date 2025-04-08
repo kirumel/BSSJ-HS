@@ -74,10 +74,6 @@ export default async function handler(req: any, res: any) {
 
       // 데이터를 엑셀 시트에 추가
       students.firstcommitstudent.forEach((student: any) => {
-        const formattedDate = student.createdAt.replace(
-          /(\d{4})\. (\d{2})\. (\d{2})/,
-          "$1-$2-$3"
-        );
         const row = [
           formattedDate,
           student.name,
