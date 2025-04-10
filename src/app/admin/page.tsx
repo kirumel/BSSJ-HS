@@ -171,7 +171,9 @@ export default function Page() {
               {session?.user?.name} / {session?.user?.grade}학년{" "}
               {session?.user?.class}반
             </p>
-            <p className="event-text">version : 1.0.2 beta</p>
+            <p className="event-text" style={{ fontSize: "12px" }}>
+              퇴장 시간 기록은 2차 출석 완료시에만 가능합니다
+            </p>
             <a href="/adminfeed">
               <button className="event-feed">feed 등록하기</button>
             </a>

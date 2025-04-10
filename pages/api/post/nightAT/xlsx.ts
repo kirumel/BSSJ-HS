@@ -44,6 +44,19 @@ export default async function handler(req: any, res: any) {
           grade: grade,
         },
       });
+
+      if (students.length === 0) {
+        console.log("No data");
+        return res.status(400).json({ message: "No data" });
+      }
+
+      const studentSort = students.sort((a, b) => {
+        if (a.class !== b.class) {
+          return a.class - b.class;
+        }
+        return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+      });
+
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet("출석부");
 
@@ -51,7 +64,7 @@ export default async function handler(req: any, res: any) {
       worksheet.mergeCells("A1:E1");
       const headerCell = worksheet.getCell("A1");
 
-      headerCell.value = `부산 성지고등학교 출석부`;
+      headerCell.value = `부산 성지고등학교 야자 출석부`;
       headerCell.alignment = { vertical: "middle" };
       headerCell.font = { size: 16, color: { argb: "FFFFFF" }, bold: true };
       headerCell.fill = {
@@ -84,18 +97,18 @@ export default async function handler(req: any, res: any) {
 
       // 열 너비 설정
       worksheet.getColumn(1).width = 15; // A열 (일자)
-      worksheet.getColumn(2).width = 20; // B열 (이름)
-      worksheet.getColumn(3).width = 15; // C열 (출석 여부)
-      worksheet.getColumn(4).width = 30; // D열 (미출석 이유)
-      worksheet.getColumn(5).width = 20; // E열 (작성자)
+      worksheet.getColumn(2).width = 15; // B열 (이름)
+      worksheet.getColumn(3).width = 5; // C열 (출석 여부)
+      worksheet.getColumn(4).width = 8; // D열 (미출석 이유)
+      worksheet.getColumn(5).width = 5; // E열 (작성자)
+      worksheet.getColumn(6).width = 25;
+      worksheet.getColumn(7).width = 10;
+      worksheet.getColumn(8).width = 10;
+      worksheet.getColumn(9).width = 25; // F열 (설정된 퇴장시간)
       worksheet.getRow(1).height = 30;
 
       // 데이터를 엑셀 시트에 추가
-      students.forEach((student: any) => {
-        const formattedDate = student.createdAt.replace(
-          /(\d{4})\. (\d{2})\. (\d{2})/,
-          "$1-$2-$3"
-        );
+      studentSort.forEach((student: any) => {
         const row = [
           formattedDate,
           student.name,

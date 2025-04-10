@@ -66,6 +66,9 @@ export default async function handler(req: any, res: any) {
     const move = await prisma.nightAttendanceObject.updateMany({
       where: { id: id },
       data: {
+        outTimeT: null,
+        author: null,
+        outTimeST: null,
         check: null,
         comment: null,
         updatedAt: null,

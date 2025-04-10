@@ -51,6 +51,13 @@ export default async function handler(req: any, res: any) {
       console.log("No data");
       return res.status(400).json({ message: "No data" });
     }
+
+    const studentSort = students.sort((a, b) => {
+      if (a.class !== b.class) {
+        return a.class - b.class;
+      }
+      return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+    });
     const pdf = new jsPDF();
 
     // 폰트 추가 및 설정
@@ -84,7 +91,7 @@ export default async function handler(req: any, res: any) {
     ];
     const 세로: any[] = [];
 
-    students.forEach((student: any) => {
+    studentSort.forEach((student: any) => {
       const studentsData = [
         formattedDate,
         student.name,
