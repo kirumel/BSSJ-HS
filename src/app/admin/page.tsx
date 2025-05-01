@@ -172,7 +172,7 @@ export default function Page() {
               {session?.user?.class}반
             </p>
             <p className="event-text" style={{ fontSize: "12px" }}>
-              공지 : 8교시 하지 않는 학생의 삭제해주세요
+              공지 : 8교시 하지 않는 학생은 삭제해주세요
             </p>
             <a href="/adminfeed">
               <button className="event-feed">feed 등록하기</button>
