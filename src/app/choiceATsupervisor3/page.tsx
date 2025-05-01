@@ -49,9 +49,13 @@ export default function Page() {
     }[]
   >([]);
   const { data: session } = useSession();
+  const [sortState, setSortstate] = useState(true);
   const [successModal, setSuccessModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
-
+  const [filteredStudents, setFilteredStudents] = useState<Attendance[]>([]);
+  const [originalAttendance, setOriginalAttendance] = useState<Attendance[]>(
+    []
+  );
   const getFilteredStudents = () => {
     if (!selectedClass) {
       return attendance;
@@ -65,7 +69,6 @@ export default function Page() {
     return Array.from(classSet).sort();
   };
 
-  const filteredStudents = getFilteredStudents();
   const classList = getClassList();
 
   useEffect(() => {
@@ -118,6 +121,8 @@ export default function Page() {
             secondNumber: student.secondNumber,
           }));
           setFirstCommitStudent(initialFirstCommitStudent);
+          setFilteredStudents(getFilteredStudents());
+          setOriginalAttendance(initialFirstCommitStudent);
         } else {
           console.error(data);
         }
@@ -135,6 +140,27 @@ export default function Page() {
       )
     );
   };
+  const handleSortChange = () => {
+    if (sortState === true) {
+      // 첫 클릭: secondNumber 기준 정렬 (undefined인 경우 Infinity 처리)
+      setSortstate(false);
+      const sortedData = [...attendance].sort((a, b) => {
+        const aNum = a.secondNumber ? parseInt(a.secondNumber) : Infinity;
+        const bNum = b.secondNumber ? parseInt(b.secondNumber) : Infinity;
+        return aNum - bNum;
+      });
+      setAttendance(sortedData);
+      setFilteredStudents(getFilteredStudents());
+    } else {
+      // 두 번째 클릭: 원래 순서(반, 번호 기준)로 복원
+      setSortstate(true);
+      setAttendance([...originalAttendance]);
+      setFilteredStudents(getFilteredStudents());
+    }
+  };
+  useEffect(() => {
+    setFilteredStudents(getFilteredStudents());
+  }, [attendance, selectedClass]);
 
   const handleStateChange = (newState: any) => {
     setFirstCommitStudent((prevState) =>
@@ -330,6 +356,15 @@ export default function Page() {
           {validation.error}
         </p>
       )}
+      <button
+        style={{
+          marginTop: "10px",
+        }}
+        className="class-select"
+        onClick={handleSortChange}
+      >
+        배열변경
+      </button>
       <div className="attendance-container">
         {filteredStudents.map((data, i) => {
           const studentCommit = firstcommitstudent.find(
@@ -416,7 +451,10 @@ export default function Page() {
                         </p>
                       </div>
                       <p className="attendance-student-number">
-                        {data.studentnumber}번
+                        {data.studentnumber}번/ 자리번호 :
+                        {data.secondNumber
+                          ? `${data.secondNumber}번`
+                          : "설정 안 됨"}
                       </p>
                     </div>
                     <div>
@@ -494,20 +532,21 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-                {(i === filteredStudents.length - 1 ||
-                  filteredStudents[i + 1].class !== data.class) && (
-                  <div className="class-line">
-                    <div
-                      className="line"
-                      style={{
-                        width: "90%",
-                        backgroundColor: "rgb(138, 156, 255)",
-                        height: "1px",
-                      }}
-                    ></div>
-                    <div>{data.class}반</div>
-                  </div>
-                )}
+                {sortState == true &&
+                  (i === filteredStudents.length - 1 ||
+                    filteredStudents[i + 1].class !== data.class) && (
+                    <div className="class-line">
+                      <div
+                        className="line"
+                        style={{
+                          width: "90%",
+                          backgroundColor: "rgb(138, 156, 255)",
+                          height: "1px",
+                        }}
+                      ></div>
+                      <div>{data.class}반</div>
+                    </div>
+                  )}
               </div>
             );
           }

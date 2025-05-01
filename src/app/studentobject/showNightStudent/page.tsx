@@ -42,6 +42,7 @@ export default function Page() {
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(
     new Set()
   );
+  const [isArray, setIsArray] = useState(false);
   const [copyDB, setCopyDB] = useState("attendanceObject");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
@@ -216,7 +217,24 @@ export default function Page() {
       console.error("Failed to copy student:", error);
     }
   };
-
+  const handleArrayChange = (): void => {
+    if (isArray === true) {
+      setIsArray(false);
+      const newArray = [...students].sort((a, b) => {
+        if (a.class === b.class) {
+          return parseInt(a.studentnumber) - parseInt(b.studentnumber);
+        }
+        return a.class - b.class;
+      });
+      setStudents(newArray);
+    } else {
+      setIsArray(true);
+      const newArray = [...students].sort((a, b) => {
+        return a.secondNumber - b.secondNumber;
+      });
+      setStudents(newArray);
+    }
+  };
   const handleSort = async () => {
     setsuccessModal(false);
     setLoading(true);
@@ -383,6 +401,13 @@ export default function Page() {
           <span>전체 선택</span>
         </div>
         <div>
+          <button
+            className="class-select"
+            style={{ marginRight: "10px" }}
+            onClick={handleArrayChange}
+          >
+            배열변경
+          </button>
           <label>학년: </label>
           <select
             className="class-select"

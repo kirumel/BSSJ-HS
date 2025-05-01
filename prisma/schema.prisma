@@ -149,7 +149,7 @@ model mainAttendanceObject {
 }
 
 model attendanceObject {
-  id            String  @id @default(cuid())
+id            String   @id @default(cuid())
   name          String?
   createdAt     DateTime @default(now())
   check         String?
@@ -159,6 +159,19 @@ model attendanceObject {
   grade         Int?
   studentnumber Int?
   updatedAt     String?
+  outTimeT       String?
+  outTimeST       String?
+  secondNumber  String?
+  monTime        String?  
+  monChecked     String? 
+  tueTime        String?
+  tueChecked       String?
+  wedTime        String?
+  wedChecked      String?
+  thuTime        String?
+  thuChecked       String?
+  friTime        String?
+  friChecked       String?
 }
 
 model attendanceObjectDB {

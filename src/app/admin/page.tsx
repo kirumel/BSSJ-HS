@@ -172,7 +172,7 @@ export default function Page() {
               {session?.user?.class}반
             </p>
             <p className="event-text" style={{ fontSize: "12px" }}>
-              퇴장 시간 기록은 2차 출석 완료 시에만 가능합니다
+              공지 : 8교시 하지 않는 학생의 삭제해주세요
             </p>
             <a href="/adminfeed">
               <button className="event-feed">feed 등록하기</button>
@@ -194,7 +194,7 @@ export default function Page() {
 
         <div className="admin-mainBottom">
           <div className="display-flex" style={{ alignItems: "flex-start" }}>
-            <p className="admin-title">8교시 출석 / 이용가능</p>
+            <p className="admin-title">8교시 출석 / beta 3.0</p>
             <div className="admin-AT">
               {["1", "2", "3"].map((data, i) => (
                 <div className="admin-AT-container" key={i}>

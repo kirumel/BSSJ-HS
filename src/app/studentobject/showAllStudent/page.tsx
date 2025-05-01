@@ -290,7 +290,7 @@ export default function Page() {
 
       <div
         className="attendance-container"
-        style={{ height: "60vh", width: "100%" }}
+        style={{ height: "calc(60vh + 30px)", width: "100%" }}
       >
         {students.length === 0 ? (
           <p>등록된 학생 데이터가 없습니다.</p>

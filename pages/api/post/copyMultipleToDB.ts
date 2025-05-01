@@ -38,7 +38,31 @@ export default async function handler(req, res) {
       grade: student.grade,
       class: student.class,
       studentnumber: student.studentnumber,
+      secondNumber: student.secondNumber,
+      monTime: student.monTime,
+      monChecked: student.monChecked,
+      tueTime: student.tueTime,
+      tueChecked: student.tueChecked,
+      wedTime: student.wedTime,
+      wedChecked: student.wedChecked,
+      thuTime: student.thuTime,
+      thuChecked: student.thuChecked,
+      friTime: student.friTime,
+      friChecked: student.friChecked,
     }));
+
+    await Promise.all(
+      formattedStudents.map((student) =>
+        model.deleteMany({
+          where: {
+            name: student.name,
+            grade: student.grade,
+            class: student.class,
+            studentnumber: student.studentnumber,
+          },
+        })
+      )
+    );
 
     // createMany 메서드를 사용하여 학생들을 추가
     const newStudents = await model.createMany({

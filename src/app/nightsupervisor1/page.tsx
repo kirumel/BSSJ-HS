@@ -620,7 +620,7 @@ export default function Page() {
                           </p>
                         </div>
                         <p className="attendance-student-number">
-                          {data.studentnumber}번/ 출석번호 :
+                          {data.studentnumber}번/ 자리번호 :
                           {data.secondNumber
                             ? `${data.secondNumber}번`
                             : "설정 안 됨"}
