@@ -68,7 +68,6 @@ export default async function handler(
     // 한국 공휴일 설정
     const hd = new Holidays("KR");
 
-    // DB 조회
     const records = await prisma.nightCompareAT2.findMany({
       where: { grade, createdAt: { in: formattedDates } },
     });
