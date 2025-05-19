@@ -372,6 +372,12 @@ export default function Page() {
                 현황 <br />
               </button>
             </Link>
+            <Link href="NightAllFIleGenerator">
+              <button className="event-box-button" style={{ color: "black" }}>
+                출석 <br />
+                병합 <br />
+              </button>
+            </Link>
           </div>
         </div>
       </div>
