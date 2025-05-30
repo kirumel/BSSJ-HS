@@ -1,0 +1,78 @@
+@font-face {
+  font-family: "Ownglyph_ParkDaHyun";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2411-3@1.0/Ownglyph_ParkDaHyun.woff2")
+    format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+#nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #f3f3f3;
+  height: 50px;
+}
+
+#main {
+  height: 100vh;
+  background-color: #f3f3f3;
+  color: black;
+}
+.logo {
+  font-size: 21px;
+  font-family: "Ownglyph_ParkDaHyun";
+  color: rgb(103, 76, 255);
+}
+.text {
+  height: 50vh;
+  width: 100%;
+  resize: none;
+  text-align: left;
+  font-family: "Ownglyph_ParkDaHyun";
+  color: rgb(0, 0, 0);
+  background-color: #e0dede;
+  font-size: 18px;
+  padding: 5px;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: none;
+}
+
+.text:focus {
+  outline: none;
+}
+
+.ok {
+  color: white;
+  background-color: rgb(103, 76, 255);
+  height: 60px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 0px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 600;
+  transition: all 0.5s;
+}
+.buttons {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: right;
+  gap: 10px;
+  align-items: center;
+}
+
+.buttons button {
+  color: gray;
+  background-color: rgb(186, 186, 186);
+  border: none;
+  border-radius: 8px;
+  font-size: 10px;
+  padding: 10px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 600;
+  transition: all 0.5s;
+}
