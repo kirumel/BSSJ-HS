@@ -119,7 +119,6 @@ export default async function handler(req: any, res: any) {
           student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
           student.comment,
           student.author,
-          student.startTimeT ? student.startTimeT : ""
           student.outTimeST ? student.outTimeST : "21:00",
           student.outTime ? student.outTime : "등록되지 않았습니다",
         ];
