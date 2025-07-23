@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "./studentObject.css";
 import Show8thStudent from "./show8thStudent/page";
 import ShowNightStudent from "./showNightStudent/page";
+import ShowVacStudent from "./showVacStudent/page";
 
 export default function Page() {
   const [student, setstudent] = useState<string[]>([]);
@@ -60,12 +61,19 @@ export default function Page() {
           >
             야자 학생 목록
           </button>
+          <button
+            style={{ backgroundColor: getButtonColor("showVacStudent") }}
+            onClick={() => setstudent(["showVacStudent"])}
+          >
+            방학 학생 목록
+          </button>
         </div>
       </div>
       {student.includes("addstudent") && <Addstudent />}
       {student.includes("showAllStudent") && <ShowAllStudent />}
       {student.includes("show8thStudent") && <Show8thStudent />}
       {student.includes("showNightStudent") && <ShowNightStudent />}
+      {student.includes("showVacStudent") && <ShowVacStudent />}
     </div>
   );
 }

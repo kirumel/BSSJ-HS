@@ -1,0 +1,67 @@
+.containerK {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  height: calc(100vh - 144px);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.select,
+.input {
+  background-color: #f0f0f0;
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  border: none;
+  border-radius: 1rem;
+  font-size: 16px;
+}
+
+.fileList {
+  font-size: 12px;
+  padding: 10px;
+  border-radius: 1rem;
+}
+
+.fileItem {
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.fileItem:last-child {
+  border-bottom: none;
+}
+
+.noFiles {
+  color: #888;
+  font-style: italic;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
+}

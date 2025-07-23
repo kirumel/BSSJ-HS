@@ -19,6 +19,9 @@ export default async function handler(req, res) {
       case "attendanceObject":
         model = prisma.attendanceObject as Prisma.attendanceObjectDelegate;
         break;
+      case "vacATObject":
+           model = prisma.vacATObject as Prisma.vacATObjectDelegate;
+        break;
       case "mainAttendanceObject":
         model =
           prisma.mainAttendanceObject as Prisma.mainAttendanceObjectDelegate;

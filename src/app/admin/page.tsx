@@ -188,7 +188,7 @@ export default function Page() {
           <Link href="/cafe/boardSetting">
             <button style={{ width: "100%" }}>게시판 관리</button>
           </Link>
-          {/* <button>이벤트 관리</button> */}
+          
         </div>
         <div className="line" style={{ marginTop: "10px" }}></div>
 
@@ -318,6 +318,92 @@ export default function Page() {
                 만들기
               </button>
             </Link>
+          </div>
+          <div className="admin-AT">
+            {["1", "2", "3"].map((data, i) => (
+              <div className="admin-AT-container" key={i}>
+                <div
+                  className="admin-AT-circle"
+                  style={{
+                    backgroundColor: Status?.[`night${i + 1}`]
+                      ? "green"
+                      : "red",
+                  }}
+                ></div>
+                <div
+                  className="admin-title"
+                  style={{
+                    paddingLeft: "5px",
+                    margin: "0px",
+                    fontSize: "11px",
+                  }}
+                >
+                  {parseInt(data)}학년 / {""}
+                  {Status?.[`night${i + 1}`] ? "생성 완료" : "생성 안 됨"}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="line"></div>
+          <div className="display-flex" style={{ alignItems: "flex-start" }}>
+            <p className="admin-title">방학 출석 / beta 출석부 만들기 사용 금지</p>
+            <div className="admin-AT">
+              {["1", "2", "3"].map((data, i) => (
+                <div className="admin-AT-container" key={i}>
+                  <div
+                    className="admin-AT-circle"
+                    style={{
+                      backgroundColor: Status?.[`vacCompareAT${i + 1}`]
+                        ? "green"
+                        : "red",
+                    }}
+                  ></div>
+                  <div
+                    className="admin-title"
+                    style={{
+                      paddingLeft: "5px",
+                      margin: "0px",
+                      fontSize: "11px",
+                    }}
+                  >
+                    {parseInt(data)}학년 / {""}
+                    {Status?.[`vacCompareAT${i + 1}`]
+                      ? "출석 완료"
+                      : "출석 안 됨"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="event-box-container">
+            <Link href="choiceVacATgrade">
+              <button
+                style={{ backgroundColor: "rgba(255, 156, 57, 1)" }}
+                className="event-box-button"
+              >
+                방학 <br />
+                출석
+              </button>
+            </Link>
+            <Link href="/choiceVacAT">
+              <button
+                style={{ backgroundColor: "rgba(255, 193, 131, 1)" }}
+                className="event-box-button"
+              >
+                입퇴장 <br />
+                출석
+              </button>
+            </Link>
+            <Link href="/vac">
+              <button
+                style={{ backgroundColor: "rgba(255, 193, 131, 1)" }}
+                className="event-box-button"
+              >
+                출석부 <br />
+                만들기
+              </button>
+            </Link>
+            
           </div>
           <div className="admin-AT">
             {["1", "2", "3"].map((data, i) => (

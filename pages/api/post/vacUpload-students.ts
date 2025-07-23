@@ -14,7 +14,7 @@ export default async function handler(
       }
 
       // 학생 데이터 저장
-      const createdStudents = await prisma.nightAttendanceObject.createMany({
+      const createdStudents = await prisma.vacATObject.createMany({
         data: students.map((student) => ({
           secondNumber: student.secondNumber,
           monTime: student.monTime,

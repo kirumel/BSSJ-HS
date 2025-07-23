@@ -19,6 +19,7 @@ export default async function handler(req: any, res: any) {
     });
 
     const [
+      vacCompareAT,
       nightAttendance,
       compareATNight,
       compareATNight2,
@@ -27,6 +28,9 @@ export default async function handler(req: any, res: any) {
       student2,
       student3,
     ] = await Promise.all([
+      prisma.vacCompareAT.findMany({
+        where:{createdAt: formattedDate},
+      }),
       prisma.nightAttendanceObjectDB.findMany({
         where: { createdAt: formattedDate },
       }),
@@ -53,6 +57,12 @@ export default async function handler(req: any, res: any) {
 
     // 파일 생성 여부 판단
     const fileStatus = {
+      vacCompareAT:
+        vacCompareAT.filter((item) => item.grade === "1").length > 0,
+      vacCompareAT2:
+        vacCompareAT.filter((item) => item.grade === "2").length > 0,
+      vacCompareAT3:
+        vacCompareAT.filter((item) => item.grade === "3").length > 0,
       night: nightAttendance.filter((item) => item.grade === "1").length > 0,
       night2: nightAttendance.filter((item) => item.grade === "2").length > 0,
       night3: nightAttendance.filter((item) => item.grade === "3").length > 0,

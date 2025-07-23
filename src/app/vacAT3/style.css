@@ -1,0 +1,39 @@
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox에서 기본 UI 제거 */
+  -webkit-appearance: none; /* Chrome, Safari에서 기본 UI 제거 */
+  appearance: none; /* 최신 표준 */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* 스피너 간격 제거 */
+}
+
+.input-code {
+  width: 10vw;
+  height: 10vw;
+  max-width: 100px;
+  max-height: 100px;
+  border: 1px solid rgb(195, 195, 195, 0.5);
+  border-radius: 0.5rem;
+  background-color: white;
+  color: black;
+  font-size: 3vw;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  text-align: center;
+}
+.time {
+  font-size: 2.3vw;
+  font-weight: 600;
+}
+@media screen and (max-width: 800px) {
+  .time {
+    display: none;
+  }
+  .formatted-time {
+    display: none;
+  }
+}
