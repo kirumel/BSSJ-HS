@@ -30,8 +30,6 @@ export default async function handler(req: any, res: any) {
           check: a.check,
           author: a.author,
           grade: a.grade,
-          outTimeST: a.outTimeST,
-          outTimeT: a.outTimeT,
           name: a.name,
           studentnumber: a.studentnumber,
           class: a.class,
@@ -52,8 +50,6 @@ export default async function handler(req: any, res: any) {
               check: a.check,
               author: a.author,
               grade: a.grade,
-              outTimeST: a.outTimeST,
-              outTimeT: a.outTimeT,
               name: a.name,
               comment: a.comment,
             },
@@ -66,9 +62,7 @@ export default async function handler(req: any, res: any) {
     const move = await prisma.vacATObject.updateMany({
       where: { id: id },
       data: {
-        outTimeT: null,
         author: null,
-        outTimeST: null,
         check: null,
         comment: null,
         updatedAt: null,

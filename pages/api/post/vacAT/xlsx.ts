@@ -82,10 +82,8 @@ export default async function handler(req: any, res: any) {
         "출석 여부",
         "미출석 이유",
         "작성자",
-        "설정된 입장시간",
         "입장시간",
-        "설정된 퇴장시간",
-        "실제 퇴장시간",
+        "퇴장시간",
       ]);
       const headerRow = worksheet.getRow(2);
       headerRow.eachCell({ includeEmpty: true }, (cell) => {
@@ -119,7 +117,7 @@ export default async function handler(req: any, res: any) {
           student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
           student.comment,
           student.author,
-          student.outTimeST ? student.outTimeST : "21:00",
+          student.startTime ? student.startTime : "등록되지 않았습니다",
           student.outTime ? student.outTime : "등록되지 않았습니다",
         ];
         worksheet.addRow(row);
@@ -132,7 +130,7 @@ export default async function handler(req: any, res: any) {
       const base64 = buffer.toString("base64");
       if (dbcompare.length == 0) {
         try {
-          const upload = await prisma.nightAttendanceObjectDB.create({
+          const upload = await prisma.vacATObjectDB.create({
             data: {
               author: students[0].author,
               grade: grade.toString(),
@@ -142,7 +140,7 @@ export default async function handler(req: any, res: any) {
             },
           });
 
-          res.status(200).json({ message: "업로드가 완료되었습니다" });
+          res.status(500).json({ message: "업로드가 완료되었습니다" });
         } catch (error) {
           res.status(500).send({
             message: `에러가 발생하였습니다 오류 코드를 확인해주세요 ${error}`,
@@ -150,7 +148,7 @@ export default async function handler(req: any, res: any) {
         }
       } else if (dbcompare.length >= 2 || dbcompare.length == 1) {
         try {
-          const dbdelete = await prisma.nightAttendanceObjectDB.deleteMany({
+          const dbdelete = await prisma.vacATObjectDB.deleteMany({
             where: {
               createdAt: {
                 equals: formattedDate,
@@ -161,7 +159,7 @@ export default async function handler(req: any, res: any) {
             },
           });
 
-          const upload = await prisma.nightAttendanceObjectDB.create({
+          const upload = await prisma.vacATObjectDB.create({
             data: {
               author: students[0].author,
               grade: grade.toString(),

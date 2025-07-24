@@ -86,10 +86,8 @@ export default async function handler(req: any, res: any) {
       "출석 여부",
       "미출석 이유",
       "작성자",
-      "설정된 입장시간",
       "입장시간",
-      "설정된 퇴장시간",
-      "실제 퇴장시간",
+      "퇴장시간",
     ];
     const 세로: any[] = [];
 
@@ -102,7 +100,7 @@ export default async function handler(req: any, res: any) {
         student.check == "2" ? "X" : student.check == "0" ? "X" : "O",
         student.comment,
         student.author,
-        student.outTimeST ? student.outTimeST : "21:00",
+        student.startTime ? student.startTime : "등록되지 않았습니다",
         student.outTime ? student.outTime : "등록되지 않았습니다",
       ];
       세로.push(studentsData);

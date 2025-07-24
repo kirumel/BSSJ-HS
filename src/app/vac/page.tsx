@@ -95,6 +95,7 @@ export default function Page() {
         { payload }
       );
       if (backupResponse.status !== 200) {
+        console.log(backupResponse);
         alert("백업 파일 생성 실패");
         return;
       }
@@ -164,4 +165,3 @@ export default function Page() {
     </div>
   );
 }
-

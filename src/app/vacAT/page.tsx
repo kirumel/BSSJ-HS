@@ -121,6 +121,7 @@ export default function FourDigitCodeInput() {
         </div>
         <button
           style={{
+            backgroundColor: "#ffae00ff",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",

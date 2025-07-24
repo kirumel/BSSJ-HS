@@ -135,7 +135,7 @@ export default function FourDigitCodeInput() {
           onClick={handleSubmit}
           className="ok-button"
         >
-          퇴장하기
+          입장하기
         </button>
       </div>
     </div>

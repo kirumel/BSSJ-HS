@@ -9,22 +9,21 @@ import axios from "axios";
 import SelectStudentModal from "./selectStudentModal";
 import GenerateModal from "./generaterModal/page";
 import GenerateModal2 from "./generaterModal2/page";
-import GenerateModalN from "./generaterModalN/page";
 
 interface Attendance {
   secondNumber: string;
-  outTimeST: string;
-  outTimeT: string;
+  // outTimeST: string;
+  // outTimeT: string;
   name: string;
   updatedAt: string;
   comment: string;
   check: string;
   author: string;
-  monTime: string;
-  tueTime: string;
-  wedTime: string;
-  thuTime: string;
-  friTime: string;
+  // monTime: string;
+  // tueTime: string;
+  // wedTime: string;
+  // thuTime: string;
+  // friTime: string;
   grade: number;
   class: number;
   studentnumber: string;
@@ -57,7 +56,6 @@ export default function Page() {
   const [modal2, setmodal2] = useState(false);
   const [modal3, setmodal3] = useState(false);
   const [passN, setPassN] = useState(false);
-  const [time, settime] = useState(false);
 
   const [timeY, settimeY] = useState(false);
 
@@ -79,7 +77,7 @@ export default function Page() {
 
   const classList = getClassList();
 
-  const handleTimeChange = (id: string, field: string, value: string) => {
+  const handleTimeChccange = (id: string, field: string, value: string) => {
     setFirstCommitStudent((prev) =>
       prev.map((student) =>
         student.id === id ? { ...student, [field]: value } : student
@@ -135,7 +133,7 @@ export default function Page() {
         month: "2-digit",
         day: "2-digit",
       });
-      const findTime = firstcommitstudent.filter((a) => a.outTimeST === "");
+      // const findTime = firstcommitstudent.filter((a) => a.outTimeST === "");
       const startTime = `${new Date()
         .getHours()
         .toString()
@@ -150,109 +148,94 @@ export default function Page() {
           startTime: startTime,
         }))
       );
-      if (findTime.length !== 0 && timeY == false) {
-        settime(true);
-      } else {
-        if (timeY == true || findTime.length === 0) {
-          setmodal1(true);
-
-          const generateY = await axios
-            .get("/api/post/vacAT/generateY", {
-              params: { grade: 3, date: formattedDate1 },
-            }) // params로 전달
-            .then(async (response) => {
-              const responseBody = response;
+      setmodal1(true);
+      await axios
+        .get("/api/post/vacAT/generateY", {
+          params: { grade: 3, date: formattedDate1 },
+        }) // params로 전달
+        .then(async (response) => {
+          const responseBody = response;
+          setTimeout(async () => {
+            if (responseBody.status === 203) {
+              setmodal1(false);
+              setPassN(true);
               setTimeout(async () => {
-                if (responseBody.status === 203) {
-                  setmodal1(false);
-                  setPassN(true);
-                  setTimeout(async () => {
-                    setPassN(false);
-                    setmodal2(false);
-                    setmodal3(true);
-                    const response3 = await axios
-                      .post(
-                        "/api/post/vacAT/fetchTime2",
-                        { firstcommitstudent },
-                        {
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        if (response.status === 200) {
-                          setSuccessModalTimer();
-                        }
-                      });
-                  }, 2000);
-                } else if (responseBody.status === 200) {
-                  setmodal1(false);
-                  setmodal2(true);
-
-                  const payload = {
-                    date: formattedDate1,
-                    grade: Number(3),
-                  };
-                  const pdfResponse = await axios.post(
-                    "/api/post/vacAT/PDF",
+                setPassN(false);
+                setmodal2(false);
+                setmodal3(true);
+                const response3 = await axios
+                  .post(
+                    "/api/post/vacAT/fetchTime2",
+                    { firstcommitstudent },
                     {
-                      payload,
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
                     }
-                  );
-                  if (pdfResponse.status !== 200) {
-                    alert("PDF 파일 생성 실패");
-                    return;
-                  }
-
-                  const xlsxResponse = await axios.post(
-                    "/api/post/vacAT/xlsx",
-                    {
-                      payload,
+                  )
+                  .then((response) => {
+                    if (response.status === 200) {
+                      setSuccessModalTimer();
                     }
-                  );
-                  if (xlsxResponse.status !== 200) {
-                    alert("엑셀 파일 생성 실패");
-                    return;
-                  }
-
-                  const backupResponse = await axios.post(
-                    "/api/post/vacAT/sevenDaysBackup",
-                    { payload }
-                  );
-                  if (backupResponse.status !== 200) {
-                    alert("백업 파일 생성 실패");
-                    return;
-                  }
-                  setTimeout(async () => {
-                    setPassN(false);
-                    setmodal2(false);
-                    setmodal3(true);
-                    const response3 = await axios
-                      .post(
-                        "/api/post/vacAT/fetchTime2",
-                        { firstcommitstudent },
-                        {
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        if (response.status === 200) {
-                          setSuccessModalTimer();
-                        }
-                      });
-                  }, 2000);
-                }
+                  });
               }, 2000);
-              settimeY(false);
-              settime(false);
-            });
-        } else {
-          null;
-        }
-      }
+            } else if (responseBody.status === 200) {
+              setmodal1(false);
+              setmodal2(true);
+
+              const payload = {
+                date: formattedDate1,
+                grade: Number(3),
+              };
+              const pdfResponse = await axios.post("/api/post/vacAT/PDF", {
+                payload,
+              });
+              if (pdfResponse.status !== 200) {
+                alert("PDF 파일 생성 실패");
+                return;
+              }
+
+              const xlsxResponse = await axios.post("/api/post/vacAT/xlsx", {
+                payload,
+              });
+              if (xlsxResponse.status !== 200) {
+                alert("엑셀 파일 생성 실패");
+                return;
+              }
+
+              const backupResponse = await axios.post(
+                "/api/post/vacAT/sevenDaysBackup",
+                { payload }
+              );
+              if (backupResponse.status !== 200) {
+                alert("백업 파일 생성 실패");
+                return;
+              }
+              setTimeout(async () => {
+                setPassN(false);
+                setmodal2(false);
+                setmodal3(true);
+                const response3 = await axios
+                  .post(
+                    "/api/post/vacAT/fetchTime2",
+                    { firstcommitstudent },
+                    {
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    }
+                  )
+                  .then((response) => {
+                    if (response.status === 200) {
+                      setSuccessModalTimer();
+                    }
+                  });
+              }, 2000);
+            }
+          }, 2000);
+          settimeY(false);
+          settime(false);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -279,7 +262,6 @@ export default function Page() {
               ...student,
               check: updatedStudent.check,
               comment: updatedStudent.comment,
-              outTimeST: updatedStudent.outTimeST,
             }
           : student;
       })
@@ -300,15 +282,6 @@ export default function Page() {
     return firstcommitstudent.filter((student) => student.check === "1").length;
   };
 
-  function convertTo12Hour(time24: string) {
-    if (!time24) return "미출석";
-    if (time24 === "0") return "미출석";
-    let [hours, minutes] = time24.split(":").map(Number);
-    let period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
-  }
-
   const validation = useMemo(() => {
     const errorCounts: { [msg: string]: number } = {};
     for (const student of firstcommitstudent) {
@@ -316,21 +289,11 @@ export default function Page() {
 
       if (!["0", "1", "2"].includes(student.check)) {
         errorMessageForStudent = "출석 여부가 선택되지 않았습니다.";
-      } else if (student.check === "1") {
-        // 출석인 경우: 출석 퇴장 시간이 없으면 에러 발생
-        if (!student.outTimeST) {
-          errorMessageForStudent = "출석 퇴장 시간이 입력되지 않았습니다.";
-        }
       } else if (student.check === "0" || student.check === "2") {
         // 미출석인 경우: 코멘트가 없으면 에러 발생 (trim으로 공백만 있는 경우도 체크)
         const commentEmpty = !student.comment || student.comment.trim() === "";
-        if (commentEmpty && !student.outTimeT) {
-          errorMessageForStudent =
-            "퇴장 시간이 입력되지 않았으며, 미출석 사유도 입력되지 않았습니다.";
-        } else if (commentEmpty) {
+        if (commentEmpty) {
           errorMessageForStudent = "미출석 사유가 입력되지 않았습니다.";
-        } else if (!student.outTimeST) {
-          errorMessageForStudent = "퇴장 시간이 입력되지 않았습니다.";
         }
       }
 
@@ -388,40 +351,9 @@ export default function Page() {
           const sortedData1 = sortedData.filter(
             (student) => student.grade === 3
           );
-          // // 기존 순서와 present/absent 분리 (필요시 유지)
-          // const presentStudents = sortedData1.filter(
-          //   (student) => student.check !== "0"
-          // );
-          // const absentStudents = sortedData1.filter(
-          //   (student) => student.check === "0"
-          // );
-          // const finalSortedData = [...presentStudents, ...absentStudents];
           const finalSortedData = sortedData1;
           const todayDay = new Date().getDay();
           const initialFirstCommitStudent = finalSortedData.map((student) => {
-            let defaultTime = "";
-            // switch (todayDay) {
-            //   case 1:
-            //     defaultTime = student.monTime || "0";
-            //     break;
-            //   case 2:
-            //     defaultTime = student.tueTime || "0";
-            //     break;
-            //   case 3:
-            //     defaultTime = student.wedTime || "0";
-            //     break;
-            //   case 4:
-            //     defaultTime = student.thuTime || "0";
-            //     break;
-            //   case 5:
-            //     defaultTime = student.friTime || "0";
-            //     break;
-            //   default:
-            //     defaultTime = "0";
-            // }
-
-            const defaultCheck = defaultTime === "0" ? "2" : "1";
-
             return {
               id: student.id,
               updatedAt: formattedDate,
@@ -429,26 +361,11 @@ export default function Page() {
               class: student.class,
               grade: student.grade,
               studentnumber: student.studentnumber,
-              check:
-                student.check === "0"
-                  ? "2"
-                  : student.check === "1"
-                  ? "1"
-                  : defaultCheck,
-              outTimeT: student.outTimeT || defaultTime,
-              outTimeST: student.outTimeT || defaultTime,
-              comment:
-                (student.check === "1" ? "" : student.comment) ||
-                (defaultCheck === "1" ? "" : "요일 미출석 학생"),
+              check: "1",
+              comment: student.check === "1" ? "" : student.comment,
               author: session?.user?.name || "",
               createdAt: student.createdAt,
               secondNumber: student.secondNumber || "",
-
-              monTime: student.monTime || "", // Add this line
-              tueTime: student.tueTime || "", // Add this line
-              wedTime: student.wedTime || "", // Add this line
-              thuTime: student.thuTime || "", // Add this line
-              friTime: student.friTime || "", // Add this line
             };
           });
           console.log(initialFirstCommitStudent);
@@ -522,13 +439,6 @@ export default function Page() {
             content={"어제의 출석이 완료되지 않았습니다"}
           />
         )}
-        {time && (
-          <GenerateModalN
-            name={"이런! 1,2차 모두 "}
-            content={"퇴장시간이 기록되지 않았습니다"}
-            setTimeY={handelTmodal}
-          />
-        )}
 
         {successModal && (
           <SuccessModal name={"완료!"} content={"출석이 완료되었습니다"} />
@@ -596,8 +506,8 @@ export default function Page() {
             ) || {
               check: "",
               comment: "",
-              outTimeST: "",
-              outTimeT: "",
+              // outTimeST: "",
+              // outTimeT: "",
             };
             if (studentCommit?.check === "2") {
               return (
@@ -684,9 +594,9 @@ export default function Page() {
                             ? `${data.secondNumber}번`
                             : "설정 안 됨"}
                         </p>
-                        <p className="attendance-student-number">
+                        {/* <p className="attendance-student-number">
                           기본:{convertTo12Hour(data.outTimeT)}
-                        </p>
+                        </p> */}
                       </div>
                       <div>
                         {studentCommit.check === "0" ? (
@@ -746,27 +656,6 @@ export default function Page() {
                           <div
                             style={{ display: "flex", justifyContent: "right" }}
                           >
-                            <div style={{ marginRight: "20px" }}>
-                              <input
-                                style={{
-                                  backgroundColor:
-                                    studentCommit.outTimeST ===
-                                    (studentCommit.outTimeT || "")
-                                      ? "#E8E8E8"
-                                      : "#E8E8FF",
-                                }}
-                                className="time-input"
-                                type="time"
-                                value={studentCommit.outTimeST || ""}
-                                onChange={(e) =>
-                                  handleTimeChange(
-                                    data.id,
-                                    "outTimeST",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
                             <input
                               type="checkbox"
                               className="no-check"

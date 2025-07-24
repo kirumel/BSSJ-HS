@@ -129,6 +129,12 @@ export default async function handler(req: any, res: any) {
       if (findDB.length !== 0) {
         if (findDB.some((a) => a.outTime)) {
           res.status(202).json({ message: "이미 퇴실 완료된 학생입니다" });
+        } else if (!findDB.some((a) => a.startTime)) {
+          res
+            .status(202)
+            .json({
+              message: "입장을 하지 않은 학생입니다 선생님에게 문의해주세요",
+            });
         } else {
           console.log(req.body);
 
