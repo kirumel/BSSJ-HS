@@ -23,7 +23,7 @@ const ProtectedPage = ({ children }: { children: any }) => {
   if (
     !session &&
     pathname !== "/funnel-register" &&
-    pathname !== "/funnel-register-ch" &&
+    pathname !== "/funnel-account-ch" &&
     pathname !== "/signin" &&
     pathname !== "/accountregister" &&
     pathname !== "/verify-email" &&
