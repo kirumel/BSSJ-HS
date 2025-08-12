@@ -12,22 +12,22 @@ const tabs = [
     icon: faHome,
     label: "홈",
   },
-  {
-    route: "/feed",
-    icon: faHome,
-    label: "피드",
-  },
+  // {
+  //   route: "/feed",
+  //   icon: faHome,
+  //   label: "피드",
+  // },
   // {
   //   route: "/cafe",
   //   icon: faBowlFood,
   //   label: "커뮤니티",
   // },
 
-  {
-    route: "/study",
-    icon: faCalendarDays,
-    label: "야자",
-  },
+  // {
+  //   route: "/study",
+  //   icon: faCalendarDays,
+  //   label: "야자",
+  // },
 
   {
     route: "/setting",
