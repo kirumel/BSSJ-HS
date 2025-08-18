@@ -58,7 +58,7 @@ export default function Home() {
     };
 
     // ✅ "월수금 9시 반", "화목 10시", "월~수 8시 반" 등 인식
-    const regex = /([월화수목금~]+)\s*(\d{1,2})시(?:\s*반)?/g;
+    const regex = /([월화수목금-]+)\s*(\d{1,2})시(?:\s*반)?/g;
     let match;
 
     while ((match = regex.exec(bigo)) !== null) {
@@ -71,8 +71,8 @@ export default function Home() {
         hasHalf ? "30" : "00"
       }`;
 
-      if (days.includes("~")) {
-        const [start, end] = days.split("~");
+      if (days.includes("-")) {
+        const [start, end] = days.split("-");
         const korDays = Object.keys(dayMap);
         const startIdx = korDays.indexOf(start);
         const endIdx = korDays.indexOf(end);
